@@ -48,7 +48,8 @@
       "Database\\Seeders\\": "vendor/orchestra/testbench-core/laravel/database/seeders"
     }
   },
-  "minimum-stability": "stable",
+	"minimum-stability": "dev",
+	"prefer-stable": true,
   "extra": {
     "laravel": {
       "providers": [
