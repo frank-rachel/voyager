@@ -75,14 +75,15 @@ abstract class SchemaManager
      */
     public static function listTableDetails($tableName)
     {
-        $columns = static::manager()->listTableColumns($tableName);
+        $columns = $this->listTableColumnNames($tableName);
 
         $foreignKeys = [];
-        if (static::manager()->getDatabasePlatform()->supportsForeignKeyConstraints()) {
-            $foreignKeys = static::manager()->listTableForeignKeys($tableName);
-        }
+        // if (static::manager()->getDatabasePlatform()->supportsForeignKeyConstraints()) {
+            // $foreignKeys = static::manager()->listTableForeignKeys($tableName);
+        // }
 
-        $indexes = static::manager()->listTableIndexes($tableName);
+        $indexes = [];
+        // $indexes = static::manager()->listTableIndexes($tableName);
 
         return new Table($tableName, $columns, $indexes, [], $foreignKeys, []);
     }
@@ -125,7 +126,7 @@ abstract class SchemaManager
         });
     }
 
-    public static function listTableColumnNames($tableName)
+    public static function listTableColumns($tableName)
     {
         // Type::registerCustomPlatformTypes();
 
@@ -137,6 +138,16 @@ abstract class SchemaManager
 
         // return $columnNames;
         return Schema::getColumns($tableName);
+    }
+
+    public static function listTableColumnNames($tableName)
+    {
+        // $tables = [];
+
+		$ColumnNames = array_map(function ($table) {
+			return $table['name'];
+		}, Schema::getColumns($tableName));
+        return $ColumnNames;
     }
 
     public static function createTable($table)
