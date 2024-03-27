@@ -29,7 +29,8 @@ abstract class SchemaManager
         return DB::connection();
     }
 
-    public static function getDatabasePlatform(ServerVersionProvider $versionProvider): PostgreSQLPlatform
+    // public static function getDatabasePlatform(ServerVersionProvider $versionProvider): PostgreSQLPlatform
+    public static function getDatabasePlatform(): PostgreSQLPlatform
     {
         return new PostgreSQLPlatform();
     }
