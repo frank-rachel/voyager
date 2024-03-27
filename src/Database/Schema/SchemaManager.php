@@ -11,39 +11,42 @@ abstract class SchemaManager
 {
     // todo: trim parameters
 
-    public static function __callStatic($method, $args)
-    {
-        return static::manager()->$method(...$args);
-    }
+    // public static function __callStatic($method, $args)
+    // {
+        // return static::manager()->$method(...$args);
+    // }
 
-    public static function manager()
-    {
-        return DB::connection()->getDoctrineSchemaManager();
-    }
+    // public static function manager()
+    // {
+        // return DB::connection()->getDoctrineSchemaManager();
+    // }
 
     public static function getDatabaseConnection()
     {
-        return DB::connection()->getDoctrineConnection();
+        // return DB::connection()->getDoctrineConnection();
+        return DB::connection();
     }
 
     public static function tableExists($table)
     {
-        if (!is_array($table)) {
-            $table = [$table];
-        }
+        // if (!is_array($table)) {
+            // $table = [$table];
+        // }
 
-        return static::manager()->tablesExist($table);
+        // return static::manager()->tablesExist($table);
+		return Schema::hasTable($table);
     }
 
     public static function listTables()
     {
-        $tables = [];
+        // $tables = [];
 
-        foreach (static::manager()->listTableNames() as $tableName) {
-            $tables[$tableName] = static::listTableDetails($tableName);
-        }
+        // foreach (static::manager()->listTableNames() as $tableName) {
+            // $tables[$tableName] = static::listTableDetails($tableName);
+        // }
 
-        return $tables;
+        // return $tables;
+        return Schema::getTables();
     }
 
     /**
