@@ -4,8 +4,10 @@ namespace TCG\Voyager\Database\Schema;
 
 use Doctrine\DBAL\Schema\SchemaException;
 use Doctrine\DBAL\Schema\Table as DoctrineTable;
-use Illuminate\Support\Facades\DB;
 use TCG\Voyager\Database\Types\Type;
+
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 abstract class SchemaManager
 {
