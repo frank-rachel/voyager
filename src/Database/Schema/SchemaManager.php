@@ -50,6 +50,18 @@ abstract class SchemaManager
         // return $tables;
         return Schema::getTables();
     }
+	
+    public static function listTableNames()
+    {
+        // $tables = [];
+
+        // foreach (static::manager()->listTableNames() as $tableName) {
+            // $tables[$tableName] = static::listTableDetails($tableName);
+        // }
+
+        // return $tables;
+        return Schema::getTables();
+    }
 
     /**
      * @param string $tableName
