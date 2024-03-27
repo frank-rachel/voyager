@@ -60,6 +60,8 @@ abstract class SchemaManager
         // }
 
         // return $tables;
+		print_r(Schema::getTables());
+		exit;
         return Schema::getTables();
     }
 
