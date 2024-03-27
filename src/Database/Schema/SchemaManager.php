@@ -55,14 +55,10 @@ abstract class SchemaManager
     {
         // $tables = [];
 
-        // foreach (static::manager()->listTableNames() as $tableName) {
-            // $tables[$tableName] = static::listTableDetails($tableName);
-        // }
-
-        // return $tables;
-		print_r(Schema::getTables());
-		exit;
-        return Schema::getTables();
+		$tableNames = array_map(function ($table) {
+			return $table['name'];
+		}, Schema::getTables());
+        return $tableNames;
     }
 
     /**
