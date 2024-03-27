@@ -75,7 +75,7 @@ abstract class SchemaManager
      */
     public static function listTableDetails($tableName)
     {
-        $columns = $this->listTableColumnNames($tableName);
+        $columns = static::listTableColumnNames($tableName);
 
         $foreignKeys = [];
         // if (static::manager()->getDatabasePlatform()->supportsForeignKeyConstraints()) {
