@@ -4,68 +4,46 @@ namespace TCG\Voyager\Database\Schema;
 
 use Doctrine\DBAL\Schema\SchemaException;
 use Doctrine\DBAL\Schema\Table as DoctrineTable;
-use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
-use TCG\Voyager\Database\Types\Type;
-
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
+use TCG\Voyager\Database\Types\Type;
 
 abstract class SchemaManager
 {
     // todo: trim parameters
 
-    // public static function __callStatic($method, $args)
-    // {
-        // return static::manager()->$method(...$args);
-    // }
+    public static function __callStatic($method, $args)
+    {
+        return static::manager()->$method(...$args);
+    }
 
-    // public static function manager()
-    // {
-        // return DB::connection()->getDoctrineSchemaManager();
-    // }
+    public static function manager()
+    {
+        return DB::connection()->getDoctrineSchemaManager();
+    }
 
     public static function getDatabaseConnection()
     {
-        // return DB::connection()->getDoctrineConnection();
-        return DB::connection();
-    }
-
-    // public static function getDatabasePlatform(ServerVersionProvider $versionProvider): PostgreSQLPlatform
-    public static function getDatabasePlatform(): PostgreSQLPlatform
-    {
-        return new PostgreSQLPlatform();
+        return DB::connection()->getDoctrineConnection();
     }
 
     public static function tableExists($table)
     {
-        // if (!is_array($table)) {
-            // $table = [$table];
-        // }
+        if (!is_array($table)) {
+            $table = [$table];
+        }
 
-        // return static::manager()->tablesExist($table);
-		return Schema::hasTable($table);
+        return static::manager()->tablesExist($table);
     }
 
     public static function listTables()
     {
-        // $tables = [];
+        $tables = [];
 
-        // foreach (static::manager()->listTableNames() as $tableName) {
-            // $tables[$tableName] = static::listTableDetails($tableName);
-        // }
+        foreach (static::manager()->listTableNames() as $tableName) {
+            $tables[$tableName] = static::listTableDetails($tableName);
+        }
 
-        // return $tables;
-        return Schema::getTables();
-    }
-	
-    public static function listTableNames()
-    {
-        // $tables = [];
-
-		$tableNames = array_map(function ($table) {
-			return $table['name'];
-		}, Schema::getTables());
-        return $tableNames;
+        return $tables;
     }
 
     /**
@@ -75,15 +53,14 @@ abstract class SchemaManager
      */
     public static function listTableDetails($tableName)
     {
-        $columns = static::listTableColumnNames($tableName);
+        $columns = static::manager()->listTableColumns($tableName);
 
         $foreignKeys = [];
-        // if (static::manager()->getDatabasePlatform()->supportsForeignKeyConstraints()) {
-            // $foreignKeys = static::manager()->listTableForeignKeys($tableName);
-        // }
+        if (static::manager()->getDatabasePlatform()->supportsForeignKeyConstraints()) {
+            $foreignKeys = static::manager()->listTableForeignKeys($tableName);
+        }
 
-        $indexes = [];
-        // $indexes = static::manager()->listTableIndexes($tableName);
+        $indexes = static::manager()->listTableIndexes($tableName);
 
         return new Table($tableName, $columns, $indexes, [], $foreignKeys, []);
     }
@@ -126,28 +103,17 @@ abstract class SchemaManager
         });
     }
 
-    public static function listTableColumns($tableName)
-    {
-        // Type::registerCustomPlatformTypes();
-
-        // $columnNames = [];
-
-        // foreach (static::manager()->listTableColumns($tableName) as $column) {
-            // $columnNames[] = $column->getName();
-        // }
-
-        // return $columnNames;
-        return Schema::getColumns($tableName);
-    }
-
     public static function listTableColumnNames($tableName)
     {
-        // $tables = [];
+        Type::registerCustomPlatformTypes();
 
-		$ColumnNames = array_map(function ($table) {
-			return $table['name'];
-		}, Schema::getColumns($tableName));
-        return $ColumnNames;
+        $columnNames = [];
+
+        foreach (static::manager()->listTableColumns($tableName) as $column) {
+            $columnNames[] = $column->getName();
+        }
+
+        return $columnNames;
     }
 
     public static function createTable($table)
