@@ -4,6 +4,7 @@ namespace TCG\Voyager\Database\Schema;
 
 use Doctrine\DBAL\Schema\SchemaException;
 use Doctrine\DBAL\Schema\Table as DoctrineTable;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use TCG\Voyager\Database\Types\Type;
 
 use Illuminate\Support\Facades\DB;
