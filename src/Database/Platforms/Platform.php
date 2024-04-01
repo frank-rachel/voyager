@@ -13,7 +13,9 @@ abstract class Platform
     public static function getPlatform($platformName)
     {
         $platform = __NAMESPACE__.'\\'.ucfirst($platformName);
-		echo($platform);
+		echo($platform.'<br/>');
+		echo($platformName.'<br/>');
+		echo( __NAMESPACE__.'<br/>');
 		exit;
         if (!class_exists($platform)) {
             throw new \Exception("Platform {$platformName} doesn't exist");
