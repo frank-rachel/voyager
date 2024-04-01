@@ -19,10 +19,10 @@ abstract class SchemaManager
         // return static::manager()->$method(...$args);
     // }
 
-    // public static function manager()
-    // {
-        // return DB::connection()->getDoctrineSchemaManager();
-    // }
+    public static function manager()
+    {
+        return DB::connection()->getDoctrineSchemaManager();
+    }
 
     public static function getName() {
 		$platform = SchemaManager::getDatabasePlatform();
@@ -91,6 +91,7 @@ abstract class SchemaManager
      *
      * @return \TCG\Voyager\Database\Schema\Table
      */
+	 /*
     public static function listTableDetails($tableName)
     {
         $columns = static::listTableColumnNames($tableName);
@@ -104,6 +105,20 @@ abstract class SchemaManager
 
         $indexes = [];
         // $indexes = static::manager()->listTableIndexes($tableName);
+
+        return new Table($tableName, $columns, $indexes, [], $foreignKeys, []);
+    }
+// */
+    public static function listTableDetails($tableName)
+    {
+        $columns = static::manager()->listTableColumns($tableName);
+
+        $foreignKeys = [];
+        if (static::manager()->getDatabasePlatform()->supportsForeignKeyConstraints()) {
+            $foreignKeys = static::manager()->listTableForeignKeys($tableName);
+        }
+
+        $indexes = static::manager()->listTableIndexes($tableName);
 
         return new Table($tableName, $columns, $indexes, [], $foreignKeys, []);
     }
