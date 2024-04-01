@@ -18,9 +18,22 @@ abstract class SchemaManager
     // {
         // return static::manager()->$method(...$args);
     // }
-
-    public static function manager()
+	
+    // public function getDoctrineSchemaManager()
+    public function manager()
     {
+        $connection = $this->getDoctrineConnection();
+
+        // Doctrine v2 expects one parameter while v3 expects two. 2nd will be ignored on v2...
+        return $this->getDoctrineDriver()->getSchemaManager(
+            $connection,
+            $connection->getDatabasePlatform()
+        );
+    }	
+
+    // public static function manager()
+    {
+		// $connection = $this->getDoctrineConnection();
         return DB::connection()->getDoctrineSchemaManager();
     }
 
