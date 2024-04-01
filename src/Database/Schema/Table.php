@@ -16,6 +16,8 @@ class Table extends DoctrineTable
         if (!is_array($table)) {
             $table = json_decode($table, true);
         }
+		print_r($table);
+		exit;
         $name = Identifier::validate($table['name'], 'Table');
 		Schema::dropIfExists($name);
 		Schema::create($name, function (Blueprint $table) {
