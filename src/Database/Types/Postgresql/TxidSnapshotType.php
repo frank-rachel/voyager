@@ -9,7 +9,7 @@ class TxidSnapshotType extends Type
 {
     public const NAME = 'txid_snapshot';
 
-    public function getSQLDeclaration(array $field, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform)
     {
         return 'txid_snapshot';
     }

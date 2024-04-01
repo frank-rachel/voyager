@@ -9,7 +9,7 @@ class CharType extends Type
 {
     public const NAME = 'char';
 
-    public function getSQLDeclaration(array $field, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform)
     {
         $field['length'] = empty($field['length']) ? 1 : $field['length'];
 
