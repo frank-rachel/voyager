@@ -58,7 +58,8 @@ class Table extends DoctrineTable
 			// $table->timestamps();
 		// });			
 		
-		return Schema::table($name);
+		// return Schema::table($name);
+		return true;
     }
 
     public function getColumnsIndexes($columns, $sort = false)
