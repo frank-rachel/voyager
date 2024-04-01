@@ -105,7 +105,7 @@ abstract class SchemaManager
      *
      * @return \TCG\Voyager\Database\Schema\Table
      */
-	 /*
+	 
     public static function listTableDetails($tableName)
     {
         $columns = static::listTableColumnNames($tableName);
@@ -123,6 +123,7 @@ abstract class SchemaManager
         return new Table($tableName, $columns, $indexes, [], $foreignKeys, []);
     }
 // */
+/*
     public static function listTableDetails($tableName)
     {
         $columns = static::manager()->listTableColumns($tableName);
@@ -136,7 +137,7 @@ abstract class SchemaManager
 
         return new Table($tableName, $columns, $indexes, [], $foreignKeys, []);
     }
-
+// */
     /**
      * Describes given table.
      *
