@@ -49,9 +49,10 @@ abstract class Type extends DoctrineType
         }
 
         $platform = SchemaManager::getDatabasePlatform();
+        $platformname = SchemaManager::getName();
 
         static::$platformTypes = Platform::getPlatformTypes(
-            $platform->getName(),
+            $platformname,
             static::getPlatformTypeMapping($platform)
         );
 
