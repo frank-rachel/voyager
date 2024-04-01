@@ -18,8 +18,6 @@ class Table extends DoctrineTable
         $name = Identifier::validate($table['name'], 'Table');
 		Schema::create($name, function (Blueprint $table) {
 			$table->id();
-			$table->string('name');
-			$table->string('email');
 			$table->timestamps();
 		});	
 
