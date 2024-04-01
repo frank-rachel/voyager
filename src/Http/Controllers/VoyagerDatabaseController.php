@@ -171,26 +171,69 @@ class VoyagerDatabaseController extends Controller
         
 $db->types = [
     'Numbers' => [
-        ['name' => 'Integer'],
-        ['name' => 'BigInteger'],
-        ['name' => 'Decimal'],
-        ['name' => 'Float']
+        ['name' => 'smallint'],
+        ['name' => 'integer'],
+        ['name' => 'bigint'],
+        ['name' => 'decimal'],
+        ['name' => 'numeric'],
+        ['name' => 'real'],
+        ['name' => 'double precision'],
+        ['name' => 'serial'],
+        ['name' => 'bigserial'],
     ],
     'Strings' => [
-        ['name' => 'Char'],
-        ['name' => 'Varchar'],
-        ['name' => 'Text'],
-        ['name' => 'LongText']
+        ['name' => 'char'],
+        ['name' => 'varchar'],
+        ['name' => 'text'],
     ],
-    'Dates' => [
-        ['name' => 'Date'],
-        ['name' => 'DateTime'],
-        ['name' => 'Timestamp']
+    'Binary' => [
+        ['name' => 'bytea'],
     ],
-    'Booleans' => [
-        ['name' => 'Boolean']
+    'Boolean' => [
+        ['name' => 'boolean'],
+    ],
+    'Dates and Times' => [
+        ['name' => 'date'],
+        ['name' => 'timestamp'],
+        ['name' => 'timestamp with time zone'],
+        ['name' => 'time'],
+        ['name' => 'time with time zone'],
+        ['name' => 'interval'],
+    ],
+    'Network Addresses' => [
+        ['name' => 'cidr'],
+        ['name' => 'inet'],
+        ['name' => 'macaddr'],
+    ],
+    'JSON' => [
+        ['name' => 'json'],
+        ['name' => 'jsonb'],
+    ],
+    'UUID' => [
+        ['name' => 'uuid'],
+    ],
+    'Arrays' => [
+        ['name' => 'array'],
+    ],
+    'Geometry' => [
+        ['name' => 'point'],
+        ['name' => 'line'],
+        ['name' => 'lseg'],
+        ['name' => 'box'],
+        ['name' => 'path'],
+        ['name' => 'polygon'],
+        ['name' => 'circle'],
+    ],
+    'Range' => [
+        ['name' => 'int4range'],
+        ['name' => 'int8range'],
+        ['name' => 'numrange'],
+        ['name' => 'tsrange'],
+        ['name' => 'tstzrange'],
+        ['name' => 'daterange'],
     ]
 ];
+
 
 
         if ($action == 'update') {
