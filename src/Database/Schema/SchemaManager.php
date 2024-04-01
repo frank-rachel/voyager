@@ -29,6 +29,7 @@ abstract class SchemaManager
         $reflection = new \ReflectionClass($platform);
 		$shortName = $reflection->getShortName(); // Gets the short class name
 		$platformName = ucfirst(strtolower(preg_replace('/Platform$/', '', $shortName)));
+		return $platformName;
 	}
 	
     public static function getDatabaseConnection()
