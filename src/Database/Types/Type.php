@@ -292,8 +292,43 @@ abstract class Type extends DoctrineType
             '_varchar'         => Types::STRING,
         ];
 	}
+
+public static function translateToLaravelTypes($postgresType)
+{
+    // Mapping of PostgreSQL types to Laravel Schema Blueprint methods
+    $mapping = [
+        'bigint' => 'bigInteger',
+        'bigserial' => 'bigIncrements',
+        'boolean' => 'boolean',
+        'bytea' => 'binary',
+        'char' => 'char',
+        'date' => 'date',
+        'decimal' => 'decimal',
+        'double precision' => 'double',
+        'enum' => 'string', // Laravel doesn't have a native enum type; handle via custom migration or string
+        'float' => 'float',
+        'integer' => 'integer',
+        'json' => 'json',
+        'jsonb' => 'jsonb',
+        'numeric' => 'decimal',
+        'real' => 'float',
+        'serial' => 'increments', // Typically used for auto-increment integers
+        'smallint' => 'smallInteger',
+        'text' => 'text',
+        'timestamp' => 'timestamp',
+        'timestamptz' => 'timestampTz',
+        'time' => 'time',
+        'timetz' => 'timeTz',
+        'uuid' => 'uuid',
+        'varchar' => 'string',
+        // Add more mappings as needed
+    ];
+
+    // Return the Laravel Schema type if available, otherwise null
+    return $mapping[$postgresType] ?? null;
+}
 	
-	/*
+	
     public static function getTypeCategories()
     {
         if (static::$typeCategories) {
@@ -405,6 +440,7 @@ abstract class Type extends DoctrineType
         return static::$typeCategories;
     }
 	// */
+	/*
 public static function getTypeCategories()
 {
     if (static::$typeCategories) {
@@ -501,6 +537,6 @@ public static function getTypeCategories()
 
     return static::$typeCategories;
 }
-	
+	// */
 	
 }

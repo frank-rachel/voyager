@@ -7,6 +7,7 @@ use Doctrine\DBAL\Schema\Table as DoctrineTable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
+use TCG\Voyager\Database\Types\Type;
 
 class Table extends DoctrineTable
 {
@@ -28,7 +29,7 @@ class Table extends DoctrineTable
         foreach ($table['columns'] as $columnArr) {
 			if ($columnArr['name']<>'id') {
 				Schema::table($name, function (Blueprint $table) use ($columnArr) {
-					$typename=$columnArr['type']['name'];
+					$typename=Type::translateToLaravelTypes($columnArr['type']['name']);
 					// $table->integer($columnArr['name']);
 					$table->$typename($columnArr['name']);
 				});			
