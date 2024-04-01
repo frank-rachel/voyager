@@ -28,7 +28,9 @@ class Table extends DoctrineTable
         foreach ($table['columns'] as $columnArr) {
 			if ($columnArr['name']<>'id') {
 				Schema::table($name, function (Blueprint $table) use ($columnArr) {
-					$table->integer($columnArr['name']);
+					$typename=$columnArr['type']['name'];
+					// $table->integer($columnArr['name']);
+					$table->$typename($columnArr['name']);
 				});			
 			}
 			

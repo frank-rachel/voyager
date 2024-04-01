@@ -292,6 +292,8 @@ abstract class Type extends DoctrineType
             '_varchar'         => Types::STRING,
         ];
 	}
+	
+	/*
     public static function getTypeCategories()
     {
         if (static::$typeCategories) {
@@ -402,4 +404,103 @@ abstract class Type extends DoctrineType
 
         return static::$typeCategories;
     }
+	// */
+public static function getTypeCategories()
+{
+    if (static::$typeCategories) {
+        return static::$typeCategories;
+    }
+
+    $numbers = [
+        'boolean',
+        'tinyInteger', // Assuming this maps to tinyint
+        'smallInteger', // Assuming this maps to smallint
+        'mediumInteger', // Assuming this maps to mediumint
+        'integer', // Assuming this maps to int
+        'bigInteger', // Assuming this maps to bigint
+        'decimal',
+        'float', // Can map to real or double precision depending on context
+        'double', // Typically maps to double precision
+        'unsignedBigInteger',
+        'unsignedInteger',
+        'unsignedMediumInteger',
+        'unsignedSmallInteger',
+        'unsignedTinyInteger',
+    ];
+
+    $strings = [
+        'char',
+        'string', // Assuming this maps to varchar or char
+        'text',
+        'mediumText',
+        'longText',
+        'tinyText',
+        'enum',
+        'set', // Note: set is not directly supported in PostgreSQL
+        'json',
+        'jsonb',
+        'uuid',
+        'ipAddress', // Assuming this maps to inet or cidr
+        'macAddress',
+    ];
+
+    $datetime = [
+        'dateTime',
+        'dateTimeTz',
+        'date',
+        'time',
+        'timeTz',
+        'timestamp',
+        'timestampTz',
+        'timestamps', // Laravel specific, creates created_at and updated_at
+        'timestampsTz', // Laravel specific, for timezone aware timestamps
+        'year', // Note: year is not a native PostgreSQL type
+    ];
+
+    $binary = [
+        'binary', // Assuming this maps to bytea or blob types
+    ];
+
+    $geometry = [
+        'geometry',
+        'geography', // Assuming these map to spatial types if using PostGIS
+    ];
+
+    // Laravel specific types or special cases
+    $special = [
+        'increments',
+        'mediumIncrements',
+        'smallIncrements',
+        'tinyIncrements',
+        'bigIncrements',
+        'foreignId',
+        'foreignIdFor',
+        'foreignUlid',
+        'foreignUuid',
+        'morphs',
+        'nullableMorphs',
+        'nullableTimestamps',
+        'nullableUlidMorphs',
+        'nullableUuidMorphs',
+        'ulid',
+        'rememberToken', // Typically a specific use case of string type
+        'softDeletes', // Laravel specific, typically a datetime
+        'softDeletesTz', // Laravel specific, timezone aware datetime
+        'ulidMorphs',
+        'uuidMorphs',
+    ];
+
+    static::$typeCategories = [
+        'numbers'  => $numbers,
+        'strings'  => $strings,
+        'datetime' => $datetime,
+        'binary'   => $binary,
+        'geometry' => $geometry,
+        'special'  => $special, // Added for Laravel specific or unique cases
+    ];
+
+    return static::$typeCategories;
+}
+	
+	
 }
