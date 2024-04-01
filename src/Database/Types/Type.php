@@ -135,7 +135,15 @@ abstract class Type extends DoctrineType
         $namespace = __NAMESPACE__.'\\'.$platformName.'\\';
         $types = [];
 
-        foreach (glob($typesPath.'*.php') as $classFile) {
+		// Sanitize and trim to avoid null bytes and unwanted characters
+		$typesPath = trim(str_replace("\0", "", $typesPath));
+
+		// Append the pattern for glob
+		$pattern = $typesPath . '*.php';
+
+		// Use glob() to find matching files
+		foreach (glob($pattern) as $classFile) {
+        // foreach (glob($typesPath.'*.php') as $classFile) {
             $types[] = $namespace.str_replace(
                 '.php',
                 '',
