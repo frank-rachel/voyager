@@ -110,7 +110,7 @@ abstract class SchemaManager
     {
         $columns = static::listTableColumnNames($tableName);
 		print_r($columns);
-		exit;
+		// exit;
 
         $foreignKeys = [];
         // if (static::manager()->getDatabasePlatform()->supportsForeignKeyConstraints()) {
