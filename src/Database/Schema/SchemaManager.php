@@ -31,6 +31,7 @@ abstract class SchemaManager
         );
     }	
 
+    public static function oldmanager()
     // public static function manager()
     {
 		// $connection = $this->getDoctrineConnection();
