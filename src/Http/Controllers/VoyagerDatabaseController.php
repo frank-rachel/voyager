@@ -166,7 +166,19 @@ class VoyagerDatabaseController extends Controller
         $db = new \stdClass();
 
         // Need to get the types first to register custom types
-        $db->types = Type::getPlatformTypes();
+		// seems to be fixed list in L11?
+        // $db->types = Type::getPlatformTypes();
+        $db->types = ["bigIncrements", "bigInteger", "binary", "boolean", "char", "dateTimeTz", "dateTime",
+    "date", "decimal", "double", "enum", "float", "foreignId", "foreignIdFor", "foreignUlid",
+    "foreignUuid", "geography", "geometry", "id", "increments", "integer", "ipAddress", "json",
+    "jsonb", "longText", "macAddress", "mediumIncrements", "mediumInteger", "mediumText",
+    "morphs", "nullableMorphs", "nullableTimestamps", "nullableUlidMorphs", "nullableUuidMorphs",
+    "rememberToken", "set", "smallIncrements", "smallInteger", "softDeletesTz", "softDeletes",
+    "string", "text", "timeTz", "time", "timestampTz", "timestamp", "timestampsTz", "timestamps",
+    "tinyIncrements", "tinyInteger", "tinyText", "unsignedBigInteger", "unsignedInteger",
+    "unsignedMediumInteger", "unsignedSmallInteger", "unsignedTinyInteger", "ulidMorphs",
+    "uuidMorphs", "ulid", "uuid", "year"];
+
 
         if ($action == 'update') {
             $db->table = SchemaManager::listTableDetails($table);
