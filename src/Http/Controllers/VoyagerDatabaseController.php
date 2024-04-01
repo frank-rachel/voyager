@@ -167,8 +167,30 @@ class VoyagerDatabaseController extends Controller
 
         // Need to get the types first to register custom types
 		// seems to be fixed list in L11?
-        $db->types = Type::getPlatformTypes();
+        // $db->types = Type::getPlatformTypes();
         
+$db->types = [
+    'Numbers' => [
+        ['name' => 'Integer'],
+        ['name' => 'BigInteger'],
+        ['name' => 'Decimal'],
+        ['name' => 'Float']
+    ],
+    'Strings' => [
+        ['name' => 'Char'],
+        ['name' => 'Varchar'],
+        ['name' => 'Text'],
+        ['name' => 'LongText']
+    ],
+    'Dates' => [
+        ['name' => 'Date'],
+        ['name' => 'DateTime'],
+        ['name' => 'Timestamp']
+    ],
+    'Booleans' => [
+        ['name' => 'Boolean']
+    ]
+];
 
 
         if ($action == 'update') {
