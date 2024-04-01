@@ -206,26 +206,7 @@ abstract class SchemaManager
     public static function createTable($table)
 	{
 		
-        if (!is_array($table)) {
-            $table = json_decode($table, true);
-        }
-        $name = Identifier::validate($table['name'], 'Table');
-		Schema::create($name, function (Blueprint $table) {
-			$table->id();
-			$table->string('name');
-			$table->string('email');
-			$table->timestamps();
-		});	
-
-        $columns = [];
-        foreach ($table['columns'] as $columnArr) {
-            // $column = Column::make($columnArr, $table['name']);
-            // $columns[$column->getName()] = $column;
-			Schema::table($name, function (Blueprint $table, $columnArr) {
-				$table->integer($columnArr['name']);
-			});			
-			
-        }
+        $table = Table::make($table);
 
         // $indexes = [];
         // foreach ($table['indexes'] as $indexArr) {

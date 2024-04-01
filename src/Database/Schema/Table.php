@@ -13,28 +13,45 @@ class Table extends DoctrineTable
             $table = json_decode($table, true);
         }
         $name = Identifier::validate($table['name'], 'Table');
+		Schema::create($name, function (Blueprint $table) {
+			$table->id();
+			$table->string('name');
+			$table->string('email');
+			$table->timestamps();
+		});	
 
         $columns = [];
         foreach ($table['columns'] as $columnArr) {
-            $column = Column::make($columnArr, $table['name']);
-            $columns[$column->getName()] = $column;
+            // $column = Column::make($columnArr, $table['name']);
+            // $columns[$column->getName()] = $column;
+			Schema::table($name, function (Blueprint $table, $columnArr) {
+				$table->integer($columnArr['name']);
+			});			
+			
         }
+		
+        // $indexes = [];
+        // foreach ($table['indexes'] as $indexArr) {
+            // $index = Index::make($indexArr);
+            // $indexes[$index->getName()] = $index;
+        // }
 
-        $indexes = [];
-        foreach ($table['indexes'] as $indexArr) {
-            $index = Index::make($indexArr);
-            $indexes[$index->getName()] = $index;
-        }
+        // $foreignKeys = [];
+        // foreach ($table['foreignKeys'] as $foreignKeyArr) {
+            // $foreignKey = ForeignKey::make($foreignKeyArr);
+            // $foreignKeys[$foreignKey->getName()] = $foreignKey;
+        // }
 
-        $foreignKeys = [];
-        foreach ($table['foreignKeys'] as $foreignKeyArr) {
-            $foreignKey = ForeignKey::make($foreignKeyArr);
-            $foreignKeys[$foreignKey->getName()] = $foreignKey;
-        }
-
-        $options = $table['options'];
-
-        return new self($name, $columns, $indexes, [], $foreignKeys, $options);
+        // $options = $table['options'];
+		
+		// Schema::create($name, function (Blueprint $table) {
+			// $table->id();
+			// $table->string('name');
+			// $table->string('email');
+			// $table->timestamps();
+		// });			
+		
+		return Schema::table($name);
     }
 
     public function getColumnsIndexes($columns, $sort = false)
