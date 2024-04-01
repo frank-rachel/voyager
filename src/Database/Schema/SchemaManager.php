@@ -47,7 +47,8 @@ abstract class SchemaManager
 		return new class extends PostgreSQLPlatform {
 			public function getName() {
 				// Implement the getName logic here
-				$className = get_class($this);
+				// $className = get_class($this);
+				$className = 'Postgresql';
 				return ucfirst(strtolower(preg_replace('/Platform$/', '', $className)));
 			}
 		};

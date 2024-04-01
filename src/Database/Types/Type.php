@@ -85,9 +85,10 @@ abstract class Type extends DoctrineType
         $platform = SchemaManager::getDatabasePlatform();
         // $platformName = ucfirst($platform->getName());
         // $platformName = ucfirst(preg_replace('/Platform$/', '', $platform));
-		$reflection = new \ReflectionClass($platform);
-		$shortName = $reflection->getShortName(); // Gets the short class name
-		$platformName = ucfirst(strtolower(preg_replace('/Platform$/', '', $shortName)));
+		// $reflection = new \ReflectionClass($platform);
+		// $shortName = $reflection->getShortName(); // Gets the short class name
+		// $platformName = ucfirst(strtolower(preg_replace('/Platform$/', '', $shortName)));
+		$platformName = SchemaManager::getName();
 
         $customTypes = array_merge(
             static::getPlatformCustomTypes('Common'),
