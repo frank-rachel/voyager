@@ -20,7 +20,7 @@ abstract class SchemaManager
     // }
 	
     // public function getDoctrineSchemaManager()
-    public function manager()
+    public static function manager()
     {
         $connection = $this->getDoctrineConnection();
 
