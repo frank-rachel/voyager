@@ -229,11 +229,11 @@ abstract class Type extends DoctrineType
         static::registerCustomOption('category', 'Numbers', $types['numbers']);
         static::registerCustomOption('category', 'Strings', $types['strings']);
         static::registerCustomOption('category', 'Date and Time', $types['datetime']);
-        static::registerCustomOption('category', 'Lists', $types['lists']);
+        // static::registerCustomOption('category', 'Lists', $types['lists']);
         static::registerCustomOption('category', 'Binary', $types['binary']);
         static::registerCustomOption('category', 'Geometry', $types['geometry']);
-        static::registerCustomOption('category', 'Network', $types['network']);
-        static::registerCustomOption('category', 'Objects', $types['objects']);
+        // static::registerCustomOption('category', 'Network', $types['network']);
+        static::registerCustomOption('category', 'Special', $types['special']);
     }
 
     public static function getAllTypes()
