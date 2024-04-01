@@ -16,16 +16,17 @@ class Table extends DoctrineTable
             $table = json_decode($table, true);
         }
         $name = Identifier::validate($table['name'], 'Table');
+		Schema::dropIfExists($name);
 		Schema::create($name, function (Blueprint $table) {
 			$table->id();
 			$table->timestamps();
 		});	
 
         $columns = [];
-        foreach ($table['columns'] as $columnArr) {
             // $column = Column::make($columnArr, $table['name']);
             // $columns[$column->getName()] = $column;
-			Schema::table($name, function (Blueprint $table, $columnArr) {
+        foreach ($table['columns'] as $columnArr) {
+			Schema::table($name, function (Blueprint $table) use ($columnArr) {
 				$table->integer($columnArr['name']);
 			});			
 			
