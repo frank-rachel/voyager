@@ -19,50 +19,50 @@ class Table extends DoctrineTable
 		// print_r($table);
 		// exit;
 		if (is_array($table)) {
-        $name = Identifier::validate($table['name'], 'Table');
-		Schema::dropIfExists($name);
-		Schema::create($name, function (Blueprint $table) {
-			$table->id();
-			$table->timestamps();
-		});	
+			$name = Identifier::validate($table['name'], 'Table');
+			Schema::dropIfExists($name);
+			Schema::create($name, function (Blueprint $table) {
+				$table->id();
+				$table->timestamps();
+			});	
 
-        $columns = [];
-            // $column = Column::make($columnArr, $table['name']);
-            // $columns[$column->getName()] = $column;
-        foreach ($table['columns'] as $columnArr) {
-			if ($columnArr['name']<>'id') {
-				Schema::table($name, function (Blueprint $table) use ($columnArr) {
-					$typename=Type::translateToLaravelTypes($columnArr['type']['name']);
-					// $table->integer($columnArr['name']);
-					$table->$typename($columnArr['name']);
-				});			
+			$columns = [];
+				// $column = Column::make($columnArr, $table['name']);
+				// $columns[$column->getName()] = $column;
+			foreach ($table['columns'] as $columnArr) {
+				if ($columnArr['name']<>'id') {
+					Schema::table($name, function (Blueprint $table) use ($columnArr) {
+						$typename=Type::translateToLaravelTypes($columnArr['type']['name']);
+						// $table->integer($columnArr['name']);
+						$table->$typename($columnArr['name']);
+					});			
+				}
+				
 			}
 			
-        }
-		
-        // $indexes = [];
-        // foreach ($table['indexes'] as $indexArr) {
-            // $index = Index::make($indexArr);
-            // $indexes[$index->getName()] = $index;
-        // }
+			// $indexes = [];
+			// foreach ($table['indexes'] as $indexArr) {
+				// $index = Index::make($indexArr);
+				// $indexes[$index->getName()] = $index;
+			// }
 
-        // $foreignKeys = [];
-        // foreach ($table['foreignKeys'] as $foreignKeyArr) {
-            // $foreignKey = ForeignKey::make($foreignKeyArr);
-            // $foreignKeys[$foreignKey->getName()] = $foreignKey;
-        // }
+			// $foreignKeys = [];
+			// foreach ($table['foreignKeys'] as $foreignKeyArr) {
+				// $foreignKey = ForeignKey::make($foreignKeyArr);
+				// $foreignKeys[$foreignKey->getName()] = $foreignKey;
+			// }
 
-        // $options = $table['options'];
-		
-		// Schema::create($name, function (Blueprint $table) {
-			// $table->id();
-			// $table->string('name');
-			// $table->string('email');
-			// $table->timestamps();
-		// });			
-		
-		// return Schema::table($name);
-		return true;
+			// $options = $table['options'];
+			
+			// Schema::create($name, function (Blueprint $table) {
+				// $table->id();
+				// $table->string('name');
+				// $table->string('email');
+				// $table->timestamps();
+			// });			
+			
+			return Schema::getTable($name);
+			// return true;
 		}
     }
 
