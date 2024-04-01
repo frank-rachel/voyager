@@ -39,10 +39,19 @@ abstract class SchemaManager
     }
 
     // public static function getDatabasePlatform(ServerVersionProvider $versionProvider): PostgreSQLPlatform
-    public static function getDatabasePlatform(): PostgreSQLPlatform
-    {
-        return new PostgreSQLPlatform();
-    }
+    // public static function getDatabasePlatform(): PostgreSQLPlatform
+    // {
+        // return new PostgreSQLPlatform();
+    // }
+	public static function getDatabasePlatform() {
+		return new class extends PostgreSQLPlatform {
+			public function getName() {
+				// Implement the getName logic here
+				$className = get_class($this);
+				return ucfirst(strtolower(preg_replace('/Platform$/', '', $className)));
+			}
+		};
+	}
 
     public static function tableExists($table)
     {
