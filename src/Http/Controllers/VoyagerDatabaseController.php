@@ -67,7 +67,7 @@ class VoyagerDatabaseController extends Controller
     {
         $this->authorize('browse_database');
 
-        try {
+        // try {
             $conn = 'database.connections.'.config('database.default');
             Type::registerCustomPlatformTypes();
 
@@ -107,9 +107,9 @@ class VoyagerDatabaseController extends Controller
             return redirect()
                ->route('voyager.database.index')
                ->with($this->alertSuccess(__('voyager::database.success_create_table', ['table' => $table->name])));
-        } catch (Exception $e) {
-            return back()->with($this->alertException($e))->withInput();
-        }
+        // } catch (Exception $e) {
+            // return back()->with($this->alertException($e))->withInput();
+        // }
     }
 
     /**
