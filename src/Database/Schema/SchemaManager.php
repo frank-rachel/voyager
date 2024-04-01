@@ -109,9 +109,9 @@ abstract class SchemaManager
     public static function listTableDetails($tableName)
     {
         $columns = static::listTableColumnNames($tableName);
-		print_r(Schema::getTypes());
-		print_r($columns);
-		exit;
+		// print_r(Schema::getTypes());
+		// print_r($columns);
+		// exit;
 
         $foreignKeys = [];
         // if (static::manager()->getDatabasePlatform()->supportsForeignKeyConstraints()) {
@@ -203,11 +203,11 @@ abstract class SchemaManager
 
     public static function createTable($table)
     {
-        if (!($table instanceof DoctrineTable)) {
+        // if (!($table instanceof DoctrineTable)) {
             $table = Table::make($table);
-        }
+        // }
 
-        static::manager()->createTable($table);
+        // static::manager()->createTable($table);
     }
 
     public static function getDoctrineTable($table)
