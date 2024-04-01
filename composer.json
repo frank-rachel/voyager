@@ -38,13 +38,13 @@
   },
   "autoload": {
     "psr-4": {
-      "TCG\\Voyager\\": "src/"
+      "FrankRachel\\Voyager\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "TCG\\Voyager\\Tests\\": "tests/",
-      "TCG\\Voyager\\Tests\\Database\\Factories\\": "tests/database/factories/",
+      "FrankRachel\\Voyager\\Tests\\": "tests/",
+      "FrankRachel\\Voyager\\Tests\\Database\\Factories\\": "tests/database/factories/",
       "Database\\Seeders\\": "vendor/orchestra/testbench-core/laravel/database/seeders"
     }
   },
@@ -53,8 +53,8 @@
   "extra": {
     "laravel": {
       "providers": [
-        "TCG\\Voyager\\VoyagerServiceProvider",
-        "TCG\\Voyager\\Providers\\VoyagerDummyServiceProvider"
+        "FrankRachel\\Voyager\\VoyagerServiceProvider",
+        "FrankRachel\\Voyager\\Providers\\VoyagerDummyServiceProvider"
       ]
     }
   },
