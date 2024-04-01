@@ -1,9 +1,9 @@
 <?php
 
-namespace FrankRachel\Voyager\Events;
+namespace TCG\Voyager\Events;
 
 use Illuminate\Queue\SerializesModels;
-use FrankRachel\Voyager\Database\Schema\Table;
+use TCG\Voyager\Database\Schema\Table;
 
 class TableAdded
 {

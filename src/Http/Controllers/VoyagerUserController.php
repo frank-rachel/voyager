@@ -1,10 +1,10 @@
 <?php
 
-namespace FrankRachel\Voyager\Http\Controllers;
+namespace TCG\Voyager\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use FrankRachel\Voyager\Facades\Voyager;
+use TCG\Voyager\Facades\Voyager;
 
 class VoyagerUserController extends VoyagerBaseController
 {

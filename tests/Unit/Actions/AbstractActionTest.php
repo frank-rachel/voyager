@@ -1,25 +1,25 @@
 <?php
 
-namespace FrankRachel\Voyager\Tests\Unit\Actions;
+namespace TCG\Voyager\Tests\Unit\Actions;
 
-use FrankRachel\Voyager\Actions\AbstractAction;
-use FrankRachel\Voyager\Facades\Voyager;
-use FrankRachel\Voyager\Models\User;
-use FrankRachel\Voyager\Tests\TestCase;
+use TCG\Voyager\Actions\AbstractAction;
+use TCG\Voyager\Facades\Voyager;
+use TCG\Voyager\Models\User;
+use TCG\Voyager\Tests\TestCase;
 
 class AbstractActionTest extends TestCase
 {
     /**
      * The users DataType instance.
      *
-     * @var \FrankRachel\Voyager\Models\DataType
+     * @var \TCG\Voyager\Models\DataType
      */
     protected $userDataType;
 
     /**
      * A dummy user instance.
      *
-     * @var \FrankRachel\Voyager\Models\User
+     * @var \TCG\Voyager\Models\User
      */
     protected $user;
 
@@ -28,7 +28,7 @@ class AbstractActionTest extends TestCase
         parent::setUp();
 
         $this->userDataType = Voyager::model('DataType')->where('name', 'users')->first();
-        $this->user = \FrankRachel\Voyager\Models\User::factory()->create();
+        $this->user = \TCG\Voyager\Models\User::factory()->create();
     }
 
     /**

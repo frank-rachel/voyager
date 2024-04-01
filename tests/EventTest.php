@@ -1,26 +1,26 @@
 <?php
 
-namespace FrankRachel\Voyager\Tests;
+namespace TCG\Voyager\Tests;
 
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
-use FrankRachel\Voyager\Events\BreadAdded;
-use FrankRachel\Voyager\Events\BreadDataAdded;
-use FrankRachel\Voyager\Events\BreadDataDeleted;
-use FrankRachel\Voyager\Events\BreadDataUpdated;
-use FrankRachel\Voyager\Events\BreadDeleted;
-use FrankRachel\Voyager\Events\BreadImagesDeleted;
-use FrankRachel\Voyager\Events\BreadUpdated;
-use FrankRachel\Voyager\Events\FileDeleted;
-use FrankRachel\Voyager\Events\MediaFileAdded;
-use FrankRachel\Voyager\Events\TableAdded;
-use FrankRachel\Voyager\Events\TableDeleted;
-use FrankRachel\Voyager\Events\TableUpdated;
-use FrankRachel\Voyager\Models\DataType;
-use FrankRachel\Voyager\Models\Page;
+use TCG\Voyager\Events\BreadAdded;
+use TCG\Voyager\Events\BreadDataAdded;
+use TCG\Voyager\Events\BreadDataDeleted;
+use TCG\Voyager\Events\BreadDataUpdated;
+use TCG\Voyager\Events\BreadDeleted;
+use TCG\Voyager\Events\BreadImagesDeleted;
+use TCG\Voyager\Events\BreadUpdated;
+use TCG\Voyager\Events\FileDeleted;
+use TCG\Voyager\Events\MediaFileAdded;
+use TCG\Voyager\Events\TableAdded;
+use TCG\Voyager\Events\TableDeleted;
+use TCG\Voyager\Events\TableUpdated;
+use TCG\Voyager\Models\DataType;
+use TCG\Voyager\Models\Page;
 
 class EventTest extends TestCase
 {

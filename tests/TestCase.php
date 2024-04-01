@@ -1,11 +1,11 @@
 <?php
 
-namespace FrankRachel\Voyager\Tests;
+namespace TCG\Voyager\Tests;
 
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Orchestra\Testbench\BrowserKit\TestCase as OrchestraTestCase;
-use FrankRachel\Voyager\Models\User;
-use FrankRachel\Voyager\VoyagerServiceProvider;
+use TCG\Voyager\Models\User;
+use TCG\Voyager\VoyagerServiceProvider;
 
 class TestCase extends OrchestraTestCase
 {

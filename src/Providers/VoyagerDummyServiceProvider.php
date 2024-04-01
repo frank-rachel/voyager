@@ -1,10 +1,10 @@
 <?php
 
-namespace FrankRachel\Voyager\Providers;
+namespace TCG\Voyager\Providers;
 
 use Arrilot\Widgets\ServiceProvider as WidgetServiceProvider;
 use Illuminate\Support\ServiceProvider;
-use FrankRachel\Voyager\Seed;
+use TCG\Voyager\Seed;
 
 class VoyagerDummyServiceProvider extends ServiceProvider
 {

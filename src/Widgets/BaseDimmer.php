@@ -1,6 +1,6 @@
 <?php
 
-namespace FrankRachel\Voyager\Widgets;
+namespace TCG\Voyager\Widgets;
 
 use Arrilot\Widgets\AbstractWidget;
 

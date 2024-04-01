@@ -1,12 +1,12 @@
 <?php
 
-namespace FrankRachel\Voyager\Models;
+namespace TCG\Voyager\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
-use FrankRachel\Voyager\Events\MenuDisplay;
-use FrankRachel\Voyager\Facades\Voyager;
+use TCG\Voyager\Events\MenuDisplay;
+use TCG\Voyager\Facades\Voyager;
 
 /**
  * @todo: Refactor this class by using something like MenuBuilder Helper.

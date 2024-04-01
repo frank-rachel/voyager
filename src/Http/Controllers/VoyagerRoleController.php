@@ -1,9 +1,9 @@
 <?php
 
-namespace FrankRachel\Voyager\Http\Controllers;
+namespace TCG\Voyager\Http\Controllers;
 
 use Illuminate\Http\Request;
-use FrankRachel\Voyager\Facades\Voyager;
+use TCG\Voyager\Facades\Voyager;
 
 class VoyagerRoleController extends VoyagerBaseController
 {

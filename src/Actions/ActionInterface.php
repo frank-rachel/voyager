@@ -1,6 +1,6 @@
 <?php
 
-namespace FrankRachel\Voyager\Actions;
+namespace TCG\Voyager\Actions;
 
 interface ActionInterface
 {

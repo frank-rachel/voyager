@@ -1,15 +1,15 @@
 <?php
 
-namespace FrankRachel\Voyager\Policies;
+namespace TCG\Voyager\Policies;
 
-use FrankRachel\Voyager\Contracts\User;
+use TCG\Voyager\Contracts\User;
 
 class SettingPolicy extends BasePolicy
 {
     /**
      * Determine if the given user can browse the model.
      *
-     * @param \FrankRachel\Voyager\Contracts\User $user
+     * @param \TCG\Voyager\Contracts\User $user
      * @param  $model
      *
      * @return bool
@@ -22,7 +22,7 @@ class SettingPolicy extends BasePolicy
     /**
      * Determine if the given model can be viewed by the user.
      *
-     * @param \FrankRachel\Voyager\Contracts\User $user
+     * @param \TCG\Voyager\Contracts\User $user
      * @param  $model
      *
      * @return bool
@@ -35,7 +35,7 @@ class SettingPolicy extends BasePolicy
     /**
      * Determine if the given model can be edited by the user.
      *
-     * @param \FrankRachel\Voyager\Contracts\User $user
+     * @param \TCG\Voyager\Contracts\User $user
      * @param  $model
      *
      * @return bool
@@ -48,7 +48,7 @@ class SettingPolicy extends BasePolicy
     /**
      * Determine if the given user can create the model.
      *
-     * @param \FrankRachel\Voyager\Contracts\User $user
+     * @param \TCG\Voyager\Contracts\User $user
      * @param  $model
      *
      * @return bool
@@ -61,7 +61,7 @@ class SettingPolicy extends BasePolicy
     /**
      * Determine if the given model can be deleted by the user.
      *
-     * @param \FrankRachel\Voyager\Contracts\User $user
+     * @param \TCG\Voyager\Contracts\User $user
      * @param  $model
      *
      * @return bool

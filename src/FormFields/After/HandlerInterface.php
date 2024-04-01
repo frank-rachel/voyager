@@ -1,6 +1,6 @@
 <?php
 
-namespace FrankRachel\Voyager\FormFields\After;
+namespace TCG\Voyager\FormFields\After;
 
 interface HandlerInterface
 {

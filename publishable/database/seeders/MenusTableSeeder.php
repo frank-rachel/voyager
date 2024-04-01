@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use FrankRachel\Voyager\Models\Menu;
+use TCG\Voyager\Models\Menu;
 
 class MenusTableSeeder extends Seeder
 {

@@ -1,9 +1,9 @@
 <?php
 
-namespace FrankRachel\Voyager\Tests;
+namespace TCG\Voyager\Tests;
 
 use Illuminate\Support\Facades\Auth;
-use FrankRachel\Voyager\Models\Menu;
+use TCG\Voyager\Models\Menu;
 
 class MenuTest extends TestCase
 {

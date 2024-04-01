@@ -1,6 +1,6 @@
 <?php
 
-namespace FrankRachel\Voyager\Tests;
+namespace TCG\Voyager\Tests;
 
 use Illuminate\Foundation\Exceptions\Handler;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace FrankRachel\Voyager\Http\Controllers;
+namespace TCG\Voyager\Http\Controllers;
 
 use Artisan;
 use Exception;

@@ -1,11 +1,11 @@
 <?php
 
-namespace FrankRachel\Voyager\Http\Controllers;
+namespace TCG\Voyager\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use FrankRachel\Voyager\Facades\Voyager;
+use TCG\Voyager\Facades\Voyager;
 
 class VoyagerSettingsController extends Controller
 {

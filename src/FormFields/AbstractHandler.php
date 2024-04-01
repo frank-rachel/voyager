@@ -1,9 +1,9 @@
 <?php
 
-namespace FrankRachel\Voyager\FormFields;
+namespace TCG\Voyager\FormFields;
 
 use Illuminate\Support\Str;
-use FrankRachel\Voyager\Traits\Renderable;
+use TCG\Voyager\Traits\Renderable;
 
 abstract class AbstractHandler implements HandlerInterface
 {

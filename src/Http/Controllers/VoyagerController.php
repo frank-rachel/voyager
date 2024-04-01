@@ -1,6 +1,6 @@
 <?php
 
-namespace FrankRachel\Voyager\Http\Controllers;
+namespace TCG\Voyager\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Intervention\Image\Constraint;
 use Intervention\Image\Facades\Image;
-use FrankRachel\Voyager\Facades\Voyager;
+use TCG\Voyager\Facades\Voyager;
 
 class VoyagerController extends Controller
 {

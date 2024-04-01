@@ -3,14 +3,14 @@
 if (!function_exists('setting')) {
     function setting($key, $default = null)
     {
-        return FrankRachel\Voyager\Facades\Voyager::setting($key, $default);
+        return TCG\Voyager\Facades\Voyager::setting($key, $default);
     }
 }
 
 if (!function_exists('menu')) {
     function menu($menuName, $type = null, array $options = [])
     {
-        return FrankRachel\Voyager\Facades\Voyager::model('Menu')->display($menuName, $type, $options);
+        return TCG\Voyager\Facades\Voyager::model('Menu')->display($menuName, $type, $options);
     }
 }
 

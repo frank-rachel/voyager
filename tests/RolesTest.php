@@ -1,10 +1,10 @@
 <?php
 
-namespace FrankRachel\Voyager\Tests;
+namespace TCG\Voyager\Tests;
 
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Auth;
-use FrankRachel\Voyager\Models\Role;
+use TCG\Voyager\Models\Role;
 
 class RolesTest extends TestCase
 {

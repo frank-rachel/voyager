@@ -1,6 +1,6 @@
 <?php
 
-namespace FrankRachel\Voyager\Database\Platforms;
+namespace TCG\Voyager\Database\Platforms;
 
 use Illuminate\Support\Collection;
 

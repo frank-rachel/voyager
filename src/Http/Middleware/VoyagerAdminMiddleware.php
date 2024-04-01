@@ -1,6 +1,6 @@
 <?php
 
-namespace FrankRachel\Voyager\Http\Middleware;
+namespace TCG\Voyager\Http\Middleware;
 
 use Closure;
 use Illuminate\Support\Facades\Auth;

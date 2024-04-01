@@ -1,9 +1,9 @@
 <?php
 
-namespace FrankRachel\Voyager\Database\Platforms;
+namespace TCG\Voyager\Database\Platforms;
 
 use Illuminate\Support\Collection;
-use FrankRachel\Voyager\Database\Types\Type;
+use TCG\Voyager\Database\Types\Type;
 
 abstract class Mysql extends Platform
 {

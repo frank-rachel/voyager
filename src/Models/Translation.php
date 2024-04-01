@@ -1,6 +1,6 @@
 <?php
 
-namespace FrankRachel\Voyager\Models;
+namespace TCG\Voyager\Models;
 
 use Illuminate\Database\Eloquent\Model;
 

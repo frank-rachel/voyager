@@ -1,13 +1,13 @@
 <?php
 
-namespace FrankRachel\Voyager\Commands;
+namespace TCG\Voyager\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Symfony\Component\Console\Input\InputOption;
-use FrankRachel\Voyager\Facades\Voyager;
+use TCG\Voyager\Facades\Voyager;
 
 class AdminCommand extends Command
 {

@@ -1,22 +1,22 @@
 <?php
 
-namespace FrankRachel\Voyager\Http\Controllers;
+namespace TCG\Voyager\Http\Controllers;
 
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use FrankRachel\Voyager\Database\DatabaseUpdater;
-use FrankRachel\Voyager\Database\Schema\Column;
-use FrankRachel\Voyager\Database\Schema\Identifier;
-use FrankRachel\Voyager\Database\Schema\SchemaManager;
-use FrankRachel\Voyager\Database\Schema\Table;
-use FrankRachel\Voyager\Database\Types\Type;
-use FrankRachel\Voyager\Events\TableAdded;
-use FrankRachel\Voyager\Events\TableDeleted;
-use FrankRachel\Voyager\Events\TableUpdated;
-use FrankRachel\Voyager\Facades\Voyager;
+use TCG\Voyager\Database\DatabaseUpdater;
+use TCG\Voyager\Database\Schema\Column;
+use TCG\Voyager\Database\Schema\Identifier;
+use TCG\Voyager\Database\Schema\SchemaManager;
+use TCG\Voyager\Database\Schema\Table;
+use TCG\Voyager\Database\Types\Type;
+use TCG\Voyager\Events\TableAdded;
+use TCG\Voyager\Events\TableDeleted;
+use TCG\Voyager\Events\TableUpdated;
+use TCG\Voyager\Facades\Voyager;
 
 class VoyagerDatabaseController extends Controller
 {

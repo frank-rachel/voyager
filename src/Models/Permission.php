@@ -1,9 +1,9 @@
 <?php
 
-namespace FrankRachel\Voyager\Models;
+namespace TCG\Voyager\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use FrankRachel\Voyager\Facades\Voyager;
+use TCG\Voyager\Facades\Voyager;
 
 class Permission extends Model
 {

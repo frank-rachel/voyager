@@ -1,6 +1,6 @@
 <?php
 
-namespace FrankRachel\Voyager\Http\Controllers;
+namespace TCG\Voyager\Http\Controllers;
 
 use Exception;
 use Illuminate\Http\Request;
@@ -8,8 +8,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
-use FrankRachel\Voyager\Events\MediaFileAdded;
-use FrankRachel\Voyager\Facades\Voyager;
+use TCG\Voyager\Events\MediaFileAdded;
+use TCG\Voyager\Facades\Voyager;
 
 class VoyagerMediaController extends Controller
 {

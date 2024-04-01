@@ -1,13 +1,13 @@
 <?php
 
-namespace FrankRachel\Voyager\Models;
+namespace TCG\Voyager\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
-use FrankRachel\Voyager\Facades\Voyager;
-use FrankRachel\Voyager\Traits\Resizable;
-use FrankRachel\Voyager\Traits\Translatable;
+use TCG\Voyager\Facades\Voyager;
+use TCG\Voyager\Traits\Resizable;
+use TCG\Voyager\Traits\Translatable;
 
 class Post extends Model
 {

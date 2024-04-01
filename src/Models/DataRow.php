@@ -1,9 +1,9 @@
 <?php
 
-namespace FrankRachel\Voyager\Models;
+namespace TCG\Voyager\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use FrankRachel\Voyager\Traits\Translatable;
+use TCG\Voyager\Traits\Translatable;
 
 class DataRow extends Model
 {

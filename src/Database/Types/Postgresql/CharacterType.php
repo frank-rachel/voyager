@@ -1,8 +1,8 @@
 <?php
 
-namespace FrankRachel\Voyager\Database\Types\Postgresql;
+namespace TCG\Voyager\Database\Types\Postgresql;
 
-use FrankRachel\Voyager\Database\Types\Common\CharType;
+use TCG\Voyager\Database\Types\Common\CharType;
 
 class CharacterType extends CharType
 {

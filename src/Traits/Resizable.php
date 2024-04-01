@@ -1,6 +1,6 @@
 <?php
 
-namespace FrankRachel\Voyager\Traits;
+namespace TCG\Voyager\Traits;
 
 use Illuminate\Support\Str;
 

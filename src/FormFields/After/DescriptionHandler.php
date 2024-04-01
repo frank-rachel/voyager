@@ -1,6 +1,6 @@
 <?php
 
-namespace FrankRachel\Voyager\FormFields\After;
+namespace TCG\Voyager\FormFields\After;
 
 class DescriptionHandler extends AbstractHandler
 {

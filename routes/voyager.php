@@ -1,11 +1,11 @@
 <?php
 
 use Illuminate\Support\Str;
-use FrankRachel\Voyager\Events\Routing;
-use FrankRachel\Voyager\Events\RoutingAdmin;
-use FrankRachel\Voyager\Events\RoutingAdminAfter;
-use FrankRachel\Voyager\Events\RoutingAfter;
-use FrankRachel\Voyager\Facades\Voyager;
+use TCG\Voyager\Events\Routing;
+use TCG\Voyager\Events\RoutingAdmin;
+use TCG\Voyager\Events\RoutingAdminAfter;
+use TCG\Voyager\Events\RoutingAfter;
+use TCG\Voyager\Facades\Voyager;
 
 /*
 |--------------------------------------------------------------------------

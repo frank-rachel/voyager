@@ -1,6 +1,6 @@
 <?php
 
-namespace FrankRachel\Voyager\Contracts;
+namespace TCG\Voyager\Contracts;
 
 interface User
 {

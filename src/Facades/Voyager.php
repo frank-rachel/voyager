@@ -1,6 +1,6 @@
 <?php
 
-namespace FrankRachel\Voyager\Facades;
+namespace TCG\Voyager\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
@@ -12,7 +12,7 @@ class Voyager extends Facade
      * @method static string image($file, $default = '')
      * @method static $this useModel($name, $object)
      *
-     * @see \FrankRachel\Voyager\Voyager
+     * @see \TCG\Voyager\Voyager
      * @return string
      */
     protected static function getFacadeAccessor()

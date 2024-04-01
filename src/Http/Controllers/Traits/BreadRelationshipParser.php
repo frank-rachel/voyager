@@ -1,10 +1,10 @@
 <?php
 
-namespace FrankRachel\Voyager\Http\Controllers\Traits;
+namespace TCG\Voyager\Http\Controllers\Traits;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
-use FrankRachel\Voyager\Models\DataType;
+use TCG\Voyager\Models\DataType;
 
 trait BreadRelationshipParser
 {

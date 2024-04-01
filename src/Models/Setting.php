@@ -1,9 +1,9 @@
 <?php
 
-namespace FrankRachel\Voyager\Models;
+namespace TCG\Voyager\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use FrankRachel\Voyager\Events\SettingUpdated;
+use TCG\Voyager\Events\SettingUpdated;
 
 class Setting extends Model
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace FrankRachel\Voyager\FormFields;
+namespace TCG\Voyager\FormFields;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;

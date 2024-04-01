@@ -1,9 +1,9 @@
 <?php
 
-namespace FrankRachel\Voyager\Events;
+namespace TCG\Voyager\Events;
 
 use Illuminate\Queue\SerializesModels;
-use FrankRachel\Voyager\Models\Setting;
+use TCG\Voyager\Models\Setting;
 
 class SettingUpdated
 {

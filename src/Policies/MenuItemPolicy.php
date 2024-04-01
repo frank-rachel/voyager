@@ -1,9 +1,9 @@
 <?php
 
-namespace FrankRachel\Voyager\Policies;
+namespace TCG\Voyager\Policies;
 
-use FrankRachel\Voyager\Contracts\User;
-use FrankRachel\Voyager\Facades\Voyager;
+use TCG\Voyager\Contracts\User;
+use TCG\Voyager\Facades\Voyager;
 
 class MenuItemPolicy extends BasePolicy
 {

@@ -1,11 +1,11 @@
 <?php
 
-namespace FrankRachel\Voyager\Providers;
+namespace TCG\Voyager\Providers;
 
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
-use FrankRachel\Voyager\Events;
-use FrankRachel\Voyager\Listeners;
+use TCG\Voyager\Events;
+use TCG\Voyager\Listeners;
 
 class VoyagerEventServiceProvider extends ServiceProvider
 {

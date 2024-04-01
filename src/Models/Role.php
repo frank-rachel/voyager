@@ -1,11 +1,11 @@
 <?php
 
-namespace FrankRachel\Voyager\Models;
+namespace TCG\Voyager\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use FrankRachel\Voyager\Facades\Voyager;
-use FrankRachel\Voyager\Tests\Database\Factories\RoleFactory;
+use TCG\Voyager\Facades\Voyager;
+use TCG\Voyager\Tests\Database\Factories\RoleFactory;
 
 class Role extends Model
 {

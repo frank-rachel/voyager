@@ -1,10 +1,10 @@
 <?php
 
-namespace FrankRachel\Voyager\Tests;
+namespace TCG\Voyager\Tests;
 
 use Illuminate\Support\Facades\Auth;
-use FrankRachel\Voyager\Models\Category;
-use FrankRachel\Voyager\Models\Post;
+use TCG\Voyager\Models\Category;
+use TCG\Voyager\Models\Post;
 
 class CategoryTest extends TestCase
 {

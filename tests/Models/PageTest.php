@@ -1,10 +1,10 @@
 <?php
 
-namespace FrankRachel\Voyager\Tests;
+namespace TCG\Voyager\Tests;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
-use FrankRachel\Voyager\Models\Page;
+use TCG\Voyager\Models\Page;
 
 class PageTest extends TestCase
 {

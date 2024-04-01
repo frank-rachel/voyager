@@ -1,6 +1,6 @@
 <?php
 
-namespace FrankRachel\Voyager\Database\Schema;
+namespace TCG\Voyager\Database\Schema;
 
 use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Table as DoctrineTable;

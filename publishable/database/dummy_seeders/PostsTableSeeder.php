@@ -3,12 +3,12 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use FrankRachel\Voyager\Models\DataRow;
-use FrankRachel\Voyager\Models\DataType;
-use FrankRachel\Voyager\Models\Menu;
-use FrankRachel\Voyager\Models\MenuItem;
-use FrankRachel\Voyager\Models\Permission;
-use FrankRachel\Voyager\Models\Post;
+use TCG\Voyager\Models\DataRow;
+use TCG\Voyager\Models\DataType;
+use TCG\Voyager\Models\Menu;
+use TCG\Voyager\Models\MenuItem;
+use TCG\Voyager\Models\Permission;
+use TCG\Voyager\Models\Post;
 
 class PostsTableSeeder extends Seeder
 {
@@ -25,8 +25,8 @@ class PostsTableSeeder extends Seeder
                 'display_name_singular' => __('voyager::seeders.data_types.post.singular'),
                 'display_name_plural'   => __('voyager::seeders.data_types.post.plural'),
                 'icon'                  => 'voyager-news',
-                'model_name'            => 'FrankRachel\\Voyager\\Models\\Post',
-                'policy_name'           => 'FrankRachel\\Voyager\\Policies\\PostPolicy',
+                'model_name'            => 'TCG\\Voyager\\Models\\Post',
+                'policy_name'           => 'TCG\\Voyager\\Policies\\PostPolicy',
                 'controller'            => '',
                 'generate_permissions'  => 1,
                 'description'           => '',

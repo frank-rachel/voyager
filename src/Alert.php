@@ -1,8 +1,8 @@
 <?php
 
-namespace FrankRachel\Voyager;
+namespace TCG\Voyager;
 
-use FrankRachel\Voyager\Alert\Components\ComponentInterface;
+use TCG\Voyager\Alert\Components\ComponentInterface;
 
 class Alert
 {

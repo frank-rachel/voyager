@@ -1,10 +1,10 @@
 <?php
 
-namespace FrankRachel\Voyager\Policies;
+namespace TCG\Voyager\Policies;
 
 use Illuminate\Auth\Access\HandlesAuthorization;
-use FrankRachel\Voyager\Contracts\User;
-use FrankRachel\Voyager\Facades\Voyager;
+use TCG\Voyager\Contracts\User;
+use TCG\Voyager\Facades\Voyager;
 
 class BasePolicy
 {
@@ -25,7 +25,7 @@ class BasePolicy
         if (count($arguments) < 2) {
             throw new \InvalidArgumentException('not enough arguments');
         }
-        /** @var \FrankRachel\Voyager\Contracts\User $user */
+        /** @var \TCG\Voyager\Contracts\User $user */
         $user = $arguments[0];
 
         /** @var $model */
@@ -37,7 +37,7 @@ class BasePolicy
     /**
      * Determine if the given model can be restored by the user.
      *
-     * @param \FrankRachel\Voyager\Contracts\User $user
+     * @param \TCG\Voyager\Contracts\User $user
      * @param  $model
      *
      * @return bool
@@ -51,7 +51,7 @@ class BasePolicy
     /**
      * Determine if the given model can be deleted by the user.
      *
-     * @param \FrankRachel\Voyager\Contracts\User $user
+     * @param \TCG\Voyager\Contracts\User $user
      * @param  $model
      *
      * @return bool
@@ -67,7 +67,7 @@ class BasePolicy
     /**
      * Check if user has an associated permission.
      *
-     * @param \FrankRachel\Voyager\Contracts\User $user
+     * @param \TCG\Voyager\Contracts\User $user
      * @param object                      $model
      * @param string                      $action
      *

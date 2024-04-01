@@ -1,11 +1,11 @@
 <?php
 
-namespace FrankRachel\Voyager\Database\Types;
+namespace TCG\Voyager\Database\Types;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform as DoctrineAbstractPlatform;
 use Doctrine\DBAL\Types\Type as DoctrineType;
-use FrankRachel\Voyager\Database\Platforms\Platform;
-use FrankRachel\Voyager\Database\Schema\SchemaManager;
+use TCG\Voyager\Database\Platforms\Platform;
+use TCG\Voyager\Database\Schema\SchemaManager;
 
 abstract class Type extends DoctrineType
 {

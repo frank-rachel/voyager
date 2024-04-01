@@ -1,10 +1,10 @@
 <?php
 
-namespace FrankRachel\Voyager\Models;
+namespace TCG\Voyager\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
-use FrankRachel\Voyager\Traits\Translatable;
+use TCG\Voyager\Traits\Translatable;
 
 class Page extends Model
 {

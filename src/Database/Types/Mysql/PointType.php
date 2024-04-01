@@ -1,9 +1,9 @@
 <?php
 
-namespace FrankRachel\Voyager\Database\Types\Mysql;
+namespace TCG\Voyager\Database\Types\Mysql;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
-use FrankRachel\Voyager\Database\Types\Type;
+use TCG\Voyager\Database\Types\Type;
 
 class PointType extends Type
 {

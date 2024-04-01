@@ -1,10 +1,10 @@
 <?php
 
-namespace FrankRachel\Voyager\Widgets;
+namespace TCG\Voyager\Widgets;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
-use FrankRachel\Voyager\Facades\Voyager;
+use TCG\Voyager\Facades\Voyager;
 
 class PageDimmer extends BaseDimmer
 {

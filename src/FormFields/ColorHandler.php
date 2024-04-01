@@ -1,6 +1,6 @@
 <?php
 
-namespace FrankRachel\Voyager\FormFields;
+namespace TCG\Voyager\FormFields;
 
 class ColorHandler extends AbstractHandler
 {
