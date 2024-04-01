@@ -26,9 +26,11 @@ class Table extends DoctrineTable
             // $column = Column::make($columnArr, $table['name']);
             // $columns[$column->getName()] = $column;
         foreach ($table['columns'] as $columnArr) {
-			Schema::table($name, function (Blueprint $table) use ($columnArr) {
-				$table->integer($columnArr['name']);
-			});			
+			if ($columnArr['name']<>'id') {
+				Schema::table($name, function (Blueprint $table) use ($columnArr) {
+					$table->integer($columnArr['name']);
+				});			
+			}
 			
         }
 		
