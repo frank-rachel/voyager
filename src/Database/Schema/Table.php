@@ -16,8 +16,9 @@ class Table extends DoctrineTable
         if (!is_array($table)) {
             $table = json_decode($table, true);
         }
-		print_r($table);
-		exit;
+		// print_r($table);
+		// exit;
+		if (is_array($table)) {
         $name = Identifier::validate($table['name'], 'Table');
 		Schema::dropIfExists($name);
 		Schema::create($name, function (Blueprint $table) {
@@ -62,6 +63,7 @@ class Table extends DoctrineTable
 		
 		// return Schema::table($name);
 		return true;
+		}
     }
 
     public function getColumnsIndexes($columns, $sort = false)
