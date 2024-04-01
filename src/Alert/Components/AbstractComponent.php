@@ -1,8 +1,8 @@
 <?php
 
-namespace TCG\Voyager\Alert\Components;
+namespace FrankRachel\Voyager\Alert\Components;
 
-use TCG\Voyager\Alert;
+use FrankRachel\Voyager\Alert;
 
 abstract class AbstractComponent implements ComponentInterface
 {

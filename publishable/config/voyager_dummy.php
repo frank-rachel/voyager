@@ -27,7 +27,7 @@ return [
     */
 
     'controllers' => [
-        'namespace' => 'TCG\\Voyager\\Http\\Controllers',
+        'namespace' => 'FrankRachel\\Voyager\\Http\\Controllers',
     ],
 
     /*
@@ -144,9 +144,9 @@ return [
         ],
 
         'widgets' => [
-            'TCG\\Voyager\\Widgets\\UserDimmer',
-            'TCG\\Voyager\\Widgets\\PostDimmer',
-            'TCG\\Voyager\\Widgets\\PageDimmer',
+            'FrankRachel\\Voyager\\Widgets\\UserDimmer',
+            'FrankRachel\\Voyager\\Widgets\\PostDimmer',
+            'FrankRachel\\Voyager\\Widgets\\PageDimmer',
         ],
 
     ],

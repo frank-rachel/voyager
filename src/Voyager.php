@@ -1,6 +1,6 @@
 <?php
 
-namespace TCG\Voyager;
+namespace FrankRachel\Voyager;
 
 use Arrilot\Widgets\Facade as Widget;
 use Illuminate\Database\Eloquent\Collection;
@@ -10,26 +10,26 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use TCG\Voyager\Actions\DeleteAction;
-use TCG\Voyager\Actions\EditAction;
-use TCG\Voyager\Actions\RestoreAction;
-use TCG\Voyager\Actions\ViewAction;
-use TCG\Voyager\Events\AlertsCollection;
-use TCG\Voyager\FormFields\After\HandlerInterface as AfterHandlerInterface;
-use TCG\Voyager\FormFields\HandlerInterface;
-use TCG\Voyager\Models\Category;
-use TCG\Voyager\Models\DataRow;
-use TCG\Voyager\Models\DataType;
-use TCG\Voyager\Models\Menu;
-use TCG\Voyager\Models\MenuItem;
-use TCG\Voyager\Models\Page;
-use TCG\Voyager\Models\Permission;
-use TCG\Voyager\Models\Post;
-use TCG\Voyager\Models\Role;
-use TCG\Voyager\Models\Setting;
-use TCG\Voyager\Models\Translation;
-use TCG\Voyager\Models\User;
-use TCG\Voyager\Traits\Translatable;
+use FrankRachel\Voyager\Actions\DeleteAction;
+use FrankRachel\Voyager\Actions\EditAction;
+use FrankRachel\Voyager\Actions\RestoreAction;
+use FrankRachel\Voyager\Actions\ViewAction;
+use FrankRachel\Voyager\Events\AlertsCollection;
+use FrankRachel\Voyager\FormFields\After\HandlerInterface as AfterHandlerInterface;
+use FrankRachel\Voyager\FormFields\HandlerInterface;
+use FrankRachel\Voyager\Models\Category;
+use FrankRachel\Voyager\Models\DataRow;
+use FrankRachel\Voyager\Models\DataType;
+use FrankRachel\Voyager\Models\Menu;
+use FrankRachel\Voyager\Models\MenuItem;
+use FrankRachel\Voyager\Models\Page;
+use FrankRachel\Voyager\Models\Permission;
+use FrankRachel\Voyager\Models\Post;
+use FrankRachel\Voyager\Models\Role;
+use FrankRachel\Voyager\Models\Setting;
+use FrankRachel\Voyager\Models\Translation;
+use FrankRachel\Voyager\Models\User;
+use FrankRachel\Voyager\Traits\Translatable;
 
 class Voyager
 {

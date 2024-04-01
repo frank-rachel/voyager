@@ -1,9 +1,9 @@
 <?php
 
-namespace TCG\Voyager\Traits;
+namespace FrankRachel\Voyager\Traits;
 
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
-use TCG\Voyager\Facades\Voyager;
+use FrankRachel\Voyager\Facades\Voyager;
 
 /**
  * @property  \Illuminate\Database\Eloquent\Collection  roles

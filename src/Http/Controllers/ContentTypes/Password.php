@@ -1,6 +1,6 @@
 <?php
 
-namespace TCG\Voyager\Http\Controllers\ContentTypes;
+namespace FrankRachel\Voyager\Http\Controllers\ContentTypes;
 
 class Password extends BaseType
 {

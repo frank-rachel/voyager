@@ -1,9 +1,9 @@
 <?php
 
-namespace TCG\Voyager\Database\Types\Postgresql;
+namespace FrankRachel\Voyager\Database\Types\Postgresql;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
-use TCG\Voyager\Database\Types\Type;
+use FrankRachel\Voyager\Database\Types\Type;
 
 class TimeStampTzType extends Type
 {

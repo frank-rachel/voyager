@@ -1,9 +1,9 @@
 <?php
 
-namespace TCG\Voyager\Listeners;
+namespace FrankRachel\Voyager\Listeners;
 
 use Cache;
-use TCG\Voyager\Events\SettingUpdated;
+use FrankRachel\Voyager\Events\SettingUpdated;
 
 class ClearCachedSettingValue
 {

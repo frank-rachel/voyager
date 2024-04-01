@@ -1,6 +1,6 @@
 <?php
 
-namespace TCG\Voyager\FormFields;
+namespace FrankRachel\Voyager\FormFields;
 
 class NumberHandler extends AbstractHandler
 {

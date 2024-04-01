@@ -1,16 +1,16 @@
 <?php
 
-namespace TCG\Voyager\Tests;
+namespace FrankRachel\Voyager\Tests;
 
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use TCG\Voyager\Http\Controllers\VoyagerBaseController;
-use TCG\Voyager\Models\DataRow;
-use TCG\Voyager\Models\DataType;
-use TCG\Voyager\Models\Post;
-use TCG\Voyager\Models\User;
+use FrankRachel\Voyager\Http\Controllers\VoyagerBaseController;
+use FrankRachel\Voyager\Models\DataRow;
+use FrankRachel\Voyager\Models\DataType;
+use FrankRachel\Voyager\Models\Post;
+use FrankRachel\Voyager\Models\User;
 
 class SearchTest extends TestCase
 {
@@ -132,7 +132,7 @@ class SearchTest extends TestCase
             'type' => 'relationship',
             'display_name' => 'Author',
             'details' => [
-                'model' => 'TCG\Voyager\Models\User',
+                'model' => 'FrankRachel\Voyager\Models\User',
                 'table' => 'users',
                 'type' => 'belongsTo',
                 'column' => 'author_id',

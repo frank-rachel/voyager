@@ -1,9 +1,9 @@
 <?php
 
-namespace TCG\Voyager\Database\Types\Mysql;
+namespace FrankRachel\Voyager\Database\Types\Mysql;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
-use TCG\Voyager\Database\Types\Type;
+use FrankRachel\Voyager\Database\Types\Type;
 
 class MediumBlobType extends Type
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace TCG\Voyager\Database\Schema;
+namespace FrankRachel\Voyager\Database\Schema;
 
 use Illuminate\Support\Facades\Validator;
 

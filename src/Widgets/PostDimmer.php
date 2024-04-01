@@ -1,10 +1,10 @@
 <?php
 
-namespace TCG\Voyager\Widgets;
+namespace FrankRachel\Voyager\Widgets;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
-use TCG\Voyager\Facades\Voyager;
+use FrankRachel\Voyager\Facades\Voyager;
 
 class PostDimmer extends BaseDimmer
 {

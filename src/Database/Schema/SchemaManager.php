@@ -89,7 +89,7 @@ abstract class SchemaManager
     /**
      * @param string $tableName
      *
-     * @return \TCG\Voyager\Database\Schema\Table
+     * @return \FrankRachel\Voyager\Database\Schema\Table
      */
     public static function listTableDetails($tableName)
     {

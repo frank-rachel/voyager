@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use TCG\Voyager\Models\Page;
+use FrankRachel\Voyager\Models\Page;
 
 class CreatePagesTable extends Migration
 {

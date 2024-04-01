@@ -1,13 +1,13 @@
 <?php
 
-namespace TCG\Voyager\Traits;
+namespace FrankRachel\Voyager\Traits;
 
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use TCG\Voyager\Facades\Voyager;
-use TCG\Voyager\Models\Translation;
-use TCG\Voyager\Translator;
+use FrankRachel\Voyager\Facades\Voyager;
+use FrankRachel\Voyager\Models\Translation;
+use FrankRachel\Voyager\Translator;
 
 trait Translatable
 {
