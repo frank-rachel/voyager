@@ -24,6 +24,13 @@ abstract class SchemaManager
         // return DB::connection()->getDoctrineSchemaManager();
     // }
 
+    public static function getName() {
+		$platform = SchemaManager::getDatabasePlatform();
+        $reflection = new \ReflectionClass($platform);
+		$shortName = $reflection->getShortName(); // Gets the short class name
+		$platformName = ucfirst(strtolower(preg_replace('/Platform$/', '', $shortName)));
+
+	}
     public static function getDatabaseConnection()
     {
         // return DB::connection()->getDoctrineConnection();
