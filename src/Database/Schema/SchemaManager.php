@@ -1,11 +1,11 @@
 <?php
 
-namespace frank-rachel\Voyager\Database\Schema;
+namespace FrankRachel\Voyager\Database\Schema;
 
 use Doctrine\DBAL\Schema\SchemaException;
 use Doctrine\DBAL\Schema\Table as DoctrineTable;
 use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
-use frank-rachel\Voyager\Database\Types\Type;
+use FrankRachel\Voyager\Database\Types\Type;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
