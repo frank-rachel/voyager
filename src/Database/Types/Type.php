@@ -47,7 +47,7 @@ abstract class Type extends DoctrineType
 
         return array_merge([
             // 'name' => $type->getName(),
-            'name' => baseNameWithoutType,
+            'name' => $baseNameWithoutType,
         ], $customTypeOptions);
     }
 
