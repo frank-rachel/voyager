@@ -33,8 +33,21 @@ abstract class Type extends DoctrineType
     {
         $customTypeOptions = $type->customOptions ?? [];
 
+		$reflection = new \ReflectionClass($type);
+		$className = $reflection->getShortName(); // If you have an object instance
+
+		// For the sake of this example, we directly manipulate the string
+		// Strip the namespace to get the basename
+		$baseName = basename(str_replace('\\', '/', $className));
+
+		// Remove 'Type' suffix
+		$baseNameWithoutType = preg_replace('/Type$/', '', $baseName);
+
+		// echo $baseNameWithoutType; // Outputs: Integer
+
         return array_merge([
-            'name' => $type->getName(),
+            // 'name' => $type->getName(),
+            'name' => baseNameWithoutType,
         ], $customTypeOptions);
     }
 
