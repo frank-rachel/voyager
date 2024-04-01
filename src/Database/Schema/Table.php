@@ -61,7 +61,7 @@ class Table extends DoctrineTable
 				// $table->timestamps();
 			// });			
 			
-			return Schema::getTable($name);
+			return Schema::getColumns($name);
 			// return true;
 		}
     }
