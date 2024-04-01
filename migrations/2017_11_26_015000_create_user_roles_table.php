@@ -14,7 +14,9 @@ class CreateUserRolesTable extends Migration
     public function up()
     {
         Schema::create('user_roles', function (Blueprint $table) {
-            $type = DB::connection()->getDoctrineColumn(DB::getTablePrefix().'users', 'id')->getType()->getName();
+			// getColumnType(string $table, string $column, bool $fullDefinition = false)
+            // $type = DB::connection()->getDoctrineColumn(DB::getTablePrefix().'users', 'id')->getType()->getName();
+            $type = Schema::connection()->getColumnType(DB::getTablePrefix().'users', 'id');
             if ($type == 'bigint') {
                 $table->bigInteger('user_id')->unsigned()->index();
             } else {
