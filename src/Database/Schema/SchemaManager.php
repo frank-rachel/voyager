@@ -9,6 +9,7 @@ use TCG\Voyager\Database\Types\Type;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
 
 abstract class SchemaManager
 {
@@ -115,10 +116,11 @@ abstract class SchemaManager
 
         $foreignKeys = [];
         // if (static::manager()->getDatabasePlatform()->supportsForeignKeyConstraints()) {
-            // $foreignKeys = static::manager()->listTableForeignKeys($tableName);
+            $foreignKeys = Schema::getForeignKeys($tableName);
         // }
 
         $indexes = [];
+        $indexes = Schema::getIndexes($tableName);
         // $indexes = static::manager()->listTableIndexes($tableName);
 
         return new Table($tableName, $columns, $indexes, [], $foreignKeys, []);
@@ -202,13 +204,58 @@ abstract class SchemaManager
     }
 
     public static function createTable($table)
-    {
+	{
+		
+        if (!is_array($table)) {
+            $table = json_decode($table, true);
+        }
+        $name = Identifier::validate($table['name'], 'Table');
+		Schema::create($name, function (Blueprint $table) {
+			$table->id();
+			$table->string('name');
+			$table->string('email');
+			$table->timestamps();
+		});	
+
+        $columns = [];
+        foreach ($table['columns'] as $columnArr) {
+            // $column = Column::make($columnArr, $table['name']);
+            // $columns[$column->getName()] = $column;
+			Schema::table($name, function (Blueprint $table, $columnArr) {
+				$table->integer($columnArr['name']);
+			});			
+			
+        }
+
+        // $indexes = [];
+        // foreach ($table['indexes'] as $indexArr) {
+            // $index = Index::make($indexArr);
+            // $indexes[$index->getName()] = $index;
+        // }
+
+        // $foreignKeys = [];
+        // foreach ($table['foreignKeys'] as $foreignKeyArr) {
+            // $foreignKey = ForeignKey::make($foreignKeyArr);
+            // $foreignKeys[$foreignKey->getName()] = $foreignKey;
+        // }
+
+        // $options = $table['options'];
+		
+		// Schema::create($name, function (Blueprint $table) {
+			// $table->id();
+			// $table->string('name');
+			// $table->string('email');
+			// $table->timestamps();
+		// });		
+	}
+    // public static function createTable($table)
+    // {
         // if (!($table instanceof DoctrineTable)) {
-            $table = Table::make($table);
+            // $table = Table::make($table);
         // }
 
         // static::manager()->createTable($table);
-    }
+    // }
 
     public static function getDoctrineTable($table)
     {
