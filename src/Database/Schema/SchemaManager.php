@@ -109,7 +109,7 @@ abstract class SchemaManager
 	 
     public static function listTableDetails($tableName)
     {
-        $columns = static::listTableColumnNames($tableName);
+        // $columns = static::listTableColumnNames($tableName);
 		// print_r(Schema::getTypes());
 		// print_r($columns);
 		// exit;
@@ -123,8 +123,8 @@ abstract class SchemaManager
         // $indexes = Schema::getIndexes($tableName);
         // $indexes = static::manager()->listTableIndexes($tableName);
 		$tableobj=new Table($tableName);
-		// $tableobj->columns=Schema::getColumns($tableName);
-		$tableobj->columns=$columns;
+		$tableobj->columns=Schema::getColumns($tableName);
+		// $tableobj->columns=$columns;
 		$tableobj->indexes=Schema::getIndexes($tableName);
 		$tableobj->fkConstraints=Schema::getForeignKeys($tableName);
 		// $tableobj->options=$options;
