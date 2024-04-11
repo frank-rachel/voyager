@@ -31,11 +31,17 @@ class Table extends DoctrineTable
 				// $columns[$column->getName()] = $column;
 			foreach ($table['columns'] as $columnArr) {
 				if ($columnArr['name']<>'id') {
-					Schema::table($name, function (Blueprint $table) use ($columnArr) {
-						$typename=Type::translateToLaravelTypes($columnArr['type']['name']);
-						// $table->integer($columnArr['name']);
-						$table->$typename($columnArr['name']);
-					});			
+					// Schema::table($name, function (Blueprint $table) use ($columnArr) {
+						// $typename=Type::translateToLaravelTypes($columnArr['type']['name']);
+						// $table->$typename($columnArr['name']);
+					// });	
+					if (!Schema::hasColumn($name, $columnArr['name'])) {
+						Schema::table($name, function (Blueprint $table) use ($columnArr) {
+							$typename = Type::translateToLaravelTypes($columnArr['type']['name']);
+							$table->$typename($columnArr['name']);
+						});
+					}
+					
 				}
 				
 			}
