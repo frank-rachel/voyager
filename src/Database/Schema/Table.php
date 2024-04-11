@@ -58,16 +58,13 @@ class Table extends DoctrineTable
 				// $foreignKeys[$foreignKey->getName()] = $foreignKey;
 			// }
 
-			// $options = $table['options'];
+			$options = $table['options'];
+					
 			
-			// Schema::create($name, function (Blueprint $table) {
-				// $table->id();
-				// $table->string('name');
-				// $table->string('email');
-				// $table->timestamps();
-			// });			
+			// return Schema::getColumns($name);
+			// return new self($name, Schema::getColumns($name), $indexes, $uniqueConstraints, $fkConstraints, $options);
+			return new self($name, Schema::getColumns($name), array(),  array(),  array(), $options);
 			
-			return Schema::getColumns($name);
 			// return true;
 		}
     }
