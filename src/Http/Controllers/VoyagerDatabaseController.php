@@ -77,7 +77,8 @@ class VoyagerDatabaseController extends Controller
             }
             $table['options']['collate'] = config($conn.'.collation', 'utf8mb4_unicode_ci');
             $table['options']['charset'] = config($conn.'.charset', 'utf8mb4');
-            $table = Table::make($table);
+			// Apparently this is done by the next command equally
+            // $table = Table::make($table);
             SchemaManager::createTable($table);
 
             if (isset($request->create_model) && $request->create_model == 'on') {
