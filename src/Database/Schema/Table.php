@@ -66,7 +66,7 @@ class Table extends DoctrineTable
 			$tableobj=new self($name);
 			$tableobj->columns=Schema::getColumns($name);
 			$tableobj->options=$options;
-			return $tableobj
+			return $tableobj;
 			
 			// return true;
 		}
