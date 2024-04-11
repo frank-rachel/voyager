@@ -84,7 +84,8 @@ class VoyagerDatabaseController extends Controller
             if (isset($request->create_model) && $request->create_model == 'on') {
                 $modelNamespace = config('voyager.models.namespace', app()->getNamespace());
                 $params = [
-                    'name' => $modelNamespace.Str::studly(Str::singular($table->name)),
+                    // 'name' => $modelNamespace.Str::studly(Str::singular($table->name)),
+                    'name' => $modelNamespace.Str::studly(Str::singular($table['name'])),
                 ];
 
                 // if (in_array('deleted_at', $request->input('field.*'))) {
@@ -98,8 +99,8 @@ class VoyagerDatabaseController extends Controller
                 Artisan::call('voyager:make:model', $params);
             } elseif (isset($request->create_migration) && $request->create_migration == 'on') {
                 Artisan::call('make:migration', [
-                    'name'    => 'create_'.$table->name.'_table',
-                    '--table' => $table->name,
+                    'name'    => 'create_'.$table['name'].'_table',
+                    '--table' => $table['name'],
                 ]);
             }
 
@@ -107,7 +108,7 @@ class VoyagerDatabaseController extends Controller
 
             return redirect()
                ->route('voyager.database.index')
-               ->with($this->alertSuccess(__('voyager::database.success_create_table', ['table' => $table->name])));
+               ->with($this->alertSuccess(__('voyager::database.success_create_table', ['table' => $table['name']])));
         // } catch (Exception $e) {
             // return back()->with($this->alertException($e))->withInput();
         // }
