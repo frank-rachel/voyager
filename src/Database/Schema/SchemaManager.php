@@ -207,7 +207,7 @@ abstract class SchemaManager
 	{
 		
         $table = Table::make($table);
-
+		return $table;
         // $indexes = [];
         // foreach ($table['indexes'] as $indexArr) {
             // $index = Index::make($indexArr);
