@@ -78,9 +78,21 @@ class VoyagerDatabaseController extends Controller
             $table['options']['collate'] = config($conn.'.collation', 'utf8mb4_unicode_ci');
             $table['options']['charset'] = config($conn.'.charset', 'utf8mb4');
 
-			if (in_array('deleted_at', $request->input('field.*'))) {
-				$params['--softdelete'] = true;
+			$found = false;
+			foreach ($array['columns'] as $column) {
+				if ($column['name'] === 'deleted_at') {
+					$found = true;
+					break;
+				}
 			}
+
+			if ($found) {
+				$params['--softdelete'] = true;
+				// echo "'deleted_at' exists in the array.";
+			} else {
+				// echo "'deleted_at' does not exist in the array.";
+			}
+
 
 			
 			// Apparently this is done by the next command equally
