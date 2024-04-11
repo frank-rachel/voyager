@@ -114,16 +114,22 @@ abstract class SchemaManager
 		// print_r($columns);
 		// exit;
 
-        $foreignKeys = [];
+        // $foreignKeys = [];
         // if (static::manager()->getDatabasePlatform()->supportsForeignKeyConstraints()) {
-            $foreignKeys = Schema::getForeignKeys($tableName);
+            // $foreignKeys = Schema::getForeignKeys($tableName);
         // }
 
-        $indexes = [];
-        $indexes = Schema::getIndexes($tableName);
+        // $indexes = [];
+        // $indexes = Schema::getIndexes($tableName);
         // $indexes = static::manager()->listTableIndexes($tableName);
-
-        return new Table($tableName, $columns, $indexes, [], $foreignKeys, []);
+		$tableobj=new Table($tableName);
+		// $tableobj->columns=Schema::getColumns($tableName);
+		$tableobj->columns=$columns;
+		$tableobj->indexes=Schema::getIndexes($tableName);
+		$tableobj->fkConstraints=Schema::getForeignKeys($tableName);
+		// $tableobj->options=$options;
+		return $tableobj;
+        // return new Table($tableName, $columns, $indexes, [], $foreignKeys, []);
     }
 // */
 /*
