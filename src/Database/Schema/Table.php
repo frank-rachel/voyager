@@ -63,7 +63,10 @@ class Table extends DoctrineTable
 			
 			// return Schema::getColumns($name);
 			// return new self($name, Schema::getColumns($name), $indexes, $uniqueConstraints, $fkConstraints, $options);
-			return new self($name, Schema::getColumns($name), array(),  array(),  array(), $options);
+			$tableobj=new self($name);
+			$tableobj->columns=Schema::getColumns($name);
+			$tableobj->options=$options;
+			return $tableobj
 			
 			// return true;
 		}
