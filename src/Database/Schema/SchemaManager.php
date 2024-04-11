@@ -123,7 +123,7 @@ abstract class SchemaManager
         // $indexes = Schema::getIndexes($tableName);
         // $indexes = static::manager()->listTableIndexes($tableName);
 		$tableobj=new Table($tableName);
-		$tableobj->columns=Schema::getColumns($tableName);
+		$tableobj->_columns=Schema::getColumns($tableName);
 		// $tableobj->columns=$columns;
 		$tableobj->indexes=Schema::getIndexes($tableName);
 		$tableobj->fkConstraints=Schema::getForeignKeys($tableName);
