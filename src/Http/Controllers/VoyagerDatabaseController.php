@@ -79,7 +79,7 @@ class VoyagerDatabaseController extends Controller
             $table['options']['charset'] = config($conn.'.charset', 'utf8mb4');
 
 			$found = false;
-			foreach ($array['columns'] as $column) {
+			foreach ($table['columns'] as $column) {
 				if ($column['name'] === 'deleted_at') {
 					$found = true;
 					break;
