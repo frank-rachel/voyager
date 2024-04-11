@@ -103,8 +103,9 @@ class VoyagerDatabaseController extends Controller
                     '--table' => $table['name'],
                 ]);
             }
-
-            event(new TableAdded($table));
+			
+			$tableobject = (object) $table;
+            event(new TableAdded($tableobject));
 
             return redirect()
                ->route('voyager.database.index')
