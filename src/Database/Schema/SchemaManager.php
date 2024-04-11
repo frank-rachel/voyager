@@ -179,6 +179,11 @@ abstract class SchemaManager
         });
     }
 
+    public static function dropTable($tableName)
+	{
+		Schema::dropIfExists($tableName);
+	}
+	
     public static function listTableColumns($tableName)
     {
         // Type::registerCustomPlatformTypes();
