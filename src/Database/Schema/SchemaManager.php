@@ -128,6 +128,8 @@ abstract class SchemaManager
 		$tableobj->indexes=Schema::getIndexes($tableName);
 		$tableobj->fkConstraints=Schema::getForeignKeys($tableName);
 		// $tableobj->options=$options;
+		print_r($tableobj);
+		exit;
 		return $tableobj;
         // return new Table($tableName, $columns, $indexes, [], $foreignKeys, []);
     }
