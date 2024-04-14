@@ -11,6 +11,44 @@ use TCG\Voyager\Database\Types\Type;
 
 class Table extends DoctrineTable
 {
+    public function __construct(
+        string $name,
+        array $columns = [],
+        array $indexes = [],
+        array $uniqueConstraints = [],
+        array $fkConstraints = [],
+        array $options = [],
+    ) {
+        if ($name === '') {
+            throw InvalidTableName::new($name);
+        }
+
+        $this->_setName($name);
+
+        foreach ($columns as $column) {
+            $this->_addColumn($column);
+        }
+		$tableobjcolumns=Schema::getColumns($name);
+		// print_r($tableobjcolumns);
+		// exit;
+        foreach ($tableobjcolumns as $column) {
+            $this->_addColumn($column);
+        }
+        foreach ($indexes as $idx) {
+            $this->_addIndex($idx);
+        }
+
+        foreach ($uniqueConstraints as $uniqueConstraint) {
+            $this->_addUniqueConstraint($uniqueConstraint);
+        }
+
+        foreach ($fkConstraints as $fkConstraint) {
+            $this->_addForeignKeyConstraint($fkConstraint);
+        }
+
+        $this->_options = array_merge($this->_options, $options);
+    }
+
     public static function make($table)
     {
         if (!is_array($table)) {
