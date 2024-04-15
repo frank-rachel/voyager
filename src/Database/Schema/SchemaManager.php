@@ -115,10 +115,23 @@ abstract class SchemaManager
             $columnDetails[$column] = Schema::getColumnType($tableName, $column);
         }
 
-        // Fetch indexes and foreign keys directly from the information schema using plain SQL
-        $foreignKeys = DB::select("SELECT * FROM information_schema.table_constraints WHERE table_schema = ? AND table_name = ? AND constraint_type = 'FOREIGN KEY'", [env('DB_DATABASE'), $tableName]);
-        $indexes = DB::select("SELECT * FROM information_schema.statistics WHERE table_schema = ? AND table_name = ?", [env('DB_DATABASE'), $tableName]);
+        // Fetch foreign keys from information_schema.table_constraints and information_schema.key_column_usage
+        $foreignKeys = DB::select("
+            SELECT tc.constraint_name, kcu.column_name, ccu.table_name AS foreign_table_name, ccu.column_name AS foreign_column_name
+            FROM information_schema.table_constraints AS tc 
+            JOIN information_schema.key_column_usage AS kcu 
+              ON tc.constraint_name = kcu.constraint_name
+            JOIN information_schema.constraint_column_usage AS ccu
+              ON ccu.constraint_name = tc.constraint_name
+            WHERE tc.table_name = ? AND tc.constraint_type = 'FOREIGN KEY' AND tc.table_schema = ?", 
+            [$tableName, env('DB_DATABASE')]);
 
+        // Fetch indexes from pg_indexes
+        $indexes = DB::select("
+            SELECT indexname, indexdef 
+            FROM pg_indexes 
+            WHERE tablename = ? AND schemaname = ?", 
+            [$tableName, env('DB_DATABASE')]);
         return [
             'tableName' => $tableName,
             'columns' => $columnDetails,
