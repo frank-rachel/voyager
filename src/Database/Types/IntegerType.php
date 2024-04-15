@@ -22,4 +22,10 @@ class IntegerType extends Type
         // Default implementation, override in child classes if needed
         return $value;
     }
+
+    public function getName(): string
+    {
+        return 'integer';  // Return the type name as a string
+    }	
+	
 }

@@ -22,4 +22,10 @@ class TextType extends Type
         // Default implementation, override in child classes if needed
         return $value;
     }
+	
+    public function getName(): string
+    {
+        return 'text';
+    }
+	
 }

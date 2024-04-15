@@ -11,6 +11,7 @@ abstract class Type
 {
 	
     // Abstract method to get SQL declaration
+    // abstract public function getSQLDeclaration(array $field, AbstractPlatform $platform): string;
     abstract public function getSQLDeclaration(array $field, AbstractPlatform $platform): string;
 
     // Default conversion to database value
@@ -26,6 +27,9 @@ abstract class Type
         // Default implementation, override in child classes if needed
         return $value;
     }
+
+    abstract public function getName(): string;  // Define getName method	
+	
 }
 /*	
     protected static $customTypesRegistered = false;
