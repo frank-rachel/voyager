@@ -106,29 +106,25 @@ abstract class SchemaManager
 	 
     public static function listTableDetails($tableName)
     {
-        // $columns = static::listTableColumnNames($tableName);
-		// print_r(Schema::getTypes());
-		// print_r($columns);
-		// exit;
+        // Get columns using Laravel's Schema
+        $columns = Schema::getColumnListing($tableName);
 
-        // $foreignKeys = [];
-        // if (static::manager()->getDatabasePlatform()->supportsForeignKeyConstraints()) {
-            // $foreignKeys = Schema::getForeignKeys($tableName);
-        // }
+        // Prepare columns detail array
+        $columnDetails = [];
+        foreach ($columns as $column) {
+            $columnDetails[$column] = Schema::getColumnType($tableName, $column);
+        }
 
-        // $indexes = [];
-        // $indexes = Schema::getIndexes($tableName);
-        // $indexes = static::manager()->listTableIndexes($tableName);
-		$tableobj=new Table($tableName);
-		// $tableobj->_columns=Schema::getColumns($tableName);
-		// $tableobj->columns=$columns;
-		$tableobj->indexes=Schema::getIndexes($tableName);
-		$tableobj->fkConstraints=Schema::getForeignKeys($tableName);
-		// $tableobj->options=$options;
-		print_r($tableobj);
-		exit;
-		return $tableobj;
-        // return new Table($tableName, $columns, $indexes, [], $foreignKeys, []);
+        // Fetch indexes and foreign keys directly from the information schema
+        $foreignKeys = DB::select(DB::raw("SELECT * FROM information_schema.table_constraints WHERE table_name = '{$tableName}' AND constraint_type = 'FOREIGN KEY'"));
+        $indexes = DB::select(DB::raw("SELECT * FROM information_schema.statistics WHERE table_name = '{$tableName}'"));
+
+        return [
+            'tableName' => $tableName,
+            'columns' => $columnDetails,
+            'indexes' => $indexes,
+            'foreignKeys' => $foreignKeys
+        ];
     }
 // */
 /*
