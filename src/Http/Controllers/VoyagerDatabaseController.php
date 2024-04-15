@@ -186,92 +186,14 @@ class VoyagerDatabaseController extends Controller
     {
         $db = new \stdClass();
 
-        // Need to get the types first to register custom types
-		// seems to be fixed list in L11?
-        // $db->types = Type::getPlatformTypes();
-        
-$db->types = [
-    'Numbers' => [
-        ['name' => 'smallint'],
-        ['name' => 'integer'],
-        ['name' => 'bigint'],
-        ['name' => 'decimal'],
-        ['name' => 'numeric'],
-        ['name' => 'real'],
-        ['name' => 'double precision'],
-        ['name' => 'serial'],
-        ['name' => 'bigserial'],
-    ],
-    'Strings' => [
-        ['name' => 'char'],
-        ['name' => 'varchar'],
-        ['name' => 'text'],
-    ],
-    'Binary' => [
-        ['name' => 'bytea'],
-    ],
-    'Boolean' => [
-        ['name' => 'boolean'],
-    ],
-    'Dates and Times' => [
-        ['name' => 'date'],
-        ['name' => 'timestamp'],
-        ['name' => 'timestamp with time zone'],
-        ['name' => 'time'],
-        ['name' => 'time with time zone'],
-        ['name' => 'interval'],
-    ],
-    'Network Addresses' => [
-        ['name' => 'cidr'],
-        ['name' => 'inet'],
-        ['name' => 'macaddr'],
-    ],
-    'JSON' => [
-        ['name' => 'json'],
-        ['name' => 'jsonb'],
-    ],
-    'UUID' => [
-        ['name' => 'uuid'],
-    ],
-    'Arrays' => [
-        ['name' => 'array'],
-    ],
-    'Geometry' => [
-        ['name' => 'point'],
-        ['name' => 'line'],
-        ['name' => 'lseg'],
-        ['name' => 'box'],
-        ['name' => 'path'],
-        ['name' => 'polygon'],
-        ['name' => 'circle'],
-    ],
-    'Range' => [
-        ['name' => 'int4range'],
-        ['name' => 'int8range'],
-        ['name' => 'numrange'],
-        ['name' => 'tsrange'],
-        ['name' => 'tstzrange'],
-        ['name' => 'daterange'],
-    ]
-];
+        // Assuming Type::getPlatformTypes() is needed for your operations, ensure it's adapted or implemented.
+        $db->types = Type::getPlatformTypes();  // Ensure Type class is correctly implemented.
 
-
-
-        if ($action == 'update') {
+        if ($action == 'update' && !empty($table)) {
             $db->table = SchemaManager::listTableDetails($table);
-            $db->formAction = route('voyager.database.update', $table);
+            $db->formAction = route('voyager.database.update', ['table' => $table]);
         } else {
-            $db->table = new Table('New Table');
-
-            // Add prefilled columns
-            $db->table->addColumn('id', 'integer', [
-                'unsigned'      => true,
-                'notnull'       => true,
-                'autoincrement' => true,
-            ]);
-
-            $db->table->setPrimaryKey(['id'], 'primary');
-
+            $db->table = $this->createNewTableTemplate();
             $db->formAction = route('voyager.database.store');
         }
 
@@ -279,9 +201,31 @@ $db->types = [
         $db->oldTable = $oldTable ? $oldTable : json_encode(null);
         $db->action = $action;
         $db->identifierRegex = Identifier::REGEX;
-        $db->platform = SchemaManager::getDatabasePlatform()->getName();
+        $db->platform = SchemaManager::getDatabasePlatform();  // Adjusted to directly use the string.
 
         return $db;
+    }
+
+    /**
+     * Create a template for a new table with default columns.
+     *
+     * @return object
+     */
+    protected function createNewTableTemplate()
+    {
+        $table = new \stdClass();
+        $table->name = 'New Table';
+        $table->columns = [
+            'id' => [
+                'type' => 'integer',
+                'unsigned' => true,
+                'notnull' => true,
+                'autoincrement' => true
+            ]
+        ];
+        $table->primaryKey = ['id' => 'primary'];
+
+        return $table;
     }
 
     public function cleanOldAndCreateNew($originalName, $tableName)
