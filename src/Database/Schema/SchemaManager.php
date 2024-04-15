@@ -52,11 +52,16 @@ abstract class SchemaManager
 
     public static function getDatabasePlatform()
     {
-        // Get the database connection name using the global namespace for PDO
         $connection = DB::connection()->getPDO()->getAttribute(\PDO::ATTR_DRIVER_NAME);
-
-        // Return the name formatted nicely
-        return ucfirst(strtolower($connection));
+        return new class($connection) {
+            private $name;
+            public function __construct($name) {
+                $this->name = ucfirst(strtolower($name));
+            }
+            public function getName() {
+                return $this->name;
+            }
+        };
     }
 
     public static function tableExists($table)
