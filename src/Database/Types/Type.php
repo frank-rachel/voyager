@@ -7,8 +7,12 @@ use Doctrine\DBAL\Types\Type as DoctrineType;
 use TCG\Voyager\Database\Platforms\Platform;
 use TCG\Voyager\Database\Schema\SchemaManager;
 
-abstract class Type extends DoctrineType
+abstract class Type
 {
+	
+    abstract public function convertToDatabaseValue($value);
+    abstract public function convertToPHPValue($value);	
+	
     protected static $customTypesRegistered = false;
     protected static $platformTypeMapping = [];
     protected static $allTypes = [];
