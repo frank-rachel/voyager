@@ -50,15 +50,10 @@ abstract class SchemaManager
         return DB::connection();
     }
 
-    // public static function getDatabasePlatform(ServerVersionProvider $versionProvider): PostgreSQLPlatform
-    // public static function getDatabasePlatform(): PostgreSQLPlatform
-    // {
-        // return new PostgreSQLPlatform();
-    // }
     public static function getDatabasePlatform()
     {
-        // Get the database connection name
-        $connection = DB::connection()->getPDO()->getAttribute(PDO::ATTR_DRIVER_NAME);
+        // Get the database connection name using the global namespace for PDO
+        $connection = DB::connection()->getPDO()->getAttribute(\PDO::ATTR_DRIVER_NAME);
 
         // Return the name formatted nicely
         return ucfirst(strtolower($connection));
