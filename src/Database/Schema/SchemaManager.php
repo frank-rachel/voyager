@@ -2,14 +2,11 @@
 
 namespace TCG\Voyager\Database\Schema;
 
-use Doctrine\DBAL\Schema\SchemaException;
-use Doctrine\DBAL\Schema\Table as DoctrineTable;
-use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
-use TCG\Voyager\Database\Types\Type;
-
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
+
+// Ensure all functionality here uses Laravel's native classes
 
 abstract class SchemaManager
 {
