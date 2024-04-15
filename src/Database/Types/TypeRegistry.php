@@ -1,5 +1,6 @@
 <?php
 namespace TCG\Voyager\Database\Types;
+use TCG\Voyager\Database\Schema\SchemaManager;
 
 class TypeRegistry
 {
