@@ -1,5 +1,5 @@
 <?php
-namespace App\Database\Types;
+namespace TCG\Voyager\Database\Types;
 
 class IntegerType extends Type
 {
