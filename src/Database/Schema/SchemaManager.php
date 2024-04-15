@@ -115,9 +115,9 @@ abstract class SchemaManager
             $columnDetails[$column] = Schema::getColumnType($tableName, $column);
         }
 
-        // Fetch indexes and foreign keys directly from the information schema
-        $foreignKeys = DB::select(DB::raw("SELECT * FROM information_schema.table_constraints WHERE table_name = '{$tableName}' AND constraint_type = 'FOREIGN KEY'"));
-        $indexes = DB::select(DB::raw("SELECT * FROM information_schema.statistics WHERE table_name = '{$tableName}'"));
+        // Fetch indexes and foreign keys directly from the information schema using plain SQL
+        $foreignKeys = DB::select("SELECT * FROM information_schema.table_constraints WHERE table_schema = ? AND table_name = ? AND constraint_type = 'FOREIGN KEY'", [env('DB_DATABASE'), $tableName]);
+        $indexes = DB::select("SELECT * FROM information_schema.statistics WHERE table_schema = ? AND table_name = ?", [env('DB_DATABASE'), $tableName]);
 
         return [
             'tableName' => $tableName,
