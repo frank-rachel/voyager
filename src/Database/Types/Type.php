@@ -558,4 +558,3 @@ public static function getTypeCategories()
 }
 	// */
 	
-}
