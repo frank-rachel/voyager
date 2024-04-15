@@ -3,6 +3,12 @@ namespace TCG\Voyager\Database\Types;
 
 class TextType extends Type
 {
+
+	public function getSQLDeclaration(array $field): string
+	{
+		return "TEXT"; 
+	}	
+	
     // Default conversion to database value
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {

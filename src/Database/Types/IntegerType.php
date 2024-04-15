@@ -3,6 +3,12 @@ namespace TCG\Voyager\Database\Types;
 
 class IntegerType extends Type
 {
+	public function getSQLDeclaration(array $field): string
+	{
+		return "INTEGER";  // or "INTEGER", depending on your database dialect
+	}
+	
+	
     // Default conversion to database value
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
