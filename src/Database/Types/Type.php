@@ -29,6 +29,7 @@ abstract class Type
     }
 
     abstract public function getName(): string;  // Define getName method	
+    abstract public function getCategory(): string;  // Define getCategory method
 	
 }
 /*	

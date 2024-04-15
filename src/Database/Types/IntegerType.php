@@ -28,4 +28,8 @@ class IntegerType extends Type
         return 'integer';  // Return the type name as a string
     }	
 	
+    public function getCategory(): string
+    {
+        return 'numeric';  // Categorize this type as numeric
+    }	
 }

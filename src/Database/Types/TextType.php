@@ -28,4 +28,8 @@ class TextType extends Type
         return 'text';
     }
 	
+    public function getCategory(): string
+    {
+        return 'text';  // Categorize this type as text
+    }	
 }
