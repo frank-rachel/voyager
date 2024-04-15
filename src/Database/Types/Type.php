@@ -10,9 +10,24 @@ use TCG\Voyager\Database\Schema\SchemaManager;
 abstract class Type
 {
 	
-    abstract public function convertToDatabaseValue($value);
-    abstract public function convertToPHPValue($value);	
-	
+    // Abstract method to get SQL declaration
+    abstract public function getSQLDeclaration(array $field, AbstractPlatform $platform): string;
+
+    // Default conversion to database value
+    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    {
+        // Default implementation, override in child classes if needed
+        return $value;
+    }
+
+    // Default conversion to PHP value
+    public function convertToPHPValue($value, AbstractPlatform $platform)
+    {
+        // Default implementation, override in child classes if needed
+        return $value;
+    }
+}
+/*	
     protected static $customTypesRegistered = false;
     protected static $platformTypeMapping = [];
     protected static $allTypes = [];
