@@ -55,16 +55,14 @@ abstract class SchemaManager
     // {
         // return new PostgreSQLPlatform();
     // }
-	public static function getDatabasePlatform() {
-		return new class extends PostgreSQLPlatform {
-			public function getName() {
-				// Implement the getName logic here
-				// $className = get_class($this);
-				$className = 'Postgresql';
-				return ucfirst(strtolower(preg_replace('/Platform$/', '', $className)));
-			}
-		};
-	}
+    public static function getDatabasePlatform()
+    {
+        // Get the database connection name
+        $connection = DB::connection()->getPDO()->getAttribute(PDO::ATTR_DRIVER_NAME);
+
+        // Return the name formatted nicely
+        return ucfirst(strtolower($connection));
+    }
 
     public static function tableExists($table)
     {
