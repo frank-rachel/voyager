@@ -13,6 +13,7 @@ use TCG\Voyager\Database\Schema\Identifier;
 use TCG\Voyager\Database\Schema\SchemaManager;
 use TCG\Voyager\Database\Schema\Table;
 use TCG\Voyager\Database\Types\Type;
+use TCG\Voyager\Database\Types\TypeRegistry;
 use TCG\Voyager\Events\TableAdded;
 use TCG\Voyager\Events\TableDeleted;
 use TCG\Voyager\Events\TableUpdated;
@@ -186,8 +187,8 @@ class VoyagerDatabaseController extends Controller
     {
         $db = new \stdClass();
 
-        // Assuming Type::getPlatformTypes() is needed for your operations, ensure it's adapted or implemented.
-        $db->types = Type::getPlatformTypes();  // Ensure Type class is correctly implemented.
+        // Assuming TypeRegistry::getPlatformTypes() is needed for your operations, ensure it's adapted or implemented.
+        $db->types = TypeRegistry::getPlatformTypes();  // Ensure Type class is correctly implemented.
 
         if ($action == 'update' && !empty($table)) {
             $db->table = SchemaManager::listTableDetails($table);
