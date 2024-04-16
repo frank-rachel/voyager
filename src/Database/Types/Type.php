@@ -3,7 +3,6 @@
 namespace TCG\Voyager\Database\Types;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform as DoctrineAbstractPlatform;
-use Doctrine\DBAL\Types\Type as DoctrineType;
 use TCG\Voyager\Database\Platforms\Platform;
 use TCG\Voyager\Database\Schema\SchemaManager;
 
@@ -28,9 +27,20 @@ abstract class Type
         return $value;
     }
 
-    abstract public function getName(): string;  // Define getName method	
-    abstract public function getCategory(): string;  // Define getCategory method
-	
+    // Define the NAME constant in each derived class
+    public const NAME = '';
+
+    // Provide a default implementation for getName()
+    public function getName()
+    {
+        return static::NAME;
+    }
+
+    // Provide a default implementation for getCategory()
+    public function getCategory()
+    {
+        return 'Other';  // Default category if not overridden
+    }
 }
 /*	
     protected static $customTypesRegistered = false;
