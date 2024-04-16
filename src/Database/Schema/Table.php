@@ -18,12 +18,23 @@ class Table
         $this->options = $options;
     }
 
-    private function initializeColumns(array $columnData)
-    {
-        foreach ($columnData as $colName => $col) {
-            $this->addColumn(new Column($colName, $col['type'], $col['options'] ?? []));
-        }
-    }
+	private function initializeColumns(array $columnData)
+	{
+		foreach ($columnData as $colName => $col) {
+			// Check if $col is an array and has the expected keys
+			if (is_array($col) && isset($col['type'])) {
+				// Assuming $col is structured as an array with 'type' and optional 'options'
+				$this->addColumn(new Column($colName, $col['type'], $col['options'] ?? []));
+			} else if ($col instanceof Column) {
+				// If $col is already a Column object, directly add it
+				$this->addColumn($col);
+			} else {
+				// Log or handle unexpected format
+				error_log("Unexpected column format for '$colName'");
+			}
+		}
+	}
+
 
     public function addColumn(Column $column)
     {
