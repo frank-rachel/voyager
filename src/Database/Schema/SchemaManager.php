@@ -153,7 +153,7 @@ abstract class SchemaManager
 
         // Construct and return a new Table object
 		$table = new Table($tableName, $columns, $indexesMapped, $foreignKeysMapped, []);
-		print_r($table);  // Log the table object for debugging
+		// print_r($table);  // Log the table object for debugging
 		return $table;
 
     }
