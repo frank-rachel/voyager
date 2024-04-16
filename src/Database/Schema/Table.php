@@ -35,12 +35,30 @@ class Table
 	}
 
 
-    private function initializeIndexes(array $indexData)
-    {
-        foreach ($indexData as $index) {
-            $this->addIndex(new Index($index['name'], $index['columns'], $index['type'], $index['isPrimary'], $index['isUnique'], $index['flags'], $index['options']));
-        }
-    }
+	private function initializeIndexes(array $indexData)
+	{
+		foreach ($indexData as $index) {
+			if ($index instanceof Index) {
+				// If $index is already an Index object, simply add it
+				$this->addIndex($index);
+			} else if (is_array($index)) {
+				// If $index is an array, create a new Index object from it
+				$this->addIndex(new Index(
+					$index['name'],
+					$index['columns'],
+					$index['type'],
+					$index['isPrimary'] ?? false,
+					$index['isUnique'] ?? false,
+					$index['flags'] ?? [],
+					$index['options'] ?? []
+				));
+			} else {
+				// Optionally handle unexpected data types
+				throw new \InvalidArgumentException("Invalid index data provided");
+			}
+		}
+	}
+
 
     public function addColumn(Column $column)
     {
