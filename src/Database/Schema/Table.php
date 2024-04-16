@@ -21,7 +21,7 @@ class Table
     private function initializeColumns(array $columnData)
     {
         foreach ($columnData as $colName => $col) {
-            $this->addColumn(new Column($colName, $col['type'], $col));
+            $this->addColumn(new Column($colName, $col['type'], $col['options'] ?? []));
         }
     }
 
