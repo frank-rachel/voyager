@@ -1,5 +1,4 @@
 <?php
-
 namespace TCG\Voyager\Database\Schema;
 
 class Table
@@ -13,11 +12,30 @@ class Table
     public function __construct($name, $columns = [], $indexes = [], $foreignKeys = [], $options = [])
     {
         $this->name = $name;
-        $this->columns = $columns;
+        $this->columns = array_map(function($column) {
+            return new Column($column['name'], $column['type'], $column['options']);
+        }, $columns);
         $this->indexes = $indexes;
         $this->foreignKeys = $foreignKeys;
         $this->options = $options;
     }
+
+    public function toArray()
+    {
+        return [
+            'name' => $this->name,
+            'columns' => array_map(function($column) { return $column->toArray(); }, $this->columns),
+            'indexes' => array_map(function($index) { return $index->toArray(); }, $this->indexes),
+            'foreignKeys' => array_map(function($fk) { return $fk->toArray(); }, $this->foreignKeys),
+            'options' => $this->options
+        ];
+    }
+
+    public function toJson()
+    {
+        return json_encode($this->toArray());
+    }
+
 
     public function getName()
     {
@@ -59,22 +77,6 @@ class Table
             ForeignKey::makeMany($table['foreignKeys']),
             $table['options'] ?? []
         );
-    }
-
-    public function toArray()
-    {
-        return [
-            'name' => $this->name,
-            'columns' => array_map(function($column) { return $column->toArray(); }, $this->columns),
-            'indexes' => array_map(function($index) { return $index->toArray(); }, $this->indexes),
-            'foreignKeys' => array_map(function($fk) { return $fk->toArray(); }, $this->foreignKeys),
-            'options' => $this->options
-        ];
-    }
-
-    public function toJson()
-    {
-        return json_encode($this->toArray());
     }
 
     public function getColumnsIndexes($columns, $sort = false)
