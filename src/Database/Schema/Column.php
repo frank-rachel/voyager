@@ -41,5 +41,17 @@ class Column
         return $this->options['notnull'] ?? false;
     }
 
+    public function toArray()
+    {
+        return [
+            'name' => $this->name,
+            'type' => $this->type, // If type is an object, ensure it has a method to serialize itself
+            'options' => $this->options,
+            'null' => $this->options['notnull'] ?? true ? 'NO' : 'YES', // Example conversion
+            'extra' => $this->getExtra(),
+            'composite' => false // Example default
+        ];
+    }
+
     // Add more methods as needed based on Doctrine's Column API
 }
