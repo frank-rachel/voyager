@@ -9,37 +9,50 @@ class Table
     public $foreignKeys = [];
     public $options = [];
 
-    public function __construct($name, array $columnData = [], array $indexes = [], array $foreignKeys = [], array $options = [])
+    public function __construct($name, array $columns = [], array $indexes = [], array $foreignKeys = [], array $options = [])
     {
         $this->name = $name;
-        $this->initializeColumns($columnData);
-        $this->indexes = $indexes;
+        $this->initializeColumns($columns);
+        $this->initializeIndexes($indexes);
         $this->foreignKeys = $foreignKeys;
         $this->options = $options;
     }
 
-	private function initializeColumns(array $columnData)
-	{
-		foreach ($columnData as $colName => $col) {
-			// Check if $col is an array and has the expected keys
-			if (is_array($col) && isset($col['type'])) {
-				// Assuming $col is structured as an array with 'type' and optional 'options'
-				$this->addColumn(new Column($colName, $col['type'], $col['options'] ?? []));
-			} else if ($col instanceof Column) {
-				// If $col is already a Column object, directly add it
-				$this->addColumn($col);
-			} else {
-				// Log or handle unexpected format
-				error_log("Unexpected column format for '$colName'");
-			}
-		}
-	}
+    private function initializeColumns(array $columnData)
+    {
+        foreach ($columnData as $colName => $col) {
+            $this->addColumn(new Column($colName, $col['type'], $col));
+        }
+    }
 
+    private function initializeIndexes(array $indexData)
+    {
+        foreach ($indexData as $index) {
+            $this->addIndex(new Index($index['name'], $index['columns'], $index['type'], $index['isPrimary'], $index['isUnique'], $index['flags'], $index['options']));
+        }
+    }
 
     public function addColumn(Column $column)
     {
         $this->columns[] = $column;
     }
+
+    public function addIndex(Index $index)
+    {
+        $this->indexes[] = $index;
+    }
+
+    public function toArray()
+    {
+        return [
+            'name' => $this->name,
+            'columns' => array_map(function ($column) { return $column->toArray(); }, $this->columns),
+            'indexes' => array_map(function ($index) { return $index->toArray(); }, $this->indexes),
+            'foreignKeys' => $this->foreignKeys,
+            'options' => $this->options,
+        ];
+    }
+
 
     public function removeColumn($columnName)
     {
@@ -60,17 +73,6 @@ class Table
             }
         }
         return null;
-    }
-
-    public function toArray()
-    {
-        return [
-            'name' => $this->name,
-            'columns' => array_map(function ($column) { return $column->toArray(); }, $this->columns),
-            'indexes' => $this->indexes,
-            'foreignKeys' => $this->foreignKeys,
-            'options' => $this->options,
-        ];
     }
 
     public function toJson()
