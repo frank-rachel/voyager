@@ -219,22 +219,40 @@ class VoyagerDatabaseController extends Controller
      *
      * @return object
      */
-    protected function createNewTableTemplate()
-    {
-        $table = new \stdClass();
-        $table->name = 'New Table';
-        $table->columns = [
-            'id' => [
-                'type' => 'integer',
-                'unsigned' => true,
-                'notnull' => true,
-                'autoincrement' => true
-            ]
-        ];
-        $table->primaryKey = ['id' => 'primary'];
+	protected function createNewTableTemplate()
+	{
+		// Create columns with new Column class instances or similar structure
+		$columns = [
+			'id' => new Column(
+				'id',                          // name
+				'integer',                     // type
+				[
+					'unsigned' => true,
+					'notnull' => true,
+					'autoincrement' => true
+				]                              // options
+			)
+		];
 
-        return $table;
-    }
+		// If you have a mechanism or class handling indexes or primary keys
+		$indexes = [
+			'primary' => new Index(
+				'primary',                    // name
+				['id'],                       // columns
+				'primary'                     // type
+			)
+		];
+
+		// Create the table with the columns and indexes
+		return new Table(
+			'New Table',                     // name
+			$columns,                        // columns
+			$indexes,                        // indexes (this could include primary keys as well)
+			[],                              // foreign keys, empty in this case
+			[]                               // other options
+		);
+	}
+
 
     public function cleanOldAndCreateNew($originalName, $tableName)
     {
