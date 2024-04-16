@@ -2,51 +2,21 @@
 
 namespace TCG\Voyager\Database\Schema;
 
-use Doctrine\DBAL\Schema\Comparator;
-use Doctrine\DBAL\Schema\Table as DoctrineTable;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
-use TCG\Voyager\Database\Types\Type;
-
-class Table extends DoctrineTable
+class Table
 {
-    public function __construct(
-        string $name,
-        array $columns = [],
-        array $indexes = [],
-        array $uniqueConstraints = [],
-        array $fkConstraints = [],
-        array $options = [],
-    ) {
-        if ($name === '') {
-            throw InvalidTableName::new($name);
-        }
+    protected $name;
+    protected $columns = [];
+    protected $indexes = [];
+    protected $foreignKeys = [];
+    protected $options = [];
 
-        $this->_setName($name);
-
-        foreach ($columns as $column) {
-            $this->_addColumn($column);
-        }
-		$tableobjcolumns=Schema::getColumns($name);
-		// print_r($tableobjcolumns);
-		// exit;
-        foreach ($tableobjcolumns as $column) {
-            $this->_addColumn($column);
-        }
-        foreach ($indexes as $idx) {
-            $this->_addIndex($idx);
-        }
-
-        foreach ($uniqueConstraints as $uniqueConstraint) {
-            $this->_addUniqueConstraint($uniqueConstraint);
-        }
-
-        foreach ($fkConstraints as $fkConstraint) {
-            $this->_addForeignKeyConstraint($fkConstraint);
-        }
-
-        $this->_options = array_merge($this->_options, $options);
+    public function __construct($name, $columns = [], $indexes = [], $foreignKeys = [], $options = [])
+    {
+        $this->name = $name;
+        $this->columns = $columns;
+        $this->indexes = $indexes;
+        $this->foreignKeys = $foreignKeys;
+        $this->options = $options;
     }
 
     public static function make($table)
@@ -54,194 +24,113 @@ class Table extends DoctrineTable
         if (!is_array($table)) {
             $table = json_decode($table, true);
         }
-		// print_r($table);
-		// exit;
-		if (is_array($table)) {
-			$name = Identifier::validate($table['name'], 'Table');
-			Schema::dropIfExists($name);
-			Schema::create($name, function (Blueprint $table) {
-				$table->id();
-				$table->timestamps();
-			});	
 
-			$columns = [];
-				// $column = Column::make($columnArr, $table['name']);
-				// $columns[$column->getName()] = $column;
-			foreach ($table['columns'] as $columnArr) {
-				if ($columnArr['name']<>'id') {
-					// Schema::table($name, function (Blueprint $table) use ($columnArr) {
-						// $typename=Type::translateToLaravelTypes($columnArr['type']['name']);
-						// $table->$typename($columnArr['name']);
-					// });	
-					if (!Schema::hasColumn($name, $columnArr['name'])) {
-						Schema::table($name, function (Blueprint $table) use ($columnArr) {
-							$typename = Type::translateToLaravelTypes($columnArr['type']['name']);
-							$table->$typename($columnArr['name']);
-						});
-					}
-					
-				}
-				
-			}
-			
-			// $indexes = [];
-			// foreach ($table['indexes'] as $indexArr) {
-				// $index = Index::make($indexArr);
-				// $indexes[$index->getName()] = $index;
-			// }
+        $name = Identifier::validate($table['name'], 'Table');
 
-			// $foreignKeys = [];
-			// foreach ($table['foreignKeys'] as $foreignKeyArr) {
-				// $foreignKey = ForeignKey::make($foreignKeyArr);
-				// $foreignKeys[$foreignKey->getName()] = $foreignKey;
-			// }
+        return new self(
+            $name,
+            Column::makeMany($table['columns']),
+            Index::makeMany($table['indexes']),
+            ForeignKey::makeMany($table['foreignKeys']),
+            $table['options'] ?? []
+        );
+    }
 
-			$options = $table['options'];
-					
-			
-			// return Schema::getColumns($name);
-			// return new self($name, Schema::getColumns($name), $indexes, $uniqueConstraints, $fkConstraints, $options);
-			$tableobj=new self($name);
-			$tableobj->columns=Schema::getColumns($name);
-			$tableobj->indexes=Schema::getIndexes($name);
-			$tableobj->fkConstraints=Schema::getForeignKeys($name);
-			$tableobj->options=$options;
-			return $tableobj;
-			
-			// return true;
+    public function toArray()
+    {
+        return [
+            'name' => $this->name,
+            'columns' => array_map(function($column) { return $column->toArray(); }, $this->columns),
+            'indexes' => array_map(function($index) { return $index->toArray(); }, $this->indexes),
+            'foreignKeys' => array_map(function($fk) { return $fk->toArray(); }, $this->foreignKeys),
+            'options' => $this->options
+        ];
+    }
+
+    public function toJson()
+    {
+        return json_encode($this->toArray());
+    }
+
+    // Example getters and setters
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    // Add other necessary methods and properties...
+
+	public function getColumnsIndexes($columns, $sort = false)
+	{
+		if (!is_array($columns)) {
+			$columns = [$columns];
 		}
-    }
 
-    public function getColumnsIndexes($columns, $sort = false)
-    {
-        if (!is_array($columns)) {
-            $columns = [$columns];
-        }
+		$matched = [];
+		foreach ($this->indexes as $index) {
+			if ($index->spansColumns($columns)) {
+				$matched[$index->getName()] = $index;
+			}
+		}
 
-        $matched = [];
+		if ($sort && count($matched) > 1) {
+			uasort($matched, [$this, 'compareIndexPriority']);
+		}
 
-        foreach ($this->_indexes as $index) {
-            if ($index->spansColumns($columns)) {
-                $matched[$index->getName()] = $index;
-            }
-        }
+		return $matched;
+	}
 
-        if (count($matched) > 1 && $sort) {
-            // Sort indexes based on priority: PRI > UNI > IND
-            uasort($matched, function ($index1, $index2) {
-                $index1_type = Index::getType($index1);
-                $index2_type = Index::getType($index2);
+	protected function compareIndexPriority($index1, $index2)
+	{
+		$priorities = ['PRIMARY' => 3, 'UNIQUE' => 2, 'INDEX' => 1];
+		$priority1 = $priorities[$index1->getType()] ?? 0;
+		$priority2 = $priorities[$index2->getType()] ?? 0;
 
-                if ($index1_type == $index2_type) {
-                    return 0;
-                }
+		return $priority2 <=> $priority1; // Using PHP 7 spaceship operator for comparison
+	}
 
-                if ($index1_type == Index::PRIMARY) {
-                    return -1;
-                }
-
-                if ($index2_type == Index::PRIMARY) {
-                    return 1;
-                }
-
-                if ($index1_type == Index::UNIQUE) {
-                    return -1;
-                }
-
-                // If we reach here, it means: $index1=INDEX && $index2=UNIQUE
-                return 1;
-            });
-        }
-
-        return $matched;
-    }
-
-    public function diff(DoctrineTable $compareTable)
-    {
-        return (new Comparator())->diffTable($this, $compareTable);
-    }
+	public function diff(Table $compareTable)
+	{
+		// Custom logic to compare this table with another table
+		// Simplified example; you'd need to develop detailed comparison logic
+		$differences = [];
+		if ($this->name !== $compareTable->name) {
+			$differences['name'] = "Different names: {$this->name} vs {$compareTable->name}";
+		}
+		return $differences;
+	}
 
     public function diffOriginal()
     {
         return (new Comparator())->diffTable(SchemaManager::getDoctrineTable($this->_name), $this);
     }
 
-    /**
-     * @return array
-     */
-    public function toArray()
-    {
-        return [
-            'name'           => $this->_name,
-            'oldName'        => $this->_name,
-            'columns'        => $this->exportColumnsToArray(),
-            'indexes'        => $this->exportIndexesToArray(),
-            'primaryKeyName' => $this->_primaryKeyName,
-            'foreignKeys'    => $this->exportForeignKeysToArray(),
-            'options'        => $this->_options,
-        ];
-    }
 
-    /**
-     * @return string
-     */
-    public function toJson()
-    {
-        return json_encode($this->toArray());
-    }
+	public function exportColumnsToArray()
+	{
+		return array_map(function($column) {
+			return $column->toArray();
+		}, $this->columns);
+	}
 
-    /**
-     * @return array
-     */
-    public function exportColumnsToArray()
-    {
-        $exportedColumns = [];
+	public function exportIndexesToArray()
+	{
+		return array_map(function($index) {
+			return $index->toArray() + ['table' => $this->name];
+		}, $this->indexes);
+	}
 
-        foreach ($this->getColumns() as $name => $column) {
-            $exportedColumns[] = Column::toArray($column);
-        }
+	public function exportForeignKeysToArray()
+	{
+		return array_map(function($fk) {
+			return $fk->toArray();
+		}, $this->foreignKeys);
+	}
 
-        return $exportedColumns;
-    }
 
-    /**
-     * @return array
-     */
-    public function exportIndexesToArray()
-    {
-        $exportedIndexes = [];
+	public function getName()
+	{
+		return $this->name;
+	}
 
-        foreach ($this->getIndexes() as $name => $index) {
-            $indexArr = Index::toArray($index);
-            $indexArr['table'] = $this->_name;
-            $exportedIndexes[] = $indexArr;
-        }
-
-        return $exportedIndexes;
-    }
-
-    /**
-     * @return array
-     */
-    public function exportForeignKeysToArray()
-    {
-        $exportedForeignKeys = [];
-
-        foreach ($this->getForeignKeys() as $name => $fk) {
-            $exportedForeignKeys[$name] = ForeignKey::toArray($fk);
-        }
-
-        return $exportedForeignKeys;
-    }
-
-    public function __get($property)
-    {
-        $getter = 'get'.ucfirst($property);
-
-        if (!method_exists($this, $getter)) {
-            throw new \Exception("Property {$property} doesn't exist or is unavailable");
-        }
-
-        return $this->$getter();
-    }
 }

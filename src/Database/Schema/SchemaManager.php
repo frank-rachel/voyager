@@ -102,18 +102,20 @@ abstract class SchemaManager
      * @return \TCG\Voyager\Database\Schema\Table
      */
 	 
-    public static function listTableDetails($tableName)
+   public static function listTableDetails($tableName)
     {
-        // Get columns using Laravel's Schema
-        $columns = Schema::getColumnListing($tableName);
-
-        // Prepare columns detail array
-        $columnDetails = [];
-        foreach ($columns as $column) {
-            $columnDetails[$column] = Schema::getColumnType($tableName, $column);
+        // Get columns with types using Laravel's Schema
+        $columns = [];
+        foreach (Schema::getColumnListing($tableName) as $column) {
+            $columnType = Schema::getColumnType($tableName, $column);
+            $columns[$column] = new Column([
+                'name' => $column,
+                'type' => $columnType,
+                // You can add more column properties here if needed
+            ]);
         }
 
-        // Fetch foreign keys from information_schema.table_constraints and information_schema.key_column_usage
+        // Fetch foreign keys from information_schema
         $foreignKeys = DB::select("
             SELECT tc.constraint_name, kcu.column_name, ccu.table_name AS foreign_table_name, ccu.column_name AS foreign_column_name
             FROM information_schema.table_constraints AS tc 
@@ -124,20 +126,43 @@ abstract class SchemaManager
             WHERE tc.table_name = ? AND tc.constraint_type = 'FOREIGN KEY' AND tc.table_schema = ?", 
             [$tableName, env('DB_DATABASE')]);
 
+        // Map foreign keys into ForeignKey class instances
+        $foreignKeysMapped = array_map(function ($fk) {
+            return new ForeignKey([
+                'name' => $fk->constraint_name,
+                'column' => $fk->column_name,
+                'foreign_table' => $fk->foreign_table_name,
+                'foreign_column' => $fk->foreign_column_name,
+                // Add more FK details as needed
+            ]);
+        }, $foreignKeys);
+
         // Fetch indexes from pg_indexes
         $indexes = DB::select("
             SELECT indexname, indexdef 
             FROM pg_indexes 
             WHERE tablename = ? AND schemaname = ?", 
             [$tableName, env('DB_DATABASE')]);
-        return (object) [
-            'name' => $tableName,
-            'tableName' => $tableName,
-            'columns' => $columnDetails,
-            'indexes' => $indexes,
-            'foreignKeys' => $foreignKeys
-        ];
+
+        // Map indexes into Index class instances
+        $indexesMapped = array_map(function ($index) {
+            return new Index([
+                'name' => $index->indexname,
+                'definition' => $index->indexdef,
+                // Additional index properties can be handled here
+            ]);
+        }, $indexes);
+
+        // Construct and return a new Table object
+        return new Table(
+            $tableName,
+            $columns,
+            $indexesMapped,
+            $foreignKeysMapped,
+            []  // Options can be passed here if needed
+        );
     }
+
 // */
 /*
     public static function listTableDetails($tableName)
