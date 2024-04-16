@@ -70,11 +70,13 @@
             },
             created() {
                 // If old table is set, use it to repopulate the form
+				console.log('Original Table Data:', this.originalTable);
                 if (this.oldTable) {
                     this.table = this.oldTable;
                 } else {
                     this.table = JSON.parse(JSON.stringify(this.originalTable));
                 }
+				console.log('Processed Table Data:', this.table);
             },
             methods: {
                 stringifyTable() {
