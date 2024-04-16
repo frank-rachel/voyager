@@ -106,14 +106,12 @@ abstract class SchemaManager
     {
         // Get columns with types using Laravel's Schema
         $columns = [];
-        foreach (Schema::getColumnListing($tableName) as $column) {
-            $columnType = Schema::getColumnType($tableName, $column);
-            $columns[$column] = new Column([
-                'name' => $column,
-                'type' => $columnType,
-                // You can add more column properties here if needed
-            ]);
-        }
+		foreach (Schema::getColumnListing($tableName) as $column) {
+			$columnType = Schema::getColumnType($tableName, $column);
+			// Create a new Column instance correctly by passing parameters individually
+			$columns[$column] = new Column($column, $columnType);
+		}
+
 
         // Fetch foreign keys from information_schema
         $foreignKeys = DB::select("
