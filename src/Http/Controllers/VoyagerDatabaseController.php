@@ -163,7 +163,7 @@ class VoyagerDatabaseController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request)
+    public function update(Request $request, $table = '')
     {
         $this->authorize('browse_database');
 
