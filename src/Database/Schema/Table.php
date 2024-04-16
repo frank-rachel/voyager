@@ -20,16 +20,19 @@ class Table
         $this->options = $options;
     }
 
-    public function toArray()
-    {
-        return [
-            'name' => $this->name,
-            'columns' => array_map(function($column) { return $column->toArray(); }, $this->columns),
-            'indexes' => array_map(function($index) { return $index->toArray(); }, $this->indexes),
-            'foreignKeys' => array_map(function($fk) { return $fk->toArray(); }, $this->foreignKeys),
-            'options' => $this->options
-        ];
-    }
+	public function toArray()
+	{
+		return [
+			'name' => $this->name,
+			'columns' => array_map(function($column) {
+				return $column->toArray();  // Ensure Column has a toArray() method
+			}, $this->columns),
+			'indexes' => array_map(function($index) { return $index->toArray(); }, $this->indexes),
+			'foreignKeys' => array_map(function($fk) { return $fk->toArray(); }, $this->foreignKeys),
+			'options' => $this->options
+		];
+	}
+
 
     public function toJson()
     {
