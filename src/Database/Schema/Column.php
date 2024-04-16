@@ -5,14 +5,37 @@ class Column
 {
     public $name;
     public $type;
-    public $options = [];
+    public $options;
+    public $nullable;
+    public $default;
+    public $length;
+    public $precision;
+    public $scale;
 
-    public function __construct(string $name, string $type, array $options = [])
+    public function __construct($name, $type, array $options = [])
     {
         $this->name = $name;
         $this->type = $type;
-        $this->options = $options;
+        $this->nullable = $options['nullable'] ?? false;
+        $this->default = $options['default'] ?? null;
+        $this->length = $options['length'] ?? null;
+        $this->precision = $options['precision'] ?? null;
+        $this->scale = $options['scale'] ?? null;
     }
+
+    public function toArray()
+    {
+        return [
+            'name' => $this->name,
+            'type' => $this->type,
+            'nullable' => $this->nullable,
+            'default' => $this->default,
+            'length' => $this->length,
+            'precision' => $this->precision,
+            'scale' => $this->scale,
+        ];
+    }
+
 
     public function getName(): string
     {
@@ -109,14 +132,5 @@ class Column
         $this->options['default'] = $default;
     }
 
-    // Implement other missing methods as needed...
 
-    public function toArray(): array
-    {
-        return [
-            'name' => $this->name,
-            'type' => $this->type,
-            'options' => $this->options,
-        ];
-    }
 }
