@@ -3,67 +3,120 @@ namespace TCG\Voyager\Database\Schema;
 
 class Column
 {
-    public $name;
-    public $type;
-    public $options;
+    protected $name;
+    protected $type;
+    protected $options = [];
 
-    public function __construct($name, $type, $options = [])
+    public function __construct(string $name, string $type, array $options = [])
     {
         $this->name = $name;
         $this->type = $type;
         $this->options = $options;
     }
 
-    // Basic getters
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
 
-    public function getOptions()
+    public function setType(string $type): void
+    {
+        $this->type = $type;
+    }
+
+    public function getOptions(): array
     {
         return $this->options;
     }
 
-    // Emulate Doctrine's method if used elsewhere in your application
-    public function getDefault()
+    public function setOptions(array $options): void
+    {
+        $this->options = $options;
+    }
+
+    public function getLength(): ?int
+    {
+        return $this->options['length'] ?? null;
+    }
+
+    public function setLength(int $length): void
+    {
+        $this->options['length'] = $length;
+    }
+
+    public function getPrecision(): ?int
+    {
+        return $this->options['precision'] ?? null;
+    }
+
+    public function setPrecision(int $precision): void
+    {
+        $this->options['precision'] = $precision;
+    }
+
+    public function getScale(): int
+    {
+        return $this->options['scale'] ?? 0;
+    }
+
+    public function setScale(int $scale): void
+    {
+        $this->options['scale'] = $scale;
+    }
+
+    public function getUnsigned(): bool
+    {
+        return $this->options['unsigned'] ?? false;
+    }
+
+    public function setUnsigned(bool $unsigned): void
+    {
+        $this->options['unsigned'] = $unsigned;
+    }
+
+    public function getFixed(): bool
+    {
+        return $this->options['fixed'] ?? false;
+    }
+
+    public function setFixed(bool $fixed): void
+    {
+        $this->options['fixed'] = $fixed;
+    }
+
+    public function getNotnull(): bool
+    {
+        return $this->options['notnull'] ?? true;
+    }
+
+    public function setNotnull(bool $notnull): void
+    {
+        $this->options['notnull'] = $notnull;
+    }
+
+    public function getDefault(): mixed
     {
         return $this->options['default'] ?? null;
     }
 
-    public function isNotNull()
+    public function setDefault(mixed $default): void
     {
-        return $this->options['notnull'] ?? false;
+        $this->options['default'] = $default;
     }
 
-    public function toArray()
+    // Implement other missing methods as needed...
+
+    public function toArray(): array
     {
         return [
             'name' => $this->name,
-            'type' => $this->type, // If type is an object, ensure it has a method to serialize itself
+            'type' => $this->type,
             'options' => $this->options,
-            'null' => $this->options['notnull'] ?? true ? 'NO' : 'YES', // Example conversion
-            // 'extra' => $this->getExtra(),
-            'composite' => false // Example default
         ];
     }
-	
-    protected static function getExtra($options)
-    {
-        $extra = '';
-
-        // Check if the column is set to auto-increment
-        $extra .= !empty($options['autoincrement']) ? 'auto_increment' : '';
-
-        // Add more conditions for additional extras if needed
-
-        return $extra;
-    }
-
-    // Add more methods as needed based on Doctrine's Column API
 }
