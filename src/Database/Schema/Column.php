@@ -1,50 +1,67 @@
 <?php
-
 namespace TCG\Voyager\Database\Schema;
 
-use Doctrine\DBAL\Schema\Column as DoctrineColumn;
-use Doctrine\DBAL\Types\Type as DoctrineType;
-use TCG\Voyager\Database\Types\Type;
-
-abstract class Column
+class Column
 {
+    protected $name;
+    protected $type;
+    protected $options;
+
+    public function __construct($name, $type, $options = [])
+    {
+        $this->name = $name;
+        $this->type = $type;
+        $this->options = $options;
+    }
+
     public static function make(array $column, string $tableName = null)
     {
         $name = Identifier::validate($column['name'], 'Column');
-        $type = $column['type'];
-        $type = ($type instanceof DoctrineType) ? $type : DoctrineType::getType(trim($type['name']));
-        $type->tableName = $tableName;
+        $type = $column['type']; // Ensure this is a simple type name or an object handling type logic
+        $options = array_diff_key($column, array_flip(['name', 'type', 'tableName']));
 
-        $options = array_diff_key($column, array_flip(['name', 'composite', 'oldName', 'null', 'extra', 'type', 'charset', 'collation']));
+        if (!empty($tableName)) {
+            $options['tableName'] = $tableName;
+        }
 
-        return new DoctrineColumn($name, $type, $options);
+        return new self($name, $type, $options);
     }
 
-    /**
-     * @return array
-     */
-    public static function toArray(DoctrineColumn $column)
+    public function toArray()
     {
-        $columnArr = $column->toArray();
-        $columnArr['type'] = Type::toArray($columnArr['type']);
-        $columnArr['oldName'] = $columnArr['name'];
-        $columnArr['null'] = $columnArr['notnull'] ? 'NO' : 'YES';
-        $columnArr['extra'] = static::getExtra($column);
-        $columnArr['composite'] = false;
-
-        return $columnArr;
+        return [
+            'name' => $this->name,
+            'type' => $this->type, // If type is an object, ensure it has a method to serialize itself
+            'options' => $this->options,
+            'null' => $this->options['notnull'] ?? true ? 'NO' : 'YES', // Example conversion
+            'extra' => $this->getExtra(),
+            'composite' => false // Example default
+        ];
     }
 
-    /**
-     * @return string
-     */
-    protected static function getExtra(DoctrineColumn $column)
+    protected function getExtra()
     {
+        // Handle any extra properties, such as auto_increment
         $extra = '';
-
-        $extra .= $column->getAutoincrement() ? 'auto_increment' : '';
-        // todo: Add Extra stuff like mysql 'onUpdate' etc...
-
+        if (!empty($this->options['autoincrement']) && $this->options['autoincrement']) {
+            $extra = 'auto_increment';
+        }
         return $extra;
+    }
+
+    // Getter methods for name, type, options, etc.
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    public function getOptions()
+    {
+        return $this->options;
     }
 }
