@@ -3,11 +3,11 @@ namespace TCG\Voyager\Database\Schema;
 
 class Table
 {
-    private $name;
-    private $columns;
-    private $indexes;
-    private $foreignKeys;
-    private $options;
+    public $name;
+    public $columns;
+    public $indexes;
+    public $foreignKeys;
+    public $options;
 
     public function __construct($name, array $columns = [], array $indexes = [], array $foreignKeys = [], array $options = [])
     {
