@@ -163,7 +163,7 @@ class VoyagerDatabaseController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, $table = '')
+    public function update(Request $request)
     {
         $this->authorize('browse_database');
 
@@ -190,13 +190,15 @@ class VoyagerDatabaseController extends Controller
         // Assuming TypeRegistry::getPlatformTypes() is needed for your operations, ensure it's adapted or implemented.
         $db->types = TypeRegistry::getPlatformTypes();  // Ensure Type class is correctly implemented.
 
-        if ($action == 'update' && !empty($table)) {
-            $db->table = SchemaManager::listTableDetails($table);
-            $db->formAction = route('voyager.database.update', ['table' => $table]);
-        } else {
-            $db->table = $this->createNewTableTemplate();
-            $db->formAction = route('voyager.database.store');
-        }
+		if ($action == 'update' && !empty($table)) {
+			$db->table = SchemaManager::listTableDetails($table);
+			// Ensure the 'database' key is used, matching the route's parameter name
+			$db->formAction = route('voyager.database.update', ['database' => $table]);
+		} else {
+			$db->table = $this->createNewTableTemplate();
+			$db->formAction = route('voyager.database.store');
+		}
+
 
         $oldTable = old('table');
         $db->oldTable = $oldTable ? $oldTable : json_encode(null);
