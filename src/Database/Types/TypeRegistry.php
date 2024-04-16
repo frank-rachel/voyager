@@ -89,93 +89,42 @@ class TypeRegistry
 
 public static function getPlatformTypeMapping($platform)
 {
-    // This assumes all types are defined in either the Common or Postgresql directories.
-    // It uses the list of type names you provided to map each type to its corresponding class.
     return [
-        // Numeric types
-        'boolean' => BooleanType::class,
-        'tinyint' => TinyIntType::class,
-        'smallint' => SmallIntType::class,
-        'mediumint' => MediumIntType::class,  // Assuming naming convention follows type names
-        'integer' => IntegerType::class,
-        'int' => IntegerType::class,
-        'bigint' => BigIntType::class,
-        'decimal' => DecimalType::class,
-        'numeric' => NumericType::class,
-        'money' => MoneyType::class,
-        'float' => FloatType::class,
-        'real' => RealType::class,
-        'double' => DoubleType::class,
-        'double precision' => DoubleType::class,
-
-        // String types
+        // Common types
         'char' => CharType::class,
-        'character' => CharacterType::class,
-        'varchar' => VarCharType::class,
-        'character varying' => CharacterVaryingType::class,
-        'string' => StringType::class,
-        'guid' => GuidType::class,  // Assuming GUID and UUID types are represented as such
-        'uuid' => UuidType::class,
-        'tinytext' => TextType::class,
-        'text' => TextType::class,
-        'mediumtext' => TextType::class,
-        'longtext' => TextType::class,
-        'tsquery' => TsQueryType::class,
-        'tsvector' => TsVectorType::class,
-        'xml' => XmlType::class,
-
-        // Date and Time types
-        'date' => DateType::class,
-        'datetime' => DateTimeType::class,
-        'year' => YearType::class,
-        'time' => TimeType::class,
-        'timetz' => TimeTzType::class,
-        'timestamp' => TimeStampType::class,
-        'timestamptz' => TimeStampTzType::class,
-        'datetimetz' => DateTimeTzType::class,
-        'dateinterval' => IntervalType::class,
-        'interval' => IntervalType::class,
-
-        // List types
-        'enum' => EnumType::class,
-        'set' => SetType::class,
-        'simple_array' => ArrayType::class,
-        'array' => ArrayType::class,
+        'double' => DoubleType::class,
         'json' => JsonType::class,
-        'jsonb' => JsonbType::class,
-        'json_array' => JsonType::class,
+        'numeric' => NumericType::class,
+        'text' => TextType::class,
+        'varchar' => VarCharType::class,
 
-        // Binary types
+        // PostgreSQL types
         'bit' => BitType::class,
         'bit varying' => BitVaryingType::class,
-        'binary' => BinaryType::class,
-        'varbinary' => VarBinaryType::class,
-        'tinyblob' => BlobType::class,
-        'blob' => BlobType::class,
-        'mediumblob' => BlobType::class,
-        'longblob' => BlobType::class,
         'bytea' => ByteaType::class,
-
-        // Network types
+        'character' => CharacterType::class,
+        'character varying' => CharacterVaryingType::class,
         'cidr' => CidrType::class,
-        'inet' => InetType::class,
-        'macaddr' => MacAddrType::class,
-        'txid_snapshot' => TxidSnapshotType::class,
-
-        // Geometry types
+        'double precision' => DoublePrecisionType::class,
         'geometry' => GeometryType::class,
-        'point' => PointType::class,
-        'linestring' => LineStringType::class,
-        'polygon' => PolygonType::class,
-        'multipoint' => MultiPointType::class,
-        'multilinestring' => MultiLineStringType::class,
-        'multipolygon' => MultiPolygonType::class,
-        'geometrycollection' => GeometryCollectionType::class,
-
-        // Object types
-        'object' => ObjectType::class,
+        'inet' => InetType::class,
+        'interval' => IntervalType::class,
+        'jsonb' => JsonbType::class,
+        'macaddr' => MacAddrType::class,
+        'money' => MoneyType::class,
+        'real' => RealType::class,
+        'smallint' => SmallIntType::class,
+        'timestamp' => TimeStampType::class,
+        'timestamptz' => TimeStampTzType::class,
+        'timetz' => TimeTzType::class,
+        'tsquery' => TsQueryType::class,
+        'tsvector' => TsVectorType::class,
+        'txid_snapshot' => TxidSnapshotType::class,
+        'uuid' => UuidType::class,
+        'xml' => XmlType::class
     ];
 }
+
 
 
 
