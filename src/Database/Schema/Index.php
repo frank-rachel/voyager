@@ -9,12 +9,12 @@ class Index
     public const UNIQUE = 'UNIQUE';
     public const INDEX = 'INDEX';
 
-    protected $name;
-    protected $columns;
-    protected $isUnique;
-    protected $isPrimary;
-    protected $flags;
-    protected $options;
+    public $name;
+    public $columns;
+    public $isUnique;
+    public $isPrimary;
+    public $flags;
+    public $options;
 
     public function __construct($name, array $columns, $type, $isPrimary = false, $isUnique = false, array $flags = [], array $options = [])
     {
