@@ -131,6 +131,7 @@ abstract class SchemaManager
             WHERE tablename = ? AND schemaname = ?", 
             [$tableName, env('DB_DATABASE')]);
         return (object) [
+            'name' => $tableName,
             'tableName' => $tableName,
             'columns' => $columnDetails,
             'indexes' => $indexes,
