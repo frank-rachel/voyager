@@ -4,61 +4,59 @@ namespace TCG\Voyager\Database\Schema;
 
 use Illuminate\Support\Facades\DB;
 
-// abstract class Index
-class Index
+class Index // Removed the 'abstract' keyword
 {
     public const PRIMARY = 'PRIMARY';
     public const UNIQUE = 'UNIQUE';
     public const INDEX = 'INDEX';
 
-    public static function make(array $index)
+    protected $name;
+    protected $columns;
+    protected $isUnique;
+    protected $isPrimary;
+    protected $flags;
+    protected $options;
+
+    public function __construct($name, array $columns, $type, $isPrimary = false, $isUnique = false, array $flags = [], array $options = [])
     {
-        $columns = $index['columns'];
-        if (!is_array($columns)) {
-            $columns = [$columns];
-        }
+        $this->name = $name;
+        $this->columns = $columns;
+        $this->isPrimary = $isPrimary;
+        $this->isUnique = $isUnique || $isPrimary;
+        $this->flags = $flags;
+        $this->options = $options;
 
-        $isPrimary = $index['isPrimary'] ?? false;
-        $isUnique = $index['isUnique'] ?? false;
-        $type = $index['type'] ?? self::INDEX;
-
-        $name = trim($index['name'] ?? '');
-        if (empty($name)) {
-            $table = $index['table'] ?? null;
-            $name = static::createName($columns, $type, $table);
-        }
-
-        // We assume a table is always available for index creation
-        $table = $index['table'];
-
-        // Create index on the table based on type
-        switch ($type) {
-            case self::PRIMARY:
-                DB::statement('ALTER TABLE ' . $table . ' ADD PRIMARY KEY (' . implode(',', $columns) . ');');
-                break;
-            case self::UNIQUE:
-                DB::statement('CREATE UNIQUE INDEX ' . $name . ' ON ' . $table . ' (' . implode(',', $columns) . ');');
-                break;
-            case self::INDEX:
-                DB::statement('CREATE INDEX ' . $name . ' ON ' . $table . ' (' . implode(',', $columns) . ');');
-                break;
-        }
-
-        return [
-            'name' => $name,
-            'columns' => $columns,
-            'type' => $type,
-            'isPrimary' => $isPrimary,
-            'isUnique' => $isUnique,
-            // Flags and options are generally not supported directly in SQL statements, handle manually if needed
-            'flags' => $index['flags'] ?? [],
-            'options' => $index['options'] ?? [],
-        ];
+        $table = $options['table'] ?? null; // Assume 'table' is provided as an option for simplicity
+        $this->createIndex($table, $type);
     }
 
-    public static function getType($index)
+    protected function createIndex($table, $type)
     {
-        return $index['type'] ?? self::INDEX;
+        switch ($type) {
+            case self::PRIMARY:
+                DB::statement('ALTER TABLE ' . $table . ' ADD PRIMARY KEY (' . implode(',', $this->columns) . ');');
+                break;
+            case self::UNIQUE:
+                DB::statement('CREATE UNIQUE INDEX ' . $this->name . ' ON ' . $table . ' (' . implode(',', $this->columns) . ');');
+                break;
+            case self::INDEX:
+                DB::statement('CREATE INDEX ' . $this->name . ' ON ' . $table . ' (' . implode(',', $this->columns) . ');');
+                break;
+        }
+    }
+
+    public function toArray()
+    {
+        return [
+            'name'        => $this->name,
+            'columns'     => $this->columns,
+            'type'        => $this->isPrimary ? self::PRIMARY : ($this->isUnique ? self::UNIQUE : self::INDEX),
+            'isPrimary'   => $this->isPrimary,
+            'isUnique'    => $this->isUnique,
+            'isComposite' => count($this->columns) > 1,
+            'flags'       => $this->flags,
+            'options'     => $this->options,
+        ];
     }
 
     public static function createName(array $columns, $type, $table = null)
