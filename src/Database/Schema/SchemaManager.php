@@ -102,61 +102,57 @@ abstract class SchemaManager
      * @return \TCG\Voyager\Database\Schema\Table
      */
 	 
-   public static function listTableDetails($tableName)
-    {
-        // Get columns with types using Laravel's Schema
+public static function listTableDetails($tableName)
+{
+    try {
         $columns = [];
-		foreach (Schema::getColumnListing($tableName) as $column) {
-			$columnType = Schema::getColumnType($tableName, $column);
-			// Create a new Column instance correctly by passing parameters individually
-			$columns[$column] = new Column($column, $columnType);
-		}
+        foreach (Schema::getColumnListing($tableName) as $column) {
+            $columnType = Schema::getColumnType($tableName, $column);
+            $columns[$column] = new Column($column, $columnType);
+        }
 
-
-        // Fetch foreign keys from information_schema
         $foreignKeys = DB::select("
             SELECT tc.constraint_name, kcu.column_name, ccu.table_name AS foreign_table_name, ccu.column_name AS foreign_column_name
             FROM information_schema.table_constraints AS tc 
             JOIN information_schema.key_column_usage AS kcu 
-              ON tc.constraint_name = kcu.constraint_name
+                ON tc.constraint_name = kcu.constraint_name
             JOIN information_schema.constraint_column_usage AS ccu
-              ON ccu.constraint_name = tc.constraint_name
+                ON ccu.constraint_name = tc.constraint_name
             WHERE tc.table_name = ? AND tc.constraint_type = 'FOREIGN KEY' AND tc.table_schema = ?", 
             [$tableName, env('DB_DATABASE')]);
 
-        // Map foreign keys into ForeignKey class instances
         $foreignKeysMapped = array_map(function ($fk) {
             return new ForeignKey([
                 'name' => $fk->constraint_name,
                 'column' => $fk->column_name,
                 'foreign_table' => $fk->foreign_table_name,
                 'foreign_column' => $fk->foreign_column_name,
-                // Add more FK details as needed
             ]);
         }, $foreignKeys);
 
-        // Fetch indexes from pg_indexes
         $indexes = DB::select("
             SELECT indexname, indexdef 
             FROM pg_indexes 
-            WHERE tablename = ? AND schemaname = ?", 
-            [$tableName, env('DB_DATABASE')]);
+            WHERE tablename = ? AND schemaname = 'public'", 
+            [$tableName]);
 
-        // Map indexes into Index class instances
         $indexesMapped = array_map(function ($index) {
             return new Index([
                 'name' => $index->indexname,
                 'definition' => $index->indexdef,
-                // Additional index properties can be handled here
             ]);
         }, $indexes);
 
-        // Construct and return a new Table object
-		$table = new Table($tableName, $columns, $indexesMapped, $foreignKeysMapped, []);
-		// print_r($table);  // Log the table object for debugging
-		return $table;
+        $table = new Table($tableName, $columns, $indexesMapped, $foreignKeysMapped, []);
+        return $table;
 
+    } catch (\Exception $e) {
+        // Log error for debugging
+        Log::error('Failed to list table details: ' . $e->getMessage());
+        return null;  // Or handle the error as appropriate
     }
+}
+
 
 // */
 /*
