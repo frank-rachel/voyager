@@ -9,7 +9,7 @@ class MediumIntType extends Type
 {
     public const NAME = 'mediumint';
 
-    public function getSQLDeclaration(array $field, AbstractPlatform $platform): string
+    public function getSQLDeclaration(array $field)
     {
         $commonIntegerTypeDeclaration = call_protected_method($platform, '_getCommonIntegerTypeDeclarationSQL', $field);
 

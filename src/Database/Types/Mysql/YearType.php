@@ -9,7 +9,7 @@ class YearType extends Type
 {
     public const NAME = 'year';
 
-    public function getSQLDeclaration(array $field, AbstractPlatform $platform): string
+    public function getSQLDeclaration(array $field)
     {
         return 'year';
     }

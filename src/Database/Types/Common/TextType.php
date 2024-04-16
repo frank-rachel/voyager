@@ -9,7 +9,7 @@ class TextType extends Type
 {
     public const NAME = 'text';
 
-    public function getSQLDeclaration(array $field, AbstractPlatform $platform): string
+    public function getSQLDeclaration(array $field)
     {
         return 'text';
     }

@@ -9,7 +9,7 @@ class TsQueryType extends Type
 {
     public const NAME = 'tsquery';
 
-    public function getSQLDeclaration(array $field, AbstractPlatform $platform): string
+    public function getSQLDeclaration(array $field)
     {
         return 'tsquery';
     }

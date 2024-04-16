@@ -9,7 +9,7 @@ class RealType extends Type
 {
     public const NAME = 'real';
 
-    public function getSQLDeclaration(array $field, AbstractPlatform $platform): string
+    public function getSQLDeclaration(array $field)
     {
         return 'real';
     }

@@ -9,7 +9,7 @@ class XmlType extends Type
 {
     public const NAME = 'xml';
 
-    public function getSQLDeclaration(array $field, AbstractPlatform $platform): string
+    public function getSQLDeclaration(array $field)
     {
         return 'xml';
     }

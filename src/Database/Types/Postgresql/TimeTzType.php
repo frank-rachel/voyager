@@ -9,7 +9,7 @@ class TimeTzType extends Type
 {
     public const NAME = 'timetz';
 
-    public function getSQLDeclaration(array $field, AbstractPlatform $platform): string
+    public function getSQLDeclaration(array $field)
     {
         return 'time(0) with time zone';
     }

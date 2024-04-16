@@ -9,7 +9,7 @@ class LongBlobType extends Type
 {
     public const NAME = 'longblob';
 
-    public function getSQLDeclaration(array $field, AbstractPlatform $platform): string
+    public function getSQLDeclaration(array $field)
     {
         return 'longblob';
     }

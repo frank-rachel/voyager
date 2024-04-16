@@ -9,7 +9,7 @@ class IntervalType extends Type
 {
     public const NAME = 'interval';
 
-    public function getSQLDeclaration(array $field, AbstractPlatform $platform): string
+    public function getSQLDeclaration(array $field)
     {
         return 'interval';
     }
