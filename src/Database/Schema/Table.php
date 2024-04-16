@@ -18,12 +18,22 @@ class Table
         $this->options = $options;
     }
 
-    private function initializeColumns(array $columnData)
-    {
-        foreach ($columnData as $colName => $col) {
-            $this->addColumn(new Column($colName, $col['type'], $col['options'] ?? []));
-        }
-    }
+	private function initializeColumns(array $columnData)
+	{
+		foreach ($columnData as $colName => $col) {
+			if ($col instanceof Column) {
+				// If $col is already a Column object, simply add it
+				$this->addColumn($col);
+			} else if (is_array($col)) {
+				// If $col is an array, create a new Column object from it
+				$this->addColumn(new Column($colName, $col['type'], $col['options'] ?? []));
+			} else {
+				// Optionally handle unexpected data types
+				throw new \InvalidArgumentException("Invalid column data provided for '$colName'");
+			}
+		}
+	}
+
 
     private function initializeIndexes(array $indexData)
     {
