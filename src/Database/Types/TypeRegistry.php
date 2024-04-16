@@ -77,6 +77,19 @@ class TypeRegistry
         return $types;
     }
 
+    public static function getPlatformTypeMapping($platform)
+    {
+        // This should return an associative array mapping type names to their class names
+        // Example mapping:
+        return [
+            'integer' => IntegerType::class,
+            'varchar' => VarCharType::class,
+            'numeric' => NumericType::class,
+            // Add more mappings as needed
+        ];
+    }
+
+
     protected static function registerTypeCategories()
     {
         $types = static::getTypeCategories();
