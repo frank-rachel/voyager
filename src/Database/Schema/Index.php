@@ -4,7 +4,8 @@ namespace TCG\Voyager\Database\Schema;
 
 use Illuminate\Support\Facades\DB;
 
-abstract class Index
+// abstract class Index
+class Index
 {
     public const PRIMARY = 'PRIMARY';
     public const UNIQUE = 'UNIQUE';
