@@ -136,12 +136,16 @@ public static function listTableDetails($tableName)
             WHERE tablename = ? AND schemaname = 'public'", 
             [$tableName]);
 
-        $indexesMapped = array_map(function ($index) {
-            return new Index([
-                'name' => $index->indexname,
-                'definition' => $index->indexdef,
-            ]);
-        }, $indexes);
+		$indexesMapped = array_map(function ($index) {
+			// Parse the index definition to extract columns and type
+			preg_match('/\(([^)]+)\)/', $index->indexdef, $matches);
+			$columns = explode(',', str_replace(' ', '', $matches[1]));
+			$isUnique = stripos($index->indexdef, 'UNIQUE') !== false;
+			$type = $isUnique ? Index::UNIQUE : Index::INDEX;
+
+			return new Index($index->indexname, $columns, $type, $type === Index::PRIMARY, $isUnique);
+		}, $indexes);
+
 
         $table = new Table($tableName, $columns, $indexesMapped, $foreignKeysMapped, []);
         return $table;
