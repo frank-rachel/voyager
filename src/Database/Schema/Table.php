@@ -72,11 +72,6 @@ class Table
         return $this->columns;
     }
 
-    public function toJson()
-    {
-        return json_encode($this->toArray());
-    }
-
     public function getName()
     {
         return $this->name;
