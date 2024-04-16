@@ -3,51 +3,60 @@ namespace TCG\Voyager\Database\Schema;
 
 class Table
 {
-    public $name;
-    public $columns = [];
-    public $indexes = [];
-    public $foreignKeys = [];
-    public $options = [];
+    private $name;
+    private $columns;
+    private $indexes;
+    private $foreignKeys;
+    private $options;
 
-    public function __construct($name, $columns = [], $indexes = [], $foreignKeys = [], $options = [])
+    public function __construct($name, array $columns = [], array $indexes = [], array $foreignKeys = [], array $options = [])
     {
         $this->name = $name;
-        $this->columns = array_map(function($column) {
-            return new Column($column['name'], $column['type'], $column['options']);
-        }, $columns);
+        $this->columns = $columns; // columns should be an array of Column objects
         $this->indexes = $indexes;
         $this->foreignKeys = $foreignKeys;
         $this->options = $options;
     }
 
-	public function toArray()
-	{
-		return [
-			'name' => $this->name,
-			'columns' => array_map(function($column) {
-				return $column->toArray();  // Ensure Column has a toArray() method
-			}, $this->columns),
-			'indexes' => array_map(function($index) { return $index->toArray(); }, $this->indexes),
-			'foreignKeys' => array_map(function($fk) { return $fk->toArray(); }, $this->foreignKeys),
-			'options' => $this->options
-		];
-	}
+    public function addColumn(Column $column)
+    {
+        $this->columns[$column->getName()] = $column;
+    }
 
+    public function removeColumn($columnName)
+    {
+        unset($this->columns[$columnName]);
+    }
+
+    public function getColumn($columnName)
+    {
+        return $this->columns[$columnName] ?? null;
+    }
+
+    public function getColumns()
+    {
+        return $this->columns;
+    }
+
+    public function toArray()
+    {
+        return [
+            'name' => $this->name,
+            'columns' => array_map(function ($column) { return $column->toArray(); }, $this->columns),
+            'indexes' => $this->indexes, // Assume indexes are handled similarly
+            'foreignKeys' => $this->foreignKeys, // Assume foreign keys are handled similarly
+            'options' => $this->options,
+        ];
+    }
 
     public function toJson()
     {
         return json_encode($this->toArray());
     }
 
-
     public function getName()
     {
         return $this->name;
-    }
-
-    public function getColumns()
-    {
-        return $this->columns;
     }
 
     public function getIndexes()
