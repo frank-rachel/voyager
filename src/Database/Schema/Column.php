@@ -53,15 +53,17 @@ class Column
         ];
     }
 	
-    protected static function getExtra(Column $column)
+    protected static function getExtra($options)
     {
         $extra = '';
 
-        $extra .= $column->getAutoincrement() ? 'auto_increment' : '';
-        // todo: Add Extra stuff like mysql 'onUpdate' etc...
+        // Check if the column is set to auto-increment
+        $extra .= !empty($options['autoincrement']) ? 'auto_increment' : '';
+
+        // Add more conditions for additional extras if needed
 
         return $extra;
-    }	
+    }
 
     // Add more methods as needed based on Doctrine's Column API
 }
