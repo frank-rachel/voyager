@@ -152,13 +152,11 @@ abstract class SchemaManager
         }, $indexes);
 
         // Construct and return a new Table object
-        return new Table(
-            $tableName,
-            $columns,
-            $indexesMapped,
-            $foreignKeysMapped,
-            []  // Options can be passed here if needed
-        );
+		$table = new Table($tableName, $columns, $indexesMapped, $foreignKeysMapped, []);
+		(print_r($table, true));  // Log the table object for debugging
+		exit;
+		return $table;
+
     }
 
 // */
