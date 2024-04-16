@@ -12,6 +12,7 @@ use TCG\Voyager\Database\Schema\Column;
 use TCG\Voyager\Database\Schema\Identifier;
 use TCG\Voyager\Database\Schema\SchemaManager;
 use TCG\Voyager\Database\Schema\Table;
+use TCG\Voyager\Database\Schema\Index;
 use TCG\Voyager\Database\Types\Type;
 use TCG\Voyager\Database\Types\TypeRegistry;
 use TCG\Voyager\Events\TableAdded;

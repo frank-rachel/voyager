@@ -2,7 +2,7 @@
 
 namespace TCG\Voyager\Database\Schema;
 
-use Doctrine\DBAL\Schema\Index as DoctrineIndex;
+use Illuminate\Support\Facades\DB;
 
 abstract class Index
 {
@@ -17,86 +17,54 @@ abstract class Index
             $columns = [$columns];
         }
 
-        if (isset($index['type'])) {
-            $type = $index['type'];
+        $isPrimary = $index['isPrimary'] ?? false;
+        $isUnique = $index['isUnique'] ?? false;
+        $type = $index['type'] ?? self::INDEX;
 
-            $isPrimary = ($type == static::PRIMARY);
-            $isUnique = $isPrimary || ($type == static::UNIQUE);
-        } else {
-            $isPrimary = $index['isPrimary'];
-            $isUnique = $index['isUnique'];
-
-            // Set the type
-            if ($isPrimary) {
-                $type = static::PRIMARY;
-            } elseif ($isUnique) {
-                $type = static::UNIQUE;
-            } else {
-                $type = static::INDEX;
-            }
-        }
-
-        // Set the name
         $name = trim($index['name'] ?? '');
         if (empty($name)) {
             $table = $index['table'] ?? null;
             $name = static::createName($columns, $type, $table);
-        } else {
-            $name = Identifier::validate($name, 'Index');
         }
 
-        $flags = $index['flags'] ?? [];
-        $options = $index['options'] ?? [];
+        // We assume a table is always available for index creation
+        $table = $index['table'];
 
-        return new DoctrineIndex($name, $columns, $isUnique, $isPrimary, $flags, $options);
-    }
-
-    /**
-     * @return array
-     */
-    public static function toArray(DoctrineIndex $index)
-    {
-        $name = $index->getName();
-        $columns = $index->getColumns();
+        // Create index on the table based on type
+        switch ($type) {
+            case self::PRIMARY:
+                DB::statement('ALTER TABLE ' . $table . ' ADD PRIMARY KEY (' . implode(',', $columns) . ');');
+                break;
+            case self::UNIQUE:
+                DB::statement('CREATE UNIQUE INDEX ' . $name . ' ON ' . $table . ' (' . implode(',', $columns) . ');');
+                break;
+            case self::INDEX:
+                DB::statement('CREATE INDEX ' . $name . ' ON ' . $table . ' (' . implode(',', $columns) . ');');
+                break;
+        }
 
         return [
-            'name'        => $name,
-            'oldName'     => $name,
-            'columns'     => $columns,
-            'type'        => static::getType($index),
-            'isPrimary'   => $index->isPrimary(),
-            'isUnique'    => $index->isUnique(),
-            'isComposite' => count($columns) > 1,
-            'flags'       => $index->getFlags(),
-            'options'     => $index->getOptions(),
+            'name' => $name,
+            'columns' => $columns,
+            'type' => $type,
+            'isPrimary' => $isPrimary,
+            'isUnique' => $isUnique,
+            // Flags and options are generally not supported directly in SQL statements, handle manually if needed
+            'flags' => $index['flags'] ?? [],
+            'options' => $index['options'] ?? [],
         ];
     }
 
-    public static function getType(DoctrineIndex $index)
+    public static function getType($index)
     {
-        if ($index->isPrimary()) {
-            return static::PRIMARY;
-        } elseif ($index->isUnique()) {
-            return static::UNIQUE;
-        } else {
-            return static::INDEX;
-        }
+        return $index['type'] ?? self::INDEX;
     }
 
-    /**
-     * Create a default index name.
-     *
-     * @param array  $columns
-     * @param string $type
-     * @param string $table
-     *
-     * @return string
-     */
     public static function createName(array $columns, $type, $table = null)
     {
-        $table = isset($table) ? trim($table).'_' : '';
+        $table = isset($table) ? trim($table) . '_' : '';
         $type = trim($type);
-        $name = strtolower($table.implode('_', $columns).'_'.$type);
+        $name = strtolower($table . implode('_', $columns) . '_' . $type);
 
         return str_replace(['-', '.'], '_', $name);
     }
