@@ -19,7 +19,7 @@ class TypeRegistry
             self::registerCustomPlatformTypes();
         }
 
-        $platform = SchemaManager::getDatabasePlatform();
+        $platform = SchemaManager::getDatabasePlatform(); // Adjust according to actual usage
 
         $types = self::getPlatformTypeMapping($platform);
         self::$platformTypes = collect($types)->mapWithKeys(function ($typeClass, $typeName) {
@@ -31,29 +31,22 @@ class TypeRegistry
 
     private static function registerCustomPlatformTypes()
     {
-        $classLoader = require 'vendor/autoload.php';
-        $allClasses = array_keys($classLoader->getClassMap());
-
-        foreach ($allClasses as $class) {
-            if (strpos($class, 'TCG\Voyager\Database\Types\Postgresql\\') === 0) {
-                if (class_exists($class)) {
-                    $typeInstance = new $class();
-                    self::$platformTypes[$typeInstance->getName()] = self::toArray($typeInstance);
-                }
-            }
-        }
-
+        self::registerTypesFromDirectory(__DIR__ . '/Postgresql');
+        self::registerTypesFromDirectory(__DIR__ . '/Common');
         self::$customTypesRegistered = true;
     }
 
-    private static function getPlatformTypeMapping($platformName)
+    private static function registerTypesFromDirectory($directory)
     {
-        // You would map platform-specific types here
-        return [
-            'integer' => IntegerType::class,
-            'text' => TextType::class,
-            // other types as necessary
-        ];
+        foreach (glob($directory . "/*.php") as $file) {
+            $className = basename($file, '.php');
+            $classNamespace = 'TCG\\Voyager\\Database\\Types\\' . basename($directory) . '\\' . $className;
+            if (class_exists($classNamespace)) {
+                // Optionally initialize and register the type
+                $typeInstance = new $classNamespace();
+                self::$platformTypes[$typeInstance->getName()] = self::toArray($typeInstance);
+            }
+        }
     }
 
     private static function toArray(Type $type)
