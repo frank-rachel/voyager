@@ -3,9 +3,9 @@ namespace TCG\Voyager\Database\Schema;
 
 class Column
 {
-    protected $name;
-    protected $type;
-    protected $options;
+    public $name;
+    public $type;
+    public $options;
 
     public function __construct($name, $type, $options = [])
     {
@@ -14,42 +14,7 @@ class Column
         $this->options = $options;
     }
 
-    public static function make(array $column, string $tableName = null)
-    {
-        $name = Identifier::validate($column['name'], 'Column');
-        $type = $column['type']; // Ensure this is a simple type name or an object handling type logic
-        $options = array_diff_key($column, array_flip(['name', 'type', 'tableName']));
-
-        if (!empty($tableName)) {
-            $options['tableName'] = $tableName;
-        }
-
-        return new self($name, $type, $options);
-    }
-
-    public function toArray()
-    {
-        return [
-            'name' => $this->name,
-            'type' => $this->type, // If type is an object, ensure it has a method to serialize itself
-            'options' => $this->options,
-            'null' => $this->options['notnull'] ?? true ? 'NO' : 'YES', // Example conversion
-            'extra' => $this->getExtra(),
-            'composite' => false // Example default
-        ];
-    }
-
-    protected function getExtra()
-    {
-        // Handle any extra properties, such as auto_increment
-        $extra = '';
-        if (!empty($this->options['autoincrement']) && $this->options['autoincrement']) {
-            $extra = 'auto_increment';
-        }
-        return $extra;
-    }
-
-    // Getter methods for name, type, options, etc.
+    // Basic getters
     public function getName()
     {
         return $this->name;
@@ -64,4 +29,17 @@ class Column
     {
         return $this->options;
     }
+
+    // Emulate Doctrine's method if used elsewhere in your application
+    public function getDefault()
+    {
+        return $this->options['default'] ?? null;
+    }
+
+    public function isNotNull()
+    {
+        return $this->options['notnull'] ?? false;
+    }
+
+    // Add more methods as needed based on Doctrine's Column API
 }
