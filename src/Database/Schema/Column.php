@@ -52,6 +52,16 @@ class Column
             'composite' => false // Example default
         ];
     }
+	
+    protected static function getExtra(Column $column)
+    {
+        $extra = '';
+
+        $extra .= $column->getAutoincrement() ? 'auto_increment' : '';
+        // todo: Add Extra stuff like mysql 'onUpdate' etc...
+
+        return $extra;
+    }	
 
     // Add more methods as needed based on Doctrine's Column API
 }
