@@ -3,9 +3,9 @@ namespace TCG\Voyager\Database\Schema;
 
 class Column
 {
-    protected $name;
-    protected $type;
-    protected $options = [];
+    public $name;
+    public $type;
+    public $options = [];
 
     public function __construct(string $name, string $type, array $options = [])
     {
