@@ -1,10 +1,9 @@
 <?php
-
 namespace TCG\Voyager\Database\Schema;
 
 use Illuminate\Support\Facades\DB;
 
-class Index // Removed the 'abstract' keyword
+class Index
 {
     public const PRIMARY = 'PRIMARY';
     public const UNIQUE = 'UNIQUE';
@@ -25,24 +24,24 @@ class Index // Removed the 'abstract' keyword
         $this->isUnique = $isUnique || $isPrimary;
         $this->flags = $flags;
         $this->options = $options;
-
-        $table = $options['table'] ?? null; // Assume 'table' is provided as an option for simplicity
-        $this->createIndex($table, $type);
     }
 
-    protected function createIndex($table, $type)
+    public static function createIndex($name, $table, array $columns, $type)
     {
+        $columnsList = implode(',', $columns);
         switch ($type) {
             case self::PRIMARY:
-                DB::statement('ALTER TABLE ' . $table . ' ADD PRIMARY KEY (' . implode(',', $this->columns) . ');');
+                DB::statement("ALTER TABLE {$table} ADD PRIMARY KEY ({$columnsList});");
                 break;
             case self::UNIQUE:
-                DB::statement('CREATE UNIQUE INDEX ' . $this->name . ' ON ' . $table . ' (' . implode(',', $this->columns) . ');');
+                DB::statement("CREATE UNIQUE INDEX {$name} ON {$table} ({$columnsList});");
                 break;
             case self::INDEX:
-                DB::statement('CREATE INDEX ' . $this->name . ' ON ' . $table . ' (' . implode(',', $this->columns) . ');');
+                DB::statement("CREATE INDEX {$name} ON {$table} ({$columnsList});");
                 break;
         }
+
+        return new self($name, $columns, $type, $type === self::PRIMARY, $type === self::UNIQUE);
     }
 
     public function toArray()
@@ -56,24 +55,6 @@ class Index // Removed the 'abstract' keyword
             'isComposite' => count($this->columns) > 1,
             'flags'       => $this->flags,
             'options'     => $this->options,
-        ];
-    }
-
-    public static function createName(array $columns, $type, $table = null)
-    {
-        $table = isset($table) ? trim($table) . '_' : '';
-        $type = trim($type);
-        $name = strtolower($table . implode('_', $columns) . '_' . $type);
-
-        return str_replace(['-', '.'], '_', $name);
-    }
-
-    public static function availableTypes()
-    {
-        return [
-            static::PRIMARY,
-            static::UNIQUE,
-            static::INDEX,
         ];
     }
 }
