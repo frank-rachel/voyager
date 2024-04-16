@@ -1,6 +1,8 @@
 <?php
 namespace TCG\Voyager\Database\Types;
 use TCG\Voyager\Database\Schema\SchemaManager;
+use Composer\Autoload\ClassLoader;
+use ReflectionClass;
 
 class TypeRegistry
 {
@@ -29,7 +31,18 @@ class TypeRegistry
 
     private static function registerCustomPlatformTypes()
     {
-        // Register your types here if any custom types need to be handled
+        $classLoader = require 'vendor/autoload.php';
+        $allClasses = array_keys($classLoader->getClassMap());
+
+        foreach ($allClasses as $class) {
+            if (strpos($class, 'TCG\Voyager\Database\Types\Postgresql\\') === 0) {
+                if (class_exists($class)) {
+                    $typeInstance = new $class();
+                    self::$platformTypes[$typeInstance->getName()] = self::toArray($typeInstance);
+                }
+            }
+        }
+
         self::$customTypesRegistered = true;
     }
 
