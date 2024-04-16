@@ -130,7 +130,7 @@ abstract class SchemaManager
             FROM pg_indexes 
             WHERE tablename = ? AND schemaname = ?", 
             [$tableName, env('DB_DATABASE')]);
-        return [
+        return (object) [
             'tableName' => $tableName,
             'columns' => $columnDetails,
             'indexes' => $indexes,

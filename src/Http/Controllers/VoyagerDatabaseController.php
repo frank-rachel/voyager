@@ -183,31 +183,29 @@ class VoyagerDatabaseController extends Controller
                ->with($this->alertSuccess(__('voyager::database.success_create_table', ['table' => $table['name']])));
     }
 
-    protected function prepareDbManager($action, $table = '')
-    {
-        $db = new \stdClass();
+	protected function prepareDbManager($action, $table = '')
+	{
+		$db = new \stdClass();
 
-        // Assuming TypeRegistry::getPlatformTypes() is needed for your operations, ensure it's adapted or implemented.
-        $db->types = TypeRegistry::getPlatformTypes();  // Ensure Type class is correctly implemented.
+		$db->types = TypeRegistry::getPlatformTypes();
 
 		if ($action == 'update' && !empty($table)) {
 			$db->table = SchemaManager::listTableDetails($table);
-			// Ensure the 'database' key is used, matching the route's parameter name
 			$db->formAction = route('voyager.database.update', ['database' => $table]);
 		} else {
-			$db->table = $this->createNewTableTemplate();
+			$db->table = $this->createNewTableTemplate();  // Ensure this also returns an object
 			$db->formAction = route('voyager.database.store');
 		}
 
+		$oldTable = old('table');
+		$db->oldTable = $oldTable ? $oldTable : json_encode(null);
+		$db->action = $action;
+		$db->identifierRegex = Identifier::REGEX;
+		$db->platform = SchemaManager::getDatabasePlatform();
 
-        $oldTable = old('table');
-        $db->oldTable = $oldTable ? $oldTable : json_encode(null);
-        $db->action = $action;
-        $db->identifierRegex = Identifier::REGEX;
-        $db->platform = SchemaManager::getDatabasePlatform();  // Adjusted to directly use the string.
+		return $db;
+	}
 
-        return $db;
-    }
 
     /**
      * Create a template for a new table with default columns.
