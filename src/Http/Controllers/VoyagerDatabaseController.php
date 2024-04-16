@@ -183,35 +183,27 @@ class VoyagerDatabaseController extends Controller
                ->with($this->alertSuccess(__('voyager::database.success_create_table', ['table' => $table['name']])));
     }
 
-	protected function prepareDbManager($action, $table = '')
+	protected function prepareDbManager($action, $tableName = '')
 	{
 		$db = new \stdClass();
-		$db->types = TypeRegistry::getPlatformTypes();
 
-		if ($action == 'update' && !empty($table)) {
-			$details = SchemaManager::listTableDetails($table);
-			$db->table = (object)[
-				'details' => $details, // Store the object
-				'json' => json_encode($details) // Store JSON string
-			];
+		$db->types = TypeRegistry::getPlatformTypes();  // Ensuring type compatibility
+
+		if ($action == 'update' && !empty($tableName)) {
+			$db->table = SchemaManager::listTableDetails($tableName);  // Returns a Table object
 		} else {
-			$details = $this->createNewTableTemplate();
-			$db->table = (object)[
-				'details' => $details,
-				'json' => json_encode($details)
-			];
+			$db->table = $this->createNewTableTemplate();  // Also should return a Table object directly
 		}
 
-		$db->formAction = $action == 'update' ? route('voyager.database.update', ['database' => $table]) : route('voyager.database.store');
-		$oldTable = old('table');
-		$db->oldTable = $oldTable ? $oldTable : json_encode(null);
+		$db->formAction = $action === 'update' ? route('voyager.database.update', ['database' => $tableName]) : route('voyager.database.store');
+		$db->oldTable = old('table') ? old('table') : json_encode(null);
 		$db->action = $action;
 		$db->identifierRegex = Identifier::REGEX;
 		$db->platform = SchemaManager::getDatabasePlatform();
-		print_r($db);
-		exit;
+
 		return $db;
 	}
+
 
 
 
