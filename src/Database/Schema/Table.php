@@ -4,11 +4,11 @@ namespace TCG\Voyager\Database\Schema;
 
 class Table
 {
-    protected $name;
-    protected $columns = [];
-    protected $indexes = [];
-    protected $foreignKeys = [];
-    protected $options = [];
+    public $name;
+    public $columns = [];
+    public $indexes = [];
+    public $foreignKeys = [];
+    public $options = [];
 
     public function __construct($name, $columns = [], $indexes = [], $foreignKeys = [], $options = [])
     {
@@ -18,6 +18,31 @@ class Table
         $this->foreignKeys = $foreignKeys;
         $this->options = $options;
     }
+
+    public function getName()
+    {
+        return $this->name;
+    }
+	public function getColumns()
+	{
+		return $this->columns;
+	}
+
+	public function getIndexes()
+	{
+		return $this->indexes;
+	}
+
+	public function getForeignKeys()
+	{
+		return $this->foreignKeys;
+	}
+
+	public function getOptions()
+	{
+		return $this->options;
+	}
+
 
     public static function make($table)
     {
@@ -52,11 +77,6 @@ class Table
         return json_encode($this->toArray());
     }
 
-    // Example getters and setters
-    public function getName()
-    {
-        return $this->name;
-    }
 
     // Add other necessary methods and properties...
 
