@@ -186,17 +186,23 @@ class VoyagerDatabaseController extends Controller
 	protected function prepareDbManager($action, $table = '')
 	{
 		$db = new \stdClass();
-
 		$db->types = TypeRegistry::getPlatformTypes();
 
 		if ($action == 'update' && !empty($table)) {
-			$db->table = SchemaManager::listTableDetails($table);
-			$db->formAction = route('voyager.database.update', ['database' => $table]);
+			$details = SchemaManager::listTableDetails($table);
+			$db->table = (object)[
+				'details' => $details, // Store the object
+				'json' => json_encode($details) // Store JSON string
+			];
 		} else {
-			$db->table = $this->createNewTableTemplate();  // Ensure this also returns an object
-			$db->formAction = route('voyager.database.store');
+			$details = $this->createNewTableTemplate();
+			$db->table = (object)[
+				'details' => $details,
+				'json' => json_encode($details)
+			];
 		}
 
+		$db->formAction = $action == 'update' ? route('voyager.database.update', ['database' => $table]) : route('voyager.database.store');
 		$oldTable = old('table');
 		$db->oldTable = $oldTable ? $oldTable : json_encode(null);
 		$db->action = $action;
@@ -205,6 +211,7 @@ class VoyagerDatabaseController extends Controller
 
 		return $db;
 	}
+
 
 
     /**
