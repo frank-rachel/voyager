@@ -22,7 +22,7 @@ class TypeRegistry
     private static $customTypesRegistered = false;
     private static $types = [];
     private static $aliases = [  // Declare a new property for aliases
-        // 'int' => 'integer',
+        'int' => 'integer',
         // 'bigint' => 'integer',
         // 'smallint' => 'integer',
         // 'tinyint' => 'integer',
@@ -170,6 +170,7 @@ public static function getPlatformTypeMapping($platform)
         'varchar' => VarCharType::class,
         'bigint' => BigIntType::class,
         'integer' => IntegerType::class,
+        'int' => IntegerType::class,
 
         // PostgreSQL types
         'bit' => BitType::class,

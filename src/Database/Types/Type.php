@@ -87,7 +87,46 @@ abstract class Type
         return $types;
     }
 	
+public static function getPlatformTypeMapping($platform)
+{
+    return [
+        // Common types
+        'char' => CharType::class,
+        'double' => DoubleType::class,
+        'json' => JsonType::class,
+        'numeric' => NumericType::class,
+        'text' => TextType::class,
+        'varchar' => VarCharType::class,
+        'bigint' => BigIntType::class,
+        'integer' => IntegerType::class,
+        'int' => IntegerType::class,
 
+        // PostgreSQL types
+        'bit' => BitType::class,
+        'bit varying' => BitVaryingType::class,
+        'bytea' => ByteaType::class,
+        'character' => CharacterType::class,
+        'character varying' => CharacterVaryingType::class,
+        'cidr' => CidrType::class,
+        'double precision' => DoublePrecisionType::class,
+        'geometry' => GeometryType::class,
+        'inet' => InetType::class,
+        'interval' => IntervalType::class,
+        'jsonb' => JsonbType::class,
+        'macaddr' => MacAddrType::class,
+        'money' => MoneyType::class,
+        'real' => RealType::class,
+        'smallint' => SmallIntType::class,
+        'timestamp' => TimeStampType::class,
+        'timestamptz' => TimeStampTzType::class,
+        'timetz' => TimeTzType::class,
+        'tsquery' => TsQueryType::class,
+        'tsvector' => TsVectorType::class,
+        'txid_snapshot' => TxidSnapshotType::class,
+        'uuid' => UuidType::class,
+        'xml' => XmlType::class
+    ];
+}
 	
 }
 

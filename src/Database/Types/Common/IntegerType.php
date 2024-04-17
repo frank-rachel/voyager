@@ -5,8 +5,8 @@ use TCG\Voyager\Database\Types\Type;
 
 class IntegerType extends Type
 {
-    // public const NAME = 'integer';
-    public const NAME = 'int';
+    public const NAME = 'integer';
+    // public const NAME = 'int';
 
     // Optionally set a default category
     protected $category = 'Numeric';
