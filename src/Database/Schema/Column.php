@@ -16,11 +16,15 @@ class Column
     {
         $this->name = $name;
         $this->type = $type;
+        $this->options = $options;
         $this->nullable = $options['nullable'] ?? false;
         $this->default = $options['default'] ?? null;
         $this->length = $options['length'] ?? null;
         $this->precision = $options['precision'] ?? null;
         $this->scale = $options['scale'] ?? null;
+        $this->options['unsigned'] = $options['unsigned'] ?? false;
+        $this->options['fixed'] = $options['fixed'] ?? false;
+        $this->options['notnull'] = $options['notnull'] ?? true;
     }
 
     public function toArray()
@@ -33,10 +37,13 @@ class Column
             'length' => $this->length,
             'precision' => $this->precision,
             'scale' => $this->scale,
+            'unsigned' => $this->getUnsigned(),
+            'fixed' => $this->getFixed(),
+            'notnull' => $this->getNotnull()
         ];
     }
 
-
+    // Additional getter and setter methods
     public function getName(): string
     {
         return $this->name;
@@ -60,41 +67,49 @@ class Column
     public function setOptions(array $options): void
     {
         $this->options = $options;
+        $this->nullable = $options['nullable'] ?? $this->nullable;
+        $this->default = $options['default'] ?? $this->default;
+        $this->length = $options['length'] ?? $this->length;
+        $this->precision = $options['precision'] ?? $this->precision;
+        $this->scale = $options['scale'] ?? $this->scale;
+        $this->options['unsigned'] = $options['unsigned'] ?? $this->options['unsigned'];
+        $this->options['fixed'] = $options['fixed'] ?? $this->options['fixed'];
+        $this->options['notnull'] = $options['notnull'] ?? $this->options['notnull'];
     }
 
     public function getLength(): ?int
     {
-        return $this->options['length'] ?? null;
+        return $this->length;
     }
 
-    public function setLength(int $length): void
+    public function setLength(?int $length): void
     {
-        $this->options['length'] = $length;
+        $this->length = $length;
     }
 
     public function getPrecision(): ?int
     {
-        return $this->options['precision'] ?? null;
+        return $this->precision;
     }
 
-    public function setPrecision(int $precision): void
+    public function setPrecision(?int $precision): void
     {
-        $this->options['precision'] = $precision;
+        $this->precision = $precision;
     }
 
-    public function getScale(): int
+    public function getScale(): ?int
     {
-        return $this->options['scale'] ?? 0;
+        return $this->scale;
     }
 
-    public function setScale(int $scale): void
+    public function setScale(?int $scale): void
     {
-        $this->options['scale'] = $scale;
+        $this->scale = $scale;
     }
 
     public function getUnsigned(): bool
     {
-        return $this->options['unsigned'] ?? false;
+        return $this->options['unsigned'];
     }
 
     public function setUnsigned(bool $unsigned): void
@@ -104,7 +119,7 @@ class Column
 
     public function getFixed(): bool
     {
-        return $this->options['fixed'] ?? false;
+        return $this->options['fixed'];
     }
 
     public function setFixed(bool $fixed): void
@@ -114,7 +129,7 @@ class Column
 
     public function getNotnull(): bool
     {
-        return $this->options['notnull'] ?? true;
+        return $this->options['notnull'];
     }
 
     public function setNotnull(bool $notnull): void
@@ -122,15 +137,13 @@ class Column
         $this->options['notnull'] = $notnull;
     }
 
-    public function getDefault(): mixed
+    public function getDefault()
     {
-        return $this->options['default'] ?? null;
+        return $this->default;
     }
 
-    public function setDefault(mixed $default): void
+    public function setDefault($default): void
     {
-        $this->options['default'] = $default;
+        $this->default = $default;
     }
-
-
 }
