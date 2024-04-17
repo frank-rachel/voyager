@@ -41,6 +41,11 @@ class Column
         return new self($name, $type, $options, $tableName);
     }
 
+    public function getName()
+    {
+        return $this->name;
+    }
+
     public function toArray()
     {
         $typeArray = method_exists($this->type, 'toArray') ? $this->type->toArray() : (string)$this->type;
