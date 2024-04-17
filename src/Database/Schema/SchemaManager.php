@@ -109,12 +109,6 @@ abstract class SchemaManager
 	public static function listTableDetails($tableName)
 	{
 		try {
-			// $columns = [];
-			// foreach (Schema::getColumnListing($tableName) as $column) {
-				// $columnType = Schema::getColumnType($tableName, $column);
-				// $columns[$column] = new Column($column, $columnType);
-			// }
-			// $columns = $this->getColumnDetails($tableName);
 			$columns = TableUtilities::getColumnDetails($tableName);
 			
 			$foreignKeys = DB::select("
@@ -228,40 +222,42 @@ abstract class SchemaManager
      */
 	public static function describeTable($tableName)
 	{
-		$table = static::listTableDetails($tableName);
+		try {
+			$table = static::listTableDetails($tableName);
 
-		return collect($table->columns)->map(function ($column) use ($table) {
-			// Assuming $column is an instance of Column, call toArray directly on the instance
-			$columnArr = $column->toArray();  // Convert column to array using its method
+			return collect($table->columns)->map(function ($column) use ($table) {
+				// Convert column to array using its method
+				$columnArr = $column->toArray();  
 
-			$columnArr['field'] = $columnArr['name'];  // Duplicate name as 'field' for compatibility
-			$columnArr['type'] = $columnArr['type'];  // Directly use the type from toArray()
+				// Duplicate name as 'field' for compatibility and direct use of type
+				$columnArr['field'] = $columnArr['name'];
+				$columnArr['type'] = $columnArr['type'];
 
-			// Initialize indexes array and key
-			$columnArr['indexes'] = [];
-			$columnArr['key'] = null;
+				// Initialize indexes array and key
+				$columnArr['indexes'] = [];
+				$columnArr['key'] = null;
 
-			// Fetch indexes for the current column and format them
-			if ($indexes = $table->getColumnsIndexes($columnArr['name'], true)) {
-				foreach ($indexes as $name => $index) {
-					// Assuming $index is an instance of Index, use toArray method
-					if ($index instanceof Index) {
+				// Fetch and format indexes for the current column
+				if ($indexes = $table->getColumnsIndexes($columnArr['name'], true)) {
+					foreach ($indexes as $name => $index) {
 						$columnArr['indexes'][$name] = $index->toArray();
-					} else {
-						throw new \InvalidArgumentException("Expected object of type Index, received " . get_class($index));
+					}
+
+					// Set the key if indexes are present
+					if (!empty($columnArr['indexes'])) {
+						$indexType = array_values($columnArr['indexes'])[0]['type'];
+						$columnArr['key'] = substr($indexType, 0, 3);  // First three letters of the index type
 					}
 				}
 
-				// Set the key if indexes are present
-				if (!empty($columnArr['indexes'])) {
-					$indexType = array_values($columnArr['indexes'])[0]['type'];
-					$columnArr['key'] = substr($indexType, 0, 3);  // Key will be the first three letters of the index type
-				}
-			}
-
-			return $columnArr;
-		});
+				return $columnArr;
+			});
+		} catch (\Exception $e) {
+			Log::error("Failed to describe table $tableName: " . $e->getMessage());
+			return collect([]);  // Return an empty collection on error
+		}
 	}
+
 
 
 
