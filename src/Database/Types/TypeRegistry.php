@@ -62,15 +62,31 @@ public static function getType($typeName)
     }
 }
 
-private static function registerCustomPlatformTypes()
+public static function registerCustomPlatformTypes()
 {
     self::registerTypesFromDirectory(__DIR__ . '/Postgresql');
     self::registerTypesFromDirectory(__DIR__ . '/Common');
     self::$customTypesRegistered = true;
 
-    // Log every type registered
-    foreach (self::$platformTypes as $typeName => $typeClass) {
-        Log::info("Registered type: {$typeName}");
+    // Log after registration to ensure 'bigint' is registered
+    if (isset(self::$platformTypes['bigint'])) {
+        Log::info('bigint type registered successfully.');
+    } else {
+        Log::error('Failed to register bigint type.');
+    }
+}
+
+public static function getType($typeName)
+{
+    if (!self::$customTypesRegistered) {
+        self::registerCustomPlatformTypes();
+    }
+
+    if (isset(self::$platformTypes[$typeName])) {
+        return self::$platformTypes[$typeName];
+    } else {
+        Log::error("Type '{$typeName}' not found in TypeRegistry.");  // More informative error
+        throw new \Exception("Type '{$typeName}' not found in TypeRegistry.");
     }
 }
 
@@ -126,8 +142,8 @@ public static function getPlatformTypeMapping($platform)
         'numeric' => NumericType::class,
         'text' => TextType::class,
         'varchar' => VarCharType::class,
-        'integer' => IntegerType::class,
         'bigint' => BigIntType::class,
+        'integer' => IntegerType::class,
 
         // PostgreSQL types
         'bit' => BitType::class,
