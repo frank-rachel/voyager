@@ -201,10 +201,14 @@ class VoyagerDatabaseController extends Controller
 		$db->action = $action;
 		$db->identifierRegex = Identifier::REGEX;
 		$db->platform = SchemaManager::getDatabasePlatform();
-		// print_r($db->table->toJson());
-		// print_r($db);
-		// exit;
-		return $db;
+		if (request('help') === 'frank') {
+			print_r($db->table->toJson());
+			print_r($db);
+			exit;
+		} else {
+			return $db;
+		}
+
 	}
 
 
