@@ -44,6 +44,16 @@ class Index
         return new self($name, $columns, $type, $type === self::PRIMARY, $type === self::UNIQUE);
     }
 
+    /**
+     * Check if the index covers all the specified columns.
+     * @param array $columnNames Array of column names to check against the index columns.
+     * @return bool Returns true if all specified column names are covered by this index.
+     */
+    public function spansColumns(array $columnNames)
+    {
+        return empty(array_diff($columnNames, $this->columns));
+    }
+
     public function toArray()
     {
         return [
