@@ -18,19 +18,25 @@ class Table
         $this->options = $options;
     }
 
-    private function initializeColumns(array $columnData)
-    {
-        foreach ($columnData as $colName => $col) {
-            if ($col instanceof Column) {
-                $this->addColumn($col);
-            } else if (is_array($col)) {
-                $this->addColumn(new Column($colName, $col['type'], $col['options'] ?? [], $this->name));
-            } else {
-                // Optionally handle unexpected data types
-                throw new \InvalidArgumentException("Invalid column data provided for '$colName'");
-            }
-        }
-    }
+	private function initializeColumns(array $columnData)
+	{
+		foreach ($columnData as $colName => $col) {
+			if ($col instanceof Column) {
+				$this->addColumn($col);
+			} else if (is_array($col)) {
+				// Ensure all required data is provided and correctly used
+				$this->addColumn(new Column(
+					$colName,
+					$col['type'], 
+					$col['options'] ?? [], 
+					$this->name  // Pass the table name if required by your Column class
+				));
+			} else {
+				throw new \InvalidArgumentException("Invalid column data provided for '$colName'");
+			}
+		}
+	}
+
 
     public function addColumn(Column $column)
     {
