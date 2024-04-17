@@ -2,7 +2,6 @@
 
 namespace TCG\Voyager\Database\Schema;
 
-use TCG\Voyager\Database\Types\Type;
 use TCG\Voyager\Database\Types\TypeRegistry;
 
 class Column
@@ -15,7 +14,8 @@ class Column
     public function __construct($name, $type, array $options = [], $tableName = null)
     {
         $this->name = $name;
-        $this->type = TypeRegistry::getType($type);  // Assuming getType returns an instance of Type properly initialized
+        // Resolve the type name using the TypeRegistry
+        $this->type = TypeRegistry::getType($type)->getName();
         $this->options = $options;
         $this->tableName = $tableName;
 
@@ -30,29 +30,11 @@ class Column
         $this->options['notnull'] = $options['notnull'] ?? !$this->options['nullable'];
     }
 
-    public static function make(array $column, string $tableName = null)
-    {
-        $name = Identifier::validate($column['name'], 'Column');
-        $type = TypeRegistry::getType(trim($column['type']['name']));
-        $type->tableName = $tableName;
-
-        $options = array_diff_key($column, array_flip(['name', 'composite', 'oldName', 'null', 'extra', 'type', 'charset', 'collation']));
-
-        return new self($name, $type, $options, $tableName);
-    }
-
-    public function getName()
-    {
-        return $this->name;
-    }
-
     public function toArray()
     {
-        $typeArray = method_exists($this->type, 'toArray') ? $this->type->toArray() : (string)$this->type;
-
         return [
             'name' => $this->name,
-            'type' => $typeArray,
+            'type' => $this->type,  // Now 'type' is just the name string
             'oldName' => $this->name,
             'null' => $this->options['nullable'] ? 'YES' : 'NO',
             'default' => $this->options['default'],
@@ -63,7 +45,7 @@ class Column
             'fixed' => $this->getFixed(),
             'notnull' => $this->getNotnull(),
             'extra' => $this->getExtra(),
-            'composite' => false
+            'composite' => false  // This is specific to your schema needs
         ];
     }
 
@@ -91,4 +73,3 @@ class Column
         return $this->options['notnull'];
     }
 }
-
