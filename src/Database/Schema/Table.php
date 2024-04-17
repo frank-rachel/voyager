@@ -34,6 +34,11 @@ class Table
 		}
 	}
 
+    public function addColumn(Column $column)
+    {
+        $this->columns[] = $column;
+    }
+
 
 	private function initializeIndexes(array $indexData)
 	{
@@ -59,11 +64,6 @@ class Table
 		}
 	}
 
-
-    public function addColumn(Column $column)
-    {
-        $this->columns[] = $column;
-    }
 
     public function addIndex(Index $index)
     {
