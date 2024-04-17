@@ -1,9 +1,6 @@
 <?php
 namespace TCG\Voyager\Database\Schema;
 
-use TCG\Voyager\Database\Types\TypeRegistry; // Corrected namespace
-
-
 class Column
 {
     public $name;
@@ -20,36 +17,15 @@ class Column
         $this->name = $name;
         $this->type = $type;
         $this->options = $options;
-        $this->nullable = $options['nullable'] ?? true;  // Set default to true to handle 'notnull' correctly
+        $this->nullable = $options['nullable'] ?? false;
         $this->default = $options['default'] ?? null;
         $this->length = $options['length'] ?? null;
         $this->precision = $options['precision'] ?? null;
         $this->scale = $options['scale'] ?? null;
-
-        // Handle type information dynamically
-        $this->handleType();
+        $this->options['unsigned'] = $options['unsigned'] ?? false;
+        $this->options['fixed'] = $options['fixed'] ?? false;
+        $this->options['notnull'] = $options['notnull'] ?? true;
     }
-
-    // private function handleType()
-    // {
-        // $typeObject = TypeRegistry::getType($this->type);
-        // if ($typeObject) {
-            // $this->type = $typeObject->getName();  // Get a more detailed type name if needed
-            // $this->length = $this->length ?? $typeObject->getDefaultLength();  // Only set if not already set
-        // }
-    // }
-private function handleType()
-{
-    // try {
-        $typeObject = TypeRegistry::getType($this->type);
-        $this->type = $typeObject->getName();
-        $this->length = $this->length ?? $typeObject->getDefaultLength();
-    // } catch (\Exception $e) {
-        // Handle the exception based on your application's needs
-        // error_log($e->getMessage());
-        // You might set default type details here if necessary
-    // }
-}
 
     public function toArray()
     {
@@ -63,7 +39,7 @@ private function handleType()
             'scale' => $this->scale,
             'unsigned' => $this->getUnsigned(),
             'fixed' => $this->getFixed(),
-            'notnull' => !$this->nullable  // Invert nullable to get notnull
+            'notnull' => $this->getNotnull()
         ];
     }
 
