@@ -1,150 +1,77 @@
 <?php
 namespace TCG\Voyager\Database\Schema;
 
+use TCG\Voyager\Database\Types\Type;
+
 class Column
 {
     public $name;
     public $type;
     public $options;
-    public $nullable;
-    public $default;
-    public $length;
-    public $precision;
-    public $scale;
+    public $tableName;
 
-	public function __construct($name, $type, array $options = [])
-	{
-		$this->name = $name;
-		$this->type = $type;
-		$this->options = $options;
-		$this->nullable = $options['nullable'] ?? true;
-		$this->default = $options['default'] ?? null;
-		$this->length = $options['length'] ?? null;
-		$this->precision = $options['precision'] ?? null;
-		$this->scale = $options['scale'] ?? null;
-		$this->options['unsigned'] = $options['unsigned'] ?? false;
-		$this->options['fixed'] = $options['fixed'] ?? false;
-		$this->options['notnull'] = $options['notnull'] ?? !$this->nullable;
-	}
+    public function __construct($name, $type, array $options = [], $tableName = null)
+    {
+        $this->name = $name;
+        $this->type = $type;  // This should be a type object or a string
+        $this->options = $options;
+        $this->tableName = $tableName;
 
+        // Set default values if not provided
+        $this->options['nullable'] = $options['nullable'] ?? true;
+        $this->options['default'] = $options['default'] ?? null;
+        $this->options['length'] = $options['length'] ?? null;
+        $this->options['precision'] = $options['precision'] ?? null;
+        $this->options['scale'] = $options['scale'] ?? null;
+        $this->options['unsigned'] = $options['unsigned'] ?? false;
+        $this->options['fixed'] = $options['fixed'] ?? false;
+        $this->options['notnull'] = $options['notnull'] ?? !$this->options['nullable'];
+    }
+
+    public static function make(array $column, string $tableName = null)
+    {
+        $name = Identifier::validate($column['name'], 'Column');
+        $type = Type::getType(trim($column['type']['name']));
+        $type->tableName = $tableName;
+
+        $options = array_diff_key($column, array_flip(['name', 'composite', 'oldName', 'null', 'extra', 'type', 'charset', 'collation']));
+
+        return new self($name, $type, $options, $tableName);
+    }
 
     public function toArray()
     {
-        return [
+        $columnArr = [
             'name' => $this->name,
-            'type' => $this->type,
-            'nullable' => $this->nullable,
-            'default' => $this->default,
-            'length' => $this->length,
-            'precision' => $this->precision,
-            'scale' => $this->scale,
+            'type' => Type::toArray($this->type), // Assuming Type class has a static toArray method
+            'oldName' => $this->name,
+            'null' => $this->options['nullable'] ? 'YES' : 'NO',
+            'default' => $this->options['default'],
+            'length' => $this->options['length'],
+            'precision' => $this->options['precision'],
+            'scale' => $this->options['scale'],
             'unsigned' => $this->getUnsigned(),
             'fixed' => $this->getFixed(),
-            'notnull' => $this->getNotnull()
+            'notnull' => $this->getNotnull(),
+            'extra' => $this->getExtra(),
+            'composite' => false  // Assume false or set based on actual logic
         ];
+
+        return $columnArr;
     }
 
-    // Additional getter and setter methods
-    public function getName(): string
+    protected function getExtra()
     {
-        return $this->name;
+        $extra = '';
+        // PostgreSQL does not use auto_increment, example only
+        if (!empty($this->options['autoincrement'])) {
+            $extra .= 'auto_increment';
+        }
+        return $extra;
     }
 
-    public function getType(): string
-    {
-        return $this->type;
-    }
-
-    public function setType(string $type): void
-    {
-        $this->type = $type;
-    }
-
-    public function getOptions(): array
-    {
-        return $this->options;
-    }
-
-    public function setOptions(array $options): void
-    {
-        $this->options = $options;
-        $this->nullable = $options['nullable'] ?? $this->nullable;
-        $this->default = $options['default'] ?? $this->default;
-        $this->length = $options['length'] ?? $this->length;
-        $this->precision = $options['precision'] ?? $this->precision;
-        $this->scale = $options['scale'] ?? $this->scale;
-        $this->options['unsigned'] = $options['unsigned'] ?? $this->options['unsigned'];
-        $this->options['fixed'] = $options['fixed'] ?? $this->options['fixed'];
-        $this->options['notnull'] = $options['notnull'] ?? $this->options['notnull'];
-    }
-
-    public function getLength(): ?int
-    {
-        return $this->length;
-    }
-
-    public function setLength(?int $length): void
-    {
-        $this->length = $length;
-    }
-
-    public function getPrecision(): ?int
-    {
-        return $this->precision;
-    }
-
-    public function setPrecision(?int $precision): void
-    {
-        $this->precision = $precision;
-    }
-
-    public function getScale(): ?int
-    {
-        return $this->scale;
-    }
-
-    public function setScale(?int $scale): void
-    {
-        $this->scale = $scale;
-    }
-
-    public function getUnsigned(): bool
-    {
-        return $this->options['unsigned'];
-    }
-
-    public function setUnsigned(bool $unsigned): void
-    {
-        $this->options['unsigned'] = $unsigned;
-    }
-
-    public function getFixed(): bool
-    {
-        return $this->options['fixed'];
-    }
-
-    public function setFixed(bool $fixed): void
-    {
-        $this->options['fixed'] = $fixed;
-    }
-
-    public function getNotnull(): bool
-    {
-        return $this->options['notnull'];
-    }
-
-    public function setNotnull(bool $notnull): void
-    {
-        $this->options['notnull'] = $notnull;
-    }
-
-    public function getDefault()
-    {
-        return $this->default;
-    }
-
-    public function setDefault($default): void
-    {
-        $this->default = $default;
-    }
+    // Additional getters and setters for the properties
+    public function getUnsigned(): bool { return $this->options['unsigned']; }
+    public function getFixed(): bool { return $this->options['fixed']; }
+    public function getNotnull(): bool { return $this->options['notnull']; }
 }
