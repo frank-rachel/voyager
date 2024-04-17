@@ -76,19 +76,19 @@ public static function registerCustomPlatformTypes()
     }
 }
 
-public static function getType($typeName)
-{
-    if (!self::$customTypesRegistered) {
-        self::registerCustomPlatformTypes();
-    }
+// public static function getType($typeName)
+// {
+    // if (!self::$customTypesRegistered) {
+        // self::registerCustomPlatformTypes();
+    // }
 
-    if (isset(self::$platformTypes[$typeName])) {
-        return self::$platformTypes[$typeName];
-    } else {
-        Log::error("Type '{$typeName}' not found in TypeRegistry.");  // More informative error
-        throw new \Exception("Type '{$typeName}' not found in TypeRegistry.");
-    }
-}
+    // if (isset(self::$platformTypes[$typeName])) {
+        // return self::$platformTypes[$typeName];
+    // } else {
+        // Log::error("Type '{$typeName}' not found in TypeRegistry.");  // More informative error
+        // throw new \Exception("Type '{$typeName}' not found in TypeRegistry.");
+    // }
+// }
 
 
 	private static function registerTypesFromDirectory($directory)
