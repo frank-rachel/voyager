@@ -53,6 +53,14 @@ class Index
     {
         return empty(array_diff($columnNames, $this->columns));
     }
+	/**
+	 * Get the name of the index.
+	 * @return string The name of the index.
+	 */
+	public function getName()
+	{
+		return $this->name;
+	}
 
     public function toArray()
     {
