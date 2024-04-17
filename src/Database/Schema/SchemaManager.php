@@ -253,6 +253,8 @@ abstract class SchemaManager
 				return $columnArr;
 			});
 		} catch (\Exception $e) {
+			echo("Failed to describe table $tableName: " . $e->getMessage());
+			exit;
 			Log::error("Failed to describe table $tableName: " . $e->getMessage());
 			return collect([]);  // Return an empty collection on error
 		}
