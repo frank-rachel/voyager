@@ -68,41 +68,26 @@ public static function registerCustomPlatformTypes()
     self::registerTypesFromDirectory(__DIR__ . '/Common');
     self::$customTypesRegistered = true;
 
-    // Log after registration to ensure 'bigint' is registered
-    if (isset(self::$platformTypes['bigint'])) {
-        Log::info('bigint type registered successfully.');
-    } else {
-        Log::error('Failed to register bigint type.');
+    // Ensure we are storing type instances with the correct keys
+    foreach (self::$platformTypes as $type) {
+        if ($type instanceof Type) {
+            self::$types[$type->getName()] = $type;  // Register by type name
+            Log::info("Registered type: " . $type->getName());
+        }
     }
 }
 
-// public static function getType($typeName)
-// {
-    // if (!self::$customTypesRegistered) {
-        // self::registerCustomPlatformTypes();
-    // }
-
-    // if (isset(self::$platformTypes[$typeName])) {
-        // return self::$platformTypes[$typeName];
-    // } else {
-        // Log::error("Type '{$typeName}' not found in TypeRegistry.");  // More informative error
-        // throw new \Exception("Type '{$typeName}' not found in TypeRegistry.");
-    // }
-// }
-
-
-	private static function registerTypesFromDirectory($directory)
-	{
-		foreach (glob($directory . "/*.php") as $file) {
-			$className = basename($file, '.php');
-			$classNamespace = 'TCG\\Voyager\\Database\\Types\\' . basename($directory) . '\\' . $className;
-			if (class_exists($classNamespace)) {
-				$typeInstance = new $classNamespace();
-				self::$platformTypes[$typeInstance->getName()] = $typeInstance;
-				Log::info("Registered type: " . $typeInstance->getName());
-			}
-		}
-	}
+private static function registerTypesFromDirectory($directory)
+{
+    foreach (glob($directory . "/*.php") as $file) {
+        $className = basename($file, '.php');
+        $classNamespace = 'TCG\\Voyager\\Database\\Types\\' . basename($directory) . '\\' . $className;
+        if (class_exists($classNamespace)) {
+            $typeInstance = new $classNamespace();
+            self::$platformTypes[$typeInstance->getName()] = $typeInstance;
+        }
+    }
+}
 
 
     private static function toArray(Type $type)

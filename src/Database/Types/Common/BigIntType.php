@@ -10,15 +10,15 @@ class BigIntType extends Type
     // Optionally set a default category
     protected $category = 'Numeric';
 
-
     public function getName() {
-        return 'bigint';
+        return self::NAME;  // Use the constant for consistency
     }
 
     public function toArray() {
         return [
-            'name' => self::getName(),
-            'category' => $category  
+            'name' => $this->getName(),  // Method call for consistency
+            'category' => $this->category  // Correct property access
         ];
     }
 }
+
