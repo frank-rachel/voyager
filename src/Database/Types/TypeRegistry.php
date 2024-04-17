@@ -41,37 +41,30 @@ class TypeRegistry
         return self::$platformTypes;
     }
 
-	public static function getType($typeName)
-	{
-		if (!self::$customTypesRegistered) {
-			self::registerCustomPlatformTypes();
-		}
+public static function getType($typeName)
+{
+    if (!self::$customTypesRegistered) {
+        self::registerCustomPlatformTypes();
+    }
 
-		// Convert to array recursively
-		$typesArray = self::recursiveToArray(self::$platformTypes);
+    // Immediately convert to array before use
+    $typesArray = self::$platformTypes instanceof Illuminate\Support\Collection 
+                  ? self::$platformTypes->mapWithKeys(function ($item, $key) {
+                        return [$key => $item];
+                    })->toArray() 
+                  : self::$platformTypes;
 
-		Log::debug("Final typesArray for usage", ['type' => gettype($typesArray), 'contents' => $typesArray]);
+    Log::debug("Final typesArray for usage", ['type' => gettype($typesArray), 'contents' => $typesArray]);
 
-		if (isset($typesArray[$typeName])) {
-			return new $typesArray[$typeName]();
-		} else {
-			Log::info("Available types: " . implode(", ", array_keys($typesArray)));
-			throw new \Exception("Type '{$typeName}' not found in TypeRegistry.");
-		}
-	}
-
-	/**
-	 * Recursively convert collections to arrays
-	 */
-	private static function recursiveToArray($collection)
-	{
-		if ($collection instanceof Illuminate\Support\Collection) {
-			return $collection->map(function ($item) {
-				return self::recursiveToArray($item);  // Recursively convert items
-			})->toArray();
-		}
-		return $collection;  // Return as is if it's not a collection
-	}
+    if (isset($typesArray[$typeName])) {
+        return new $typesArray[$typeName]();
+    } else {
+        // Direct conversion again to ensure it's an array right before the problematic step
+        $typesArray = self::$platformTypes->toArray();
+        Log::info("Available types: " . implode(", ", array_keys($typesArray)));
+        throw new \Exception("Type '{$typeName}' not found in TypeRegistry.");
+    }
+}
 
 
 
