@@ -50,10 +50,11 @@ class TypeRegistry
 		if (isset(self::$platformTypes[$typeName])) {
 			return new self::$platformTypes[$typeName]();
 		} else {
-			error_log("Attempted to access undefined type '{$typeName}'.");
+			Log::info("Available types: " . implode(", ", array_keys(self::$platformTypes)));
 			throw new \Exception("Type '{$typeName}' not found in TypeRegistry.");
 		}
 	}
+
 
 
     private static function registerCustomPlatformTypes()
@@ -63,17 +64,6 @@ class TypeRegistry
         self::$customTypesRegistered = true;
     }
 
-    // private static function registerTypesFromDirectory($directory)
-    // {
-        // foreach (glob($directory . "/*.php") as $file) {
-            // $className = basename($file, '.php');
-            // $classNamespace = 'TCG\\Voyager\\Database\\Types\\' . basename($directory) . '\\' . $className;
-            // if (class_exists($classNamespace)) {
-                // $typeInstance = new $classNamespace();
-                // self::$platformTypes[$typeInstance->getName()] = self::toArray($typeInstance);
-            // }
-        // }
-    // }
 	private static function registerTypesFromDirectory($directory)
 	{
 		foreach (glob($directory . "/*.php") as $file) {
