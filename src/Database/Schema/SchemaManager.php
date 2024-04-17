@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Log;
 use TCG\Voyager\Database\Schema\TableUtilities;
+use TCG\Voyager\Database\Types\Type;
 // use TableUtilities;
 // Ensure all functionality here uses Laravel's native classes
 
