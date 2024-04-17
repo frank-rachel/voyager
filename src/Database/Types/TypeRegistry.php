@@ -47,14 +47,16 @@ class TypeRegistry
 			self::registerCustomPlatformTypes();
 		}
 
-		if (isset(self::$platformTypes[$typeName])) {
-			return new self::$platformTypes[$typeName]();
+		// Convert the collection to an array before checking with array_keys
+		$typesArray = self::$platformTypes->toArray();
+
+		if (isset($typesArray[$typeName])) {
+			return new $typesArray[$typeName]();
 		} else {
-			Log::info("Available types: " . implode(", ", array_keys(self::$platformTypes)));
+				Log::info("Available types: " . implode(", ", array_keys(self::$platformTypes)));
 			throw new \Exception("Type '{$typeName}' not found in TypeRegistry.");
 		}
 	}
-
 
 
     private static function registerCustomPlatformTypes()
