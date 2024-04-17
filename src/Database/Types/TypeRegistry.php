@@ -39,6 +39,19 @@ class TypeRegistry
         return self::$platformTypes;
     }
 
+    public static function getType($typeName)
+    {
+        if (!self::$customTypesRegistered) {
+            self::registerCustomPlatformTypes();
+        }
+
+        if (isset(self::$types[$typeName])) {
+            return self::$types[$typeName];
+        } else {
+            throw new \Exception("Type '{$typeName}' not found in TypeRegistry.");
+        }
+    }
+
     private static function registerCustomPlatformTypes()
     {
         self::registerTypesFromDirectory(__DIR__ . '/Postgresql');
