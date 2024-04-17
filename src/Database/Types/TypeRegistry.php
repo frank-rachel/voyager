@@ -47,17 +47,25 @@ class TypeRegistry
 			self::registerCustomPlatformTypes();
 		}
 
-		// Convert to array right before use to avoid any last-minute changes affecting type
-		$typesArray = (self::$platformTypes instanceof Illuminate\Support\Collection) ? self::$platformTypes->toArray() : self::$platformTypes;
+		// Ensure all parts of the collection are converted to arrays
+		$typesArray = self::$platformTypes instanceof Illuminate\Support\Collection 
+					  ? self::$platformTypes->mapWithKeys(function ($category) {
+							return [$category => $category->toArray()];
+						})->toArray() 
+					  : self::$platformTypes;
 
-		// Log the type and contents of typesArray immediately before using it
-		Log::debug("TypesArray Content", ['type' => gettype($typesArray), 'contents' => $typesArray]);
+		Log::debug("Final typesArray for usage", ['type' => gettype($typesArray), 'contents' => $typesArray]);
 
 		if (isset($typesArray[$typeName])) {
 			return new $typesArray[$typeName]();
 		} else {
-			// Convert and check again to ensure it's an array
-			$typesArray = (self::$platformTypes instanceof Illuminate\Support\Collection) ? self::$platformTypes->toArray() : self::$platformTypes;
+			// Ensure it's an array before logging or using array_keys()
+			$typesArray = self::$platformTypes instanceof Illuminate\Support\Collection 
+						  ? self::$platformTypes->mapWithKeys(function ($category) {
+								return [$category => $category->toArray()];
+							})->toArray() 
+						  : self::$platformTypes;
+
 			Log::info("Available types: " . implode(", ", array_keys($typesArray)));
 			throw new \Exception("Type '{$typeName}' not found in TypeRegistry.");
 		}
