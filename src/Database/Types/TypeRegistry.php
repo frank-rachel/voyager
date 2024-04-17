@@ -47,28 +47,30 @@ class TypeRegistry
 			self::registerCustomPlatformTypes();
 		}
 
-		// Ensure all parts of the collection are converted to arrays
-		$typesArray = self::$platformTypes instanceof Illuminate\Support\Collection 
-					  ? self::$platformTypes->mapWithKeys(function ($category) {
-							return [$category => $category->toArray()];
-						})->toArray() 
-					  : self::$platformTypes;
+		// Convert to array recursively
+		$typesArray = self::recursiveToArray(self::$platformTypes);
 
 		Log::debug("Final typesArray for usage", ['type' => gettype($typesArray), 'contents' => $typesArray]);
 
 		if (isset($typesArray[$typeName])) {
 			return new $typesArray[$typeName]();
 		} else {
-			// Ensure it's an array before logging or using array_keys()
-			$typesArray = self::$platformTypes instanceof Illuminate\Support\Collection 
-						  ? self::$platformTypes->mapWithKeys(function ($category) {
-								return [$category => $category->toArray()];
-							})->toArray() 
-						  : self::$platformTypes;
-
 			Log::info("Available types: " . implode(", ", array_keys($typesArray)));
 			throw new \Exception("Type '{$typeName}' not found in TypeRegistry.");
 		}
+	}
+
+	/**
+	 * Recursively convert collections to arrays
+	 */
+	private static function recursiveToArray($collection)
+	{
+		if ($collection instanceof Illuminate\Support\Collection) {
+			return $collection->map(function ($item) {
+				return self::recursiveToArray($item);  // Recursively convert items
+			})->toArray();
+		}
+		return $collection;  // Return as is if it's not a collection
 	}
 
 
