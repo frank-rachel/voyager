@@ -108,14 +108,37 @@ class TypeRegistry
 
 
 
-    private static function toArray(Type $type)
-    {
-        return [
-            'name' => $type->getName(),
-            'category' => $type->getCategory() // Assume these methods exist
-        ];
-    }
+    // private static function toArray(Type $type)
+    // {
+        // return [
+            // 'name' => $type->getName(),
+            // 'category' => $type->getCategory() // Assume these methods exist
+        // ];
+    // }
 
+	private static function toArray(Type $type)
+	{
+		// Adjust this to include defaults based on type category or specific types
+		$defaults = [];
+		switch ($type->getCategory()) {
+			case 'Numbers':
+				$defaults = ['default' => ['type' => 'number', 'step' => 'any']];
+				break;
+			case 'Date and Time':
+				if ($type->getName() === 'date') {
+					$defaults = ['default' => ['type' => 'date']];
+				} elseif (in_array($type->getName(), ['time', 'timetz'])) {
+					$defaults = ['default' => ['type' => 'time', 'step' => '1']];
+				}
+				break;
+			// Add other cases as needed
+		}
+
+		return array_merge([
+			'name' => $type->getName(),
+			'category' => $type->getCategory(),
+		], $defaults);
+	}
 
 
     protected static function getPlatformCustomTypes($platformName)
