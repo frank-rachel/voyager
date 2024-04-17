@@ -49,6 +49,11 @@ class Column
         ];
     }
 
+    public function getName()
+    {
+        return $this->name;
+    }
+
     protected function getExtra()
     {
         $extra = '';
