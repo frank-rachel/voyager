@@ -228,7 +228,7 @@ abstract class SchemaManager
      */
     public static function describeTable($tableName)
     {
-        TypeRegistry::registerCustomPlatformTypes();
+        // TypeRegistry::registerCustomPlatformTypes();
 
         $table = static::listTableDetails($tableName);
 
