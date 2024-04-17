@@ -21,25 +21,25 @@ class TypeRegistry
     private static $platformTypes = null;
     private static $customTypesRegistered = false;
 
-    public static function getPlatformTypes()
-    {
-        if (self::$platformTypes) {
-            return self::$platformTypes;
-        }
+    // public static function getPlatformTypes()
+    // {
+        // if (self::$platformTypes) {
+            // return self::$platformTypes;
+        // }
 
-        if (!self::$customTypesRegistered) {
-            self::registerCustomPlatformTypes();
-        }
+        // if (!self::$customTypesRegistered) {
+            // self::registerCustomPlatformTypes();
+        // }
 
-        $platform = SchemaManager::getDatabasePlatform(); // Adjust according to actual usage
+        // $platform = SchemaManager::getDatabasePlatform(); // Adjust according to actual usage
 
-        $types = self::getPlatformTypeMapping($platform);
-        self::$platformTypes = collect($types)->mapWithKeys(function ($typeClass, $typeName) {
-            return [$typeName => self::toArray(new $typeClass)];
-        })->groupBy('category');
+        // $types = self::getPlatformTypeMapping($platform);
+        // self::$platformTypes = collect($types)->mapWithKeys(function ($typeClass, $typeName) {
+            // return [$typeName => self::toArray(new $typeClass)];
+        // })->groupBy('category');
 
-        return self::$platformTypes;
-    }
+        // return self::$platformTypes;
+    // }
 
 public static function getType($typeName)
 {
@@ -294,5 +294,42 @@ public static function getPlatformTypeMapping($platform)
 
         return static::$typeCategories;
     }
+		
+public static function getPlatformTypes()
+{
+    if (self::$platformTypes) {
+        return self::$platformTypes;
+    }
+
+    if (!self::$customTypesRegistered) {
+        self::registerCustomPlatformTypes();
+    }
+
+    $platform = SchemaManager::getDatabasePlatform(); // Adjust according to actual usage
+
+    $types = self::getPlatformTypeMapping($platform);
+    self::$platformTypes = collect($types)->mapWithKeys(function ($typeClass, $typeName) {
+        return [$typeName => self::toArray(new $typeClass)];
+    })->groupBy('category')->toArray(); // Ensure it's converted to an array
+
+    return self::$platformTypes;
+}
+
+public static function logAvailableTypes()
+{
+    $typesArray = self::getPlatformTypes();
+
+    // Checking and converting explicitly
+    if ($typesArray instanceof Illuminate\Support\Collection) {
+        $typesArray = $typesArray->toArray();
+    }
+
+    // Logging to check the type of $typesArray
+    Log::info('TypesArray Type: ' . (is_array($typesArray) ? 'Array' : gettype($typesArray)));
+
+    // Use array_keys on a guaranteed array
+    Log::info("Available types: " . implode(", ", array_keys($typesArray)));
+}
+		
 		
 }
