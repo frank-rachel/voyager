@@ -8,6 +8,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Log;
 use TCG\Voyager\Database\Schema\TableUtilities;
 use TCG\Voyager\Database\Types\Type;
+use TCG\Voyager\Database\Types\TypeRegistry;
 // use TableUtilities;
 // Ensure all functionality here uses Laravel's native classes
 
@@ -227,7 +228,7 @@ abstract class SchemaManager
      */
     public static function describeTable($tableName)
     {
-        Type::registerCustomPlatformTypes();
+        TypeRegistry::registerCustomPlatformTypes();
 
         $table = static::listTableDetails($tableName);
 
