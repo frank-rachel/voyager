@@ -47,34 +47,33 @@ public static function getType($typeName)
         self::registerCustomPlatformTypes();
     }
 
-    // Immediately convert to array before use
+    // Ensure we're dealing with an array
     $typesArray = self::$platformTypes instanceof Illuminate\Support\Collection 
-                  ? self::$platformTypes->mapWithKeys(function ($item, $key) {
-                        return [$key => $item];
-                    })->toArray() 
+                  ? self::$platformTypes->toArray() 
                   : self::$platformTypes;
 
-    Log::debug("Final typesArray for usage", ['type' => gettype($typesArray), 'contents' => $typesArray]);
+    // Log available types for debugging
+    Log::info("Available types: " . implode(", ", array_keys($typesArray)));
 
     if (isset($typesArray[$typeName])) {
         return new $typesArray[$typeName]();
     } else {
-        // Direct conversion again to ensure it's an array right before the problematic step
-        $typesArray = self::$platformTypes->toArray();
-        Log::info("Available types: " . implode(", ", array_keys($typesArray)));
         throw new \Exception("Type '{$typeName}' not found in TypeRegistry.");
     }
 }
 
+private static function registerCustomPlatformTypes()
+{
+    self::registerTypesFromDirectory(__DIR__ . '/Postgresql');
+    self::registerTypesFromDirectory(__DIR__ . '/Common');
+    self::$customTypesRegistered = true;
 
-
-
-    private static function registerCustomPlatformTypes()
-    {
-        self::registerTypesFromDirectory(__DIR__ . '/Postgresql');
-        self::registerTypesFromDirectory(__DIR__ . '/Common');
-        self::$customTypesRegistered = true;
+    // Log every type registered
+    foreach (self::$platformTypes as $typeName => $typeClass) {
+        Log::info("Registered type: {$typeName}");
     }
+}
+
 
 	private static function registerTypesFromDirectory($directory)
 	{
