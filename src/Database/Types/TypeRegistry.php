@@ -61,18 +61,29 @@ class TypeRegistry
         self::$customTypesRegistered = true;
     }
 
-    private static function registerTypesFromDirectory($directory)
-    {
-        foreach (glob($directory . "/*.php") as $file) {
-            $className = basename($file, '.php');
-            $classNamespace = 'TCG\\Voyager\\Database\\Types\\' . basename($directory) . '\\' . $className;
-            if (class_exists($classNamespace)) {
-                // Optionally initialize and register the type
-                $typeInstance = new $classNamespace();
-                self::$platformTypes[$typeInstance->getName()] = self::toArray($typeInstance);
-            }
-        }
-    }
+    // private static function registerTypesFromDirectory($directory)
+    // {
+        // foreach (glob($directory . "/*.php") as $file) {
+            // $className = basename($file, '.php');
+            // $classNamespace = 'TCG\\Voyager\\Database\\Types\\' . basename($directory) . '\\' . $className;
+            // if (class_exists($classNamespace)) {
+                // $typeInstance = new $classNamespace();
+                // self::$platformTypes[$typeInstance->getName()] = self::toArray($typeInstance);
+            // }
+        // }
+    // }
+	private static function registerTypesFromDirectory($directory)
+	{
+		foreach (glob($directory . "/*.php") as $file) {
+			$className = basename($file, '.php');
+			$classNamespace = 'TCG\\Voyager\\Database\\Types\\' . basename($directory) . '\\' . $className;
+			if (class_exists($classNamespace)) {
+				$typeInstance = new $classNamespace();
+				self::$platformTypes[$typeInstance->getName()] = $typeInstance;
+				error_log("Registered type: " . $typeInstance->getName());
+			}
+		}
+	}
 
 
     private static function toArray(Type $type)
