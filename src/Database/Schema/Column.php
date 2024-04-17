@@ -17,14 +17,24 @@ class Column
         $this->name = $name;
         $this->type = $type;
         $this->options = $options;
-        $this->nullable = $options['nullable'] ?? false;
+        $this->nullable = $options['nullable'] ?? true;  // Set default to true to handle 'notnull' correctly
         $this->default = $options['default'] ?? null;
         $this->length = $options['length'] ?? null;
         $this->precision = $options['precision'] ?? null;
         $this->scale = $options['scale'] ?? null;
-        $this->options['unsigned'] = $options['unsigned'] ?? false;
-        $this->options['fixed'] = $options['fixed'] ?? false;
-        $this->options['notnull'] = $options['notnull'] ?? true;
+
+        // Handle type information dynamically
+        $this->handleType();
+    }
+
+    private function handleType()
+    {
+        // Assuming you have a way to fetch the type object based on the type name
+        $typeObject = TypeRegistry::getType($this->type);
+        if ($typeObject) {
+            $this->type = $typeObject->getName();  // Get a more detailed type name if needed
+            $this->length = $this->length ?? $typeObject->getDefaultLength();  // Only set if not already set
+        }
     }
 
     public function toArray()
@@ -39,7 +49,7 @@ class Column
             'scale' => $this->scale,
             'unsigned' => $this->getUnsigned(),
             'fixed' => $this->getFixed(),
-            'notnull' => $this->getNotnull()
+            'notnull' => !$this->nullable  // Invert nullable to get notnull
         ];
     }
 
