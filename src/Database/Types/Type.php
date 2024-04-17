@@ -42,13 +42,25 @@ abstract class Type
     }
 
     // Convert the type instance to an array format for easy handling
-    public function toArray()
-    {
-        return [
-            'name' => $this->getName(),
-            'category' => $this->getCategory()
-        ];
-    }
+	public function toArray() {
+		return [
+			'name' => $this->getName(),
+			'category' => $this->getCategory(),
+			'default' => $this->getDefaultSettings()
+		];
+	}
+
+	protected function getDefaultSettings() {
+		// Return default settings based on the type. For example:
+		if ($this->category === 'Numbers') {
+			return ['type' => 'number', 'step' => 'any'];
+		} else if ($this->category === 'Date and Time') {
+			return ['type' => 'date'];
+		}
+		// Add other conditions as necessary
+		return null;
+	}
+
 
     // Method to initialize and return the type instance
     public static function getType($typeName)

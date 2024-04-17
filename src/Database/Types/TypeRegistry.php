@@ -29,24 +29,34 @@ class TypeRegistry
         'double' => 'float',  // Example if needed
     ];
 
-    public static function getPlatformTypes()
-    {
-        if (self::$platformTypes) {
-            return self::$platformTypes;
-        }
-
-        if (!self::$customTypesRegistered) {
-            self::registerCustomPlatformTypes();
-        }
-
-        $platform = SchemaManager::getDatabasePlatform();
-        $types = self::getPlatformTypeMapping($platform);
-        self::$platformTypes = collect($types)->mapWithKeys(function ($typeClass, $typeName) {
-            return [$typeName => self::toArray(new $typeClass)];
-        })->groupBy('category');
-
+public static function getPlatformTypes()
+{
+    if (self::$platformTypes) {
         return self::$platformTypes;
     }
+
+    if (!self::$customTypesRegistered) {
+        self::registerCustomPlatformTypes();
+    }
+
+    $platform = SchemaManager::getDatabasePlatform();
+    $types = self::getPlatformTypeMapping($platform);
+    $groupedTypes = collect($types)->mapWithKeys(function ($typeClass, $typeName) {
+        $typeInstance = new $typeClass;
+        return [$typeName => $typeInstance->toArray()];
+    })->groupBy('category');
+
+    // Adjust categories to match expected structure in the frontend
+    self::$platformTypes = [
+        'Numbers' => $groupedTypes->get('Numeric')->all(),
+        'Strings' => $groupedTypes->get('String')->all(),
+        'Date and Time' => $groupedTypes->get('Date and Time')->all(),
+        // Add other categories similarly
+    ];
+
+    return self::$platformTypes;
+}
+
 
     public static function getType($typeName)
     {
