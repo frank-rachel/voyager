@@ -30,24 +30,25 @@ class Column
         $this->options['notnull'] = $options['notnull'] ?? !$this->options['nullable'];
     }
 
-    public function toArray()
-    {
-        return [
-            'name' => $this->name,
-            'type' => $this->type,  // Now 'type' is just the name string
-            'oldName' => $this->name,
-            'null' => $this->options['nullable'] ? 'YES' : 'NO',
-            'default' => $this->options['default'],
-            'length' => $this->options['length'],
-            'precision' => $this->options['precision'],
-            'scale' => $this->options['scale'],
-            'unsigned' => $this->getUnsigned(),
-            'fixed' => $this->getFixed(),
-            'notnull' => $this->getNotnull(),
-            'extra' => $this->getExtra(),
-            'composite' => false  // This is specific to your schema needs
-        ];
-    }
+	public function toArray()
+	{
+		return [
+			'name' => $this->name,
+			'type' => $this->type->getName(), // Ensure this returns just the type name
+			'oldName' => $this->name,
+			'null' => $this->options['nullable'] ? 'YES' : 'NO',
+			'default' => $this->options['default'],
+			'length' => $this->options['length'],
+			'precision' => $this->options['precision'],
+			'scale' => $this->options['scale'],
+			'unsigned' => $this->getUnsigned(),
+			'fixed' => $this->getFixed(),
+			'notnull' => $this->getNotnull(),
+			'extra' => $this->getExtra(),
+			'composite' => false
+		];
+	}
+
 
     public function getName()
     {
