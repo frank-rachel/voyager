@@ -47,16 +47,18 @@ class TypeRegistry
 			self::registerCustomPlatformTypes();
 		}
 
-		// Convert the collection to an array before checking with array_keys
-		$typesArray = self::$platformTypes->toArray();
+		// Check if self::$platformTypes is a collection and convert it to an array if true
+		$typesArray = self::$platformTypes instanceof Illuminate\Support\Collection ? self::$platformTypes->toArray() : self::$platformTypes;
 
 		if (isset($typesArray[$typeName])) {
 			return new $typesArray[$typeName]();
 		} else {
-				Log::info("Available types: " . implode(", ", array_keys(self::$platformTypes)));
+			// Logging available types using error_log, checking for array keys
+			Log::info("Available types: " . implode(", ", array_keys($typesArray)));
 			throw new \Exception("Type '{$typeName}' not found in TypeRegistry.");
 		}
 	}
+
 
 
     private static function registerCustomPlatformTypes()
