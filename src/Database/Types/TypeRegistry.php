@@ -22,7 +22,7 @@ class TypeRegistry
     private static $customTypesRegistered = false;
     private static $types = [];
     private static $aliases = [  // Declare a new property for aliases
-        'int' => 'integer',
+        // 'int' => 'integer',
         // 'bigint' => 'integer',
         // 'smallint' => 'integer',
         // 'tinyint' => 'integer',
