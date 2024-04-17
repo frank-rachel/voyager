@@ -20,86 +20,71 @@ class TypeRegistry
 {
     private static $platformTypes = null;
     private static $customTypesRegistered = false;
+    private static $types = [];  // Declare the static property to hold type instances
 
-    // public static function getPlatformTypes()
-    // {
-        // if (self::$platformTypes) {
-            // return self::$platformTypes;
-        // }
+    public static function getPlatformTypes()
+    {
+        if (self::$platformTypes) {
+            return self::$platformTypes;
+        }
 
-        // if (!self::$customTypesRegistered) {
-            // self::registerCustomPlatformTypes();
-        // }
+        if (!self::$customTypesRegistered) {
+            self::registerCustomPlatformTypes();
+        }
 
-        // $platform = SchemaManager::getDatabasePlatform(); // Adjust according to actual usage
+        $platform = SchemaManager::getDatabasePlatform();
 
-        // $types = self::getPlatformTypeMapping($platform);
-        // self::$platformTypes = collect($types)->mapWithKeys(function ($typeClass, $typeName) {
-            // return [$typeName => self::toArray(new $typeClass)];
-        // })->groupBy('category');
+        $types = self::getPlatformTypeMapping($platform);
+        self::$platformTypes = collect($types)->mapWithKeys(function ($typeClass, $typeName) {
+            return [$typeName => self::toArray(new $typeClass)];
+        })->groupBy('category');
 
-        // return self::$platformTypes;
-    // }
-
-public static function getType($typeName)
-{
-    if (!self::$customTypesRegistered) {
-        self::registerCustomPlatformTypes();
+        return self::$platformTypes;
     }
 
-    // Ensure we're dealing with an array
-    $typesArray = self::$platformTypes instanceof Illuminate\Support\Collection 
-                  ? self::$platformTypes->toArray() 
-                  : self::$platformTypes;
+    public static function getType($typeName)
+    {
+        if (!self::$customTypesRegistered) {
+            self::registerCustomPlatformTypes();
+        }
 
-    // Log available types for debugging
-    Log::info("Available types: " . implode(", ", array_keys($typesArray)));
-
-    if (isset($typesArray[$typeName])) {
-        return new $typesArray[$typeName]();
-    } else {
-        throw new \Exception("Type '{$typeName}' not found in TypeRegistry.");
-    }
-}
-
-public static function registerCustomPlatformTypes()
-{
-    self::registerTypesFromDirectory(__DIR__ . '/Postgresql');
-    self::registerTypesFromDirectory(__DIR__ . '/Common');
-    self::$customTypesRegistered = true;
-
-    // Ensure we are storing type instances with the correct keys
-    foreach (self::$platformTypes as $type) {
-        if ($type instanceof Type) {
-            self::$types[$type->getName()] = $type;  // Register by type name
-            Log::info("Registered type: " . $type->getName());
+        if (isset(self::$types[$typeName])) {
+            return self::$types[$typeName];
+        } else {
+            throw new \Exception("Type '{$typeName}' not found in TypeRegistry.");
         }
     }
-}
 
-private static function registerTypesFromDirectory($directory)
-{
-    foreach (glob($directory . "/*.php") as $file) {
-        $className = basename($file, '.php');
-        $classNamespace = 'TCG\\Voyager\\Database\\Types\\' . basename($directory) . '\\' . $className;
-        if (class_exists($classNamespace)) {
-            $typeInstance = new $classNamespace();
-            self::$platformTypes[$typeInstance->getName()] = $typeInstance;
+    private static function registerCustomPlatformTypes()
+    {
+        self::registerTypesFromDirectory(__DIR__ . '/Postgresql');
+        self::registerTypesFromDirectory(__DIR__ . '/Common');
+        self::$customTypesRegistered = true;
+    }
+
+    private static function registerTypesFromDirectory($directory)
+    {
+        foreach (glob($directory . "/*.php") as $file) {
+            $className = basename($file, '.php');
+            $classNamespace = 'TCG\\Voyager\\Database\\Types\\' . basename($directory) . '\\' . $className;
+            if (class_exists($classNamespace)) {
+                $typeInstance = new $classNamespace();
+                self::$types[$typeInstance->getName()] = $typeInstance;  // Store by type name
+                Log::info("Registered type: " . $typeInstance->getName());
+            }
         }
     }
-}
-
 
     private static function toArray(Type $type)
     {
-        // Convert type instances to an array format if necessary
-        // For example, returning type properties like name, category etc.
         return [
             'name' => $type->getName(),
             'category' => $type->getCategory() // Assume these methods exist
         ];
     }
-	
+
+
+
     protected static function getPlatformCustomTypes($platformName)
     {
         $typesPath = __DIR__.DIRECTORY_SEPARATOR.$platformName.DIRECTORY_SEPARATOR;
