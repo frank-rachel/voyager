@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Log;
-
+use TCG\Voyager\Database\TableUtilities;
 // Ensure all functionality here uses Laravel's native classes
 
 abstract class SchemaManager
@@ -111,7 +111,8 @@ abstract class SchemaManager
 				// $columnType = Schema::getColumnType($tableName, $column);
 				// $columns[$column] = new Column($column, $columnType);
 			// }
-			$columns = $this->getColumnDetails($tableName);
+			// $columns = $this->getColumnDetails($tableName);
+			$columns = TableUtilities::getColumnDetails($tableName);
 			
 			$foreignKeys = DB::select("
 				SELECT tc.constraint_name, kcu.column_name, ccu.table_name AS foreign_table_name, ccu.column_name AS foreign_column_name
