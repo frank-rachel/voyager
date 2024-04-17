@@ -29,33 +29,44 @@ class TypeRegistry
         'double' => 'float',  // Example if needed
     ];
 
-public static function getPlatformTypes()
-{
-    if (self::$platformTypes) {
-        return self::$platformTypes;
-    }
+	public static function getPlatformTypes()
+	{
+		if (self::$platformTypes) {
+			return self::$platformTypes;
+		}
 
-    if (!self::$customTypesRegistered) {
-        self::registerCustomPlatformTypes();
-    }
+		if (!self::$customTypesRegistered) {
+			self::registerCustomPlatformTypes();
+		}
 
-    $platform = SchemaManager::getDatabasePlatform();
-    $types = self::getPlatformTypeMapping($platform);
-    $groupedTypes = collect($types)->mapWithKeys(function ($typeClass, $typeName) {
-        $typeInstance = new $typeClass;
-        return [$typeName => $typeInstance->toArray()];
-    })->groupBy('category');
+		$platform = SchemaManager::getDatabasePlatform();
+		$types = self::getPlatformTypeMapping($platform);
+		$groupedTypes = collect($types)->mapWithKeys(function ($typeClass, $typeName) {
+			$typeInstance = new $typeClass;
+			return [$typeName => $typeInstance->toArray()];
+		})->groupBy('category');
 
-    // Adjust categories to match expected structure in the frontend
-    self::$platformTypes = [
-        'Numbers' => $groupedTypes->get('Numeric')->all(),
-        'Strings' => $groupedTypes->get('String')->all(),
-        'Date and Time' => $groupedTypes->get('Date and Time')->all(),
-        // Add other categories similarly
-    ];
+		// Safe retrieval of categories with fallback to an empty collection
+		self::$platformTypes = [
+			'Numbers' => $groupedTypes->get('Numeric', collect())->all(),
+			'Strings' => $groupedTypes->get('String', collect())->all(),
+			'Date and Time' => $groupedTypes->get('Date and Time', collect())->all(),
+			'Other' => $groupedTypes->get('Other', collect())->all(),
+			// Ensure all expected categories are covered, defaulting to an empty array if not present
+		];
 
-    return self::$platformTypes;
-}
+		// Optionally, handle uncategorized types:
+		$knownCategories = ['Numeric', 'String', 'Date and Time', 'Other'];
+		foreach ($groupedTypes as $category => $items) {
+			if (!in_array($category, $knownCategories)) {
+				// Append uncategorized items to the 'Other' category
+				self::$platformTypes['Other'] = array_merge(self::$platformTypes['Other'], $items->all());
+			}
+		}
+
+		return self::$platformTypes;
+	}
+
 
 
     public static function getType($typeName)
