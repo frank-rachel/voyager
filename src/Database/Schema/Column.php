@@ -30,15 +30,26 @@ class Column
         $this->handleType();
     }
 
-    private function handleType()
-    {
-        // Assuming you have a way to fetch the type object based on the type name
+    // private function handleType()
+    // {
+        // $typeObject = TypeRegistry::getType($this->type);
+        // if ($typeObject) {
+            // $this->type = $typeObject->getName();  // Get a more detailed type name if needed
+            // $this->length = $this->length ?? $typeObject->getDefaultLength();  // Only set if not already set
+        // }
+    // }
+private function handleType()
+{
+    // try {
         $typeObject = TypeRegistry::getType($this->type);
-        if ($typeObject) {
-            $this->type = $typeObject->getName();  // Get a more detailed type name if needed
-            $this->length = $this->length ?? $typeObject->getDefaultLength();  // Only set if not already set
-        }
-    }
+        $this->type = $typeObject->getName();
+        $this->length = $this->length ?? $typeObject->getDefaultLength();
+    // } catch (\Exception $e) {
+        // Handle the exception based on your application's needs
+        // error_log($e->getMessage());
+        // You might set default type details here if necessary
+    // }
+}
 
     public function toArray()
     {
