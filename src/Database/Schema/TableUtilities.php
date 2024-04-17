@@ -1,9 +1,10 @@
 <?php
+
+namespace TCG\Voyager\Database\Schema;
+
 use Illuminate\Support\Facades\DB;
 
 class TableUtilities {
-    // Assuming we are in some utility class
-
     public static function getColumnDetails($tableName) {
         $columns = DB::select("SELECT column_name, data_type, is_nullable, column_default, character_maximum_length, numeric_precision, numeric_scale 
                                 FROM information_schema.columns 
