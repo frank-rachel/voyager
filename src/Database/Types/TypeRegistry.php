@@ -48,7 +48,13 @@ class TypeRegistry
 		}
 
 		// Force the conversion to an array every time before use
-		$typesArray = self::$platformTypes instanceof Illuminate\Support\Collection ? self::$platformTypes->toArray() : self::$platformTypes;
+		if (self::$platformTypes instanceof Illuminate\Support\Collection) {
+			Log::debug("Platform types is a collection, converting to array.");
+			$typesArray = self::$platformTypes->toArray();
+		} else {
+			Log::debug("Platform types is already an array.");
+			$typesArray = self::$platformTypes;
+		}
 
 		if (isset($typesArray[$typeName])) {
 			return new $typesArray[$typeName]();
