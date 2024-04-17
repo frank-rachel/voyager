@@ -8,7 +8,7 @@ abstract class Type
     // Define the properties each type class should have
     public const DBTYPE = 'default_db_type';
     public $name;
-    public $category = 'Other';  // Default category
+    protected $category = 'Other';  // Default category
 
     public function __construct()
     {
