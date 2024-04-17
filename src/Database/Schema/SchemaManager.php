@@ -103,62 +103,92 @@ abstract class SchemaManager
      * @return \TCG\Voyager\Database\Schema\Table
      */
 	 
-public static function listTableDetails($tableName)
-{
-    try {
-        $columns = [];
-        foreach (Schema::getColumnListing($tableName) as $column) {
-            $columnType = Schema::getColumnType($tableName, $column);
-            $columns[$column] = new Column($column, $columnType);
-        }
+	public static function listTableDetails($tableName)
+	{
+		try {
+			// $columns = [];
+			// foreach (Schema::getColumnListing($tableName) as $column) {
+				// $columnType = Schema::getColumnType($tableName, $column);
+				// $columns[$column] = new Column($column, $columnType);
+			// }
+			$columns = $this->getColumnDetails($tableName);
+			
+			$foreignKeys = DB::select("
+				SELECT tc.constraint_name, kcu.column_name, ccu.table_name AS foreign_table_name, ccu.column_name AS foreign_column_name
+				FROM information_schema.table_constraints AS tc 
+				JOIN information_schema.key_column_usage AS kcu 
+					ON tc.constraint_name = kcu.constraint_name
+				JOIN information_schema.constraint_column_usage AS ccu
+					ON ccu.constraint_name = tc.constraint_name
+				WHERE tc.table_name = ? AND tc.constraint_type = 'FOREIGN KEY' AND tc.table_schema = ?", 
+				[$tableName, env('DB_DATABASE')]);
 
-        $foreignKeys = DB::select("
-            SELECT tc.constraint_name, kcu.column_name, ccu.table_name AS foreign_table_name, ccu.column_name AS foreign_column_name
-            FROM information_schema.table_constraints AS tc 
-            JOIN information_schema.key_column_usage AS kcu 
-                ON tc.constraint_name = kcu.constraint_name
-            JOIN information_schema.constraint_column_usage AS ccu
-                ON ccu.constraint_name = tc.constraint_name
-            WHERE tc.table_name = ? AND tc.constraint_type = 'FOREIGN KEY' AND tc.table_schema = ?", 
-            [$tableName, env('DB_DATABASE')]);
+			$foreignKeysMapped = array_map(function ($fk) {
+				return new ForeignKey([
+					'name' => $fk->constraint_name,
+					'column' => $fk->column_name,
+					'foreign_table' => $fk->foreign_table_name,
+					'foreign_column' => $fk->foreign_column_name,
+				]);
+			}, $foreignKeys);
 
-        $foreignKeysMapped = array_map(function ($fk) {
-            return new ForeignKey([
-                'name' => $fk->constraint_name,
-                'column' => $fk->column_name,
-                'foreign_table' => $fk->foreign_table_name,
-                'foreign_column' => $fk->foreign_column_name,
-            ]);
-        }, $foreignKeys);
+			$indexes = DB::select("
+				SELECT indexname, indexdef 
+				FROM pg_indexes 
+				WHERE tablename = ? AND schemaname = 'public'", 
+				[$tableName]);
 
-        $indexes = DB::select("
-            SELECT indexname, indexdef 
-            FROM pg_indexes 
-            WHERE tablename = ? AND schemaname = 'public'", 
-            [$tableName]);
+			$indexesMapped = array_map(function ($index) {
+				// Parse the index definition to extract columns and type
+				preg_match('/\(([^)]+)\)/', $index->indexdef, $matches);
+				$columns = explode(',', str_replace(' ', '', $matches[1]));
+				$isUnique = stripos($index->indexdef, 'UNIQUE') !== false;
+				$type = $isUnique ? Index::UNIQUE : Index::INDEX;
 
-		$indexesMapped = array_map(function ($index) {
-			// Parse the index definition to extract columns and type
-			preg_match('/\(([^)]+)\)/', $index->indexdef, $matches);
-			$columns = explode(',', str_replace(' ', '', $matches[1]));
-			$isUnique = stripos($index->indexdef, 'UNIQUE') !== false;
-			$type = $isUnique ? Index::UNIQUE : Index::INDEX;
-
-			return new Index($index->indexname, $columns, $type, $type === Index::PRIMARY, $isUnique);
-		}, $indexes);
-
-
-        $table = new Table($tableName, $columns, $indexesMapped, $foreignKeysMapped, []);
-        return $table;
-
-    } catch (\Exception $e) {
-        // Log error for debugging
-        Log::error('Failed to list table details: ' . $e->getMessage());
-        return null;  // Or handle the error as appropriate
-    }
-}
+				return new Index($index->indexname, $columns, $type, $type === Index::PRIMARY, $isUnique);
+			}, $indexes);
 
 
+			$table = new Table($tableName, $columns, $indexesMapped, $foreignKeysMapped, []);
+			return $table;
+
+		} catch (\Exception $e) {
+			// Log error for debugging
+			Log::error('Failed to list table details: ' . $e->getMessage());
+			return null;  // Or handle the error as appropriate
+		}
+	}
+
+	private function getColumnDetails($tableName) {
+		// Query to fetch column details from PostgreSQL's information_schema
+		$columns = DB::select("SELECT column_name, data_type, is_nullable, column_default, character_maximum_length, numeric_precision, numeric_scale 
+								FROM information_schema.columns 
+								WHERE table_schema = 'public' AND table_name = ?", [$tableName]);
+
+		return array_map(function ($column) {
+			$options = [
+				'nullable' => $column->is_nullable === 'YES',
+				'default' => $column->column_default,
+				'length' => $column->character_maximum_length,
+				'precision' => $column->numeric_precision,
+				'scale' => $column->numeric_scale,
+				'unsigned' => strpos($column->data_type, 'int') !== false && strpos($column->column_default, 'nextval(') === false && strpos($column->data_type, 'unsigned') !== false
+			];
+			// Handle the type conversion to a more generic or understandable format if necessary
+			$type = $this->convertPostgresTypeToGeneric($column->data_type);
+			return new Column($column->column_name, $type, $options);
+		}, $columns);
+	}
+
+	private function convertPostgresTypeToGeneric($postgresType) {
+		$typeMapping = [
+			'character varying' => 'varchar',
+			'integer' => 'int',
+			'timestamp without time zone' => 'timestamp',
+			// Add more mappings as needed
+		];
+		return $typeMapping[$postgresType] ?? $postgresType;
+	}
 // */
 /*
     public static function listTableDetails($tableName)

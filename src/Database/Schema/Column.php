@@ -24,8 +24,7 @@ class Column
         $this->scale = $options['scale'] ?? null;
         $this->options['unsigned'] = $options['unsigned'] ?? false;
         $this->options['fixed'] = $options['fixed'] ?? false;
-        // $this->options['notnull'] = $options['notnull'] ?? false;
-        $this->options['notnull'] = $options['nullable'] ?? false;
+        $this->options['notnull'] = $options['notnull'] ?? false;
     }
 
     public function toArray()
