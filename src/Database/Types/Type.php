@@ -28,7 +28,12 @@ abstract class Type
     }
 
     // Each type must implement its own SQL declaration method
-    abstract public function getSQLDeclaration(array $field);
+    // abstract public function getSQLDeclaration(array $field);
+    public function getSQLDeclaration(array $field)
+    {
+        $length = $field['length'] ?? 2000; // Default length
+        return DBTYPE."($length)";
+    }
 
     // Convert the type instance to an array format for easy handling
     public function toArray()

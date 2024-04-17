@@ -8,4 +8,6 @@ class CharacterVaryingType extends VarCharType
 {
     public const NAME = 'character varying';
     public const DBTYPE = 'varchar';
+    protected $category = 'String';
+	
 }

@@ -8,4 +8,6 @@ class CharacterType extends CharType
 {
     public const NAME = 'character';
     public const DBTYPE = 'bpchar';
+    protected $category = 'String';
+
 }
