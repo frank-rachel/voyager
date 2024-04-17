@@ -11,30 +11,30 @@ class Column
     public $options;
     public $tableName;
 
-    public function __construct($name, $type, array $options = [], $tableName = null)
-    {
-        $this->name = $name;
-        // Resolve the type name using the TypeRegistry
-        $this->type = TypeRegistry::getType($type)->getName();
-        $this->options = $options;
-        $this->tableName = $tableName;
+	public function __construct($name, $type, array $options = [], $tableName = null)
+	{
+		$this->name = $name;
+		// Check if $type is already an instance of Type, otherwise get it from TypeRegistry
+		$this->type = $type instanceof Type ? $type : TypeRegistry::getType($type);
+		$this->options = $options;
+		$this->tableName = $tableName;
 
-        // Set defaults from options or use default values
-        $this->options['nullable'] = $options['nullable'] ?? true;
-        $this->options['default'] = $options['default'] ?? null;
-        $this->options['length'] = $options['length'] ?? null;
-        $this->options['precision'] = $options['precision'] ?? null;
-        $this->options['scale'] = $options['scale'] ?? null;
-        $this->options['unsigned'] = $options['unsigned'] ?? false;
-        $this->options['fixed'] = $options['fixed'] ?? false;
-        $this->options['notnull'] = $options['notnull'] ?? !$this->options['nullable'];
-    }
+		// Set defaults from options or use default values
+		$this->options['nullable'] = $options['nullable'] ?? true;
+		$this->options['default'] = $options['default'] ?? null;
+		$this->options['length'] = $options['length'] ?? null;
+		$this->options['precision'] = $options['precision'] ?? null;
+		$this->options['scale'] = $options['scale'] ?? null;
+		$this->options['unsigned'] = $options['unsigned'] ?? false;
+		$this->options['fixed'] = $options['fixed'] ?? false;
+		$this->options['notnull'] = $options['notnull'] ?? !$this->options['nullable'];
+	}
 
 	public function toArray()
 	{
 		return [
 			'name' => $this->name,
-			'type' => $this->type->getName(), // Ensure this returns just the type name
+			'type' => $this->type->getName(), // This assumes $this->type is always an instance of Type
 			'oldName' => $this->name,
 			'null' => $this->options['nullable'] ? 'YES' : 'NO',
 			'default' => $this->options['default'],
@@ -48,6 +48,7 @@ class Column
 			'composite' => false
 		];
 	}
+
 
 
     public function getName()

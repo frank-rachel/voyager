@@ -21,6 +21,12 @@ abstract class Type
         return $this->name;
     }
 
+	// In your Type class
+	public function getSimpleOutput() {
+		return $this->getName(); // Just return the type name as a string
+	}
+
+
     // Getter for category
     public function getCategory()
     {
