@@ -2,7 +2,7 @@
 namespace TCG\Voyager\Database\Types;
 
 use TCG\Voyager\Database\Types\Common\{
-    CharType, DoubleType, JsonType, NumericType, TextType, VarCharType
+    CharType, DoubleType, JsonType, NumericType, TextType, VarCharType, IntegerType
 };
 use TCG\Voyager\Database\Types\Postgresql\{
     BitType, BitVaryingType, ByteaType, CharacterType, CharacterVaryingType, CidrType, DoublePrecisionType,
@@ -97,6 +97,7 @@ public static function getPlatformTypeMapping($platform)
         'numeric' => NumericType::class,
         'text' => TextType::class,
         'varchar' => VarCharType::class,
+        'integer' => IntegerType::class,
 
         // PostgreSQL types
         'bit' => BitType::class,
