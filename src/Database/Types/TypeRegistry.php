@@ -39,18 +39,20 @@ class TypeRegistry
         return self::$platformTypes;
     }
 
-    public static function getType($typeName)
-    {
-        if (!self::$customTypesRegistered) {
-            self::registerCustomPlatformTypes();
-        }
+	public static function getType($typeName)
+	{
+		if (!self::$customTypesRegistered) {
+			self::registerCustomPlatformTypes();
+		}
 
-        if (isset(self::$types[$typeName])) {
-            return self::$types[$typeName];
-        } else {
-            throw new \Exception("Type '{$typeName}' not found in TypeRegistry.");
-        }
-    }
+		if (isset(self::$platformTypes[$typeName])) {
+			return new self::$platformTypes[$typeName]();
+		} else {
+			error_log("Attempted to access undefined type '{$typeName}'.");
+			throw new \Exception("Type '{$typeName}' not found in TypeRegistry.");
+		}
+	}
+
 
     private static function registerCustomPlatformTypes()
     {
