@@ -1,6 +1,9 @@
 <?php
 namespace TCG\Voyager\Database\Schema;
 
+use TCG\Voyager\Database\Types\TypeRegistry; // Corrected namespace
+
+
 class Column
 {
     public $name;
