@@ -20,7 +20,14 @@ class TypeRegistry
 {
     private static $platformTypes = null;
     private static $customTypesRegistered = false;
-    private static $types = [];  // Declare the static property to hold type instances
+    private static $types = [];
+    private static $aliases = [  // Declare a new property for aliases
+        'int' => 'integer',
+        'bigint' => 'integer',
+        'smallint' => 'integer',
+        'tinyint' => 'integer',
+        'double' => 'float',  // Example if needed
+    ];
 
     public static function getPlatformTypes()
     {
@@ -33,7 +40,6 @@ class TypeRegistry
         }
 
         $platform = SchemaManager::getDatabasePlatform();
-
         $types = self::getPlatformTypeMapping($platform);
         self::$platformTypes = collect($types)->mapWithKeys(function ($typeClass, $typeName) {
             return [$typeName => self::toArray(new $typeClass)];
@@ -48,8 +54,11 @@ class TypeRegistry
             self::registerCustomPlatformTypes();
         }
 
-        if (isset(self::$types[$typeName])) {
-            return self::$types[$typeName];
+        // Check if the type name is an alias, and get the canonical type name
+        $canonicalName = self::$aliases[$typeName] ?? $typeName;
+
+        if (isset(self::$types[$canonicalName])) {
+            return self::$types[$canonicalName];
         } else {
             throw new \Exception("Type '{$typeName}' not found in TypeRegistry.");
         }
@@ -69,11 +78,14 @@ class TypeRegistry
             $classNamespace = 'TCG\\Voyager\\Database\\Types\\' . basename($directory) . '\\' . $className;
             if (class_exists($classNamespace)) {
                 $typeInstance = new $classNamespace();
-                self::$types[$typeInstance->getName()] = $typeInstance;  // Store by type name
+                self::$types[$typeInstance->getName()] = $typeInstance;
                 Log::info("Registered type: " . $typeInstance->getName());
             }
         }
     }
+
+
+
 
     private static function toArray(Type $type)
     {
