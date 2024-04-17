@@ -161,11 +161,20 @@ abstract class SchemaManager
 		}
 	}
 
-	private function getColumnDetails($tableName) {
-		// Query to fetch column details from PostgreSQL's information_schema
-		$columns = DB::select("SELECT column_name, data_type, is_nullable, column_default, character_maximum_length, numeric_precision, numeric_scale 
-								FROM information_schema.columns 
-								WHERE table_schema = 'public' AND table_name = ?", [$tableName]);
+	public static function getColumnDetails($tableName) {
+		$columns = DB::select("
+			SELECT 
+				column_name, 
+				data_type, 
+				is_nullable, 
+				column_default, 
+				character_maximum_length, 
+				numeric_precision, 
+				numeric_scale,
+				CASE WHEN character_maximum_length IS NOT NULL THEN 'true' ELSE 'false' END as fixed,
+				CASE WHEN numeric_precision IS NOT NULL THEN 'true' ELSE 'false' END as unsigned
+			FROM information_schema.columns 
+			WHERE table_schema = 'public' AND table_name = ?", [$tableName]);
 
 		return array_map(function ($column) {
 			$options = [
@@ -174,13 +183,14 @@ abstract class SchemaManager
 				'length' => $column->character_maximum_length,
 				'precision' => $column->numeric_precision,
 				'scale' => $column->numeric_scale,
-				'unsigned' => strpos($column->data_type, 'int') !== false && strpos($column->column_default, 'nextval(') === false && strpos($column->data_type, 'unsigned') !== false
+				'unsigned' => $column->unsigned === 'true', // Example for handling unsigned; adjust as needed
+				'fixed' => $column->fixed === 'true', // Fixed determination based on length
+				'notnull' => $column->is_nullable === 'NO'
 			];
-			// Handle the type conversion to a more generic or understandable format if necessary
-			$type = $this->convertPostgresTypeToGeneric($column->data_type);
-			return new Column($column->column_name, $type, $options);
+			return new Column($column->column_name, $column->data_type, $options);
 		}, $columns);
 	}
+
 
 	private function convertPostgresTypeToGeneric($postgresType) {
 		$typeMapping = [

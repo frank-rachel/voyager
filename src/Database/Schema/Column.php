@@ -12,20 +12,21 @@ class Column
     public $precision;
     public $scale;
 
-    public function __construct($name, $type, array $options = [])
-    {
-        $this->name = $name;
-        $this->type = $type;
-        $this->options = $options;
-        $this->nullable = $options['nullable'] ?? true;
-        $this->default = $options['default'] ?? null;
-        $this->length = $options['length'] ?? null;
-        $this->precision = $options['precision'] ?? null;
-        $this->scale = $options['scale'] ?? null;
-        $this->options['unsigned'] = $options['unsigned'] ?? false;
-        $this->options['fixed'] = $options['fixed'] ?? false;
-        $this->options['notnull'] = $options['notnull'] ?? false;
-    }
+	public function __construct($name, $type, array $options = [])
+	{
+		$this->name = $name;
+		$this->type = $type;
+		$this->options = $options;
+		$this->nullable = $options['nullable'] ?? true;
+		$this->default = $options['default'] ?? null;
+		$this->length = $options['length'] ?? null;
+		$this->precision = $options['precision'] ?? null;
+		$this->scale = $options['scale'] ?? null;
+		$this->options['unsigned'] = $options['unsigned'] ?? false;
+		$this->options['fixed'] = $options['fixed'] ?? false;
+		$this->options['notnull'] = $options['notnull'] ?? !$this->nullable;
+	}
+
 
     public function toArray()
     {
