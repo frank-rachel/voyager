@@ -1,6 +1,8 @@
 <?php
 namespace TCG\Voyager\Database\Types;
 
+use Illuminate\Support\Facades\Log;
+
 use TCG\Voyager\Database\Types\Common\{
     CharType, DoubleType, JsonType, NumericType, TextType, VarCharType, IntegerType, BigIntType
 };
@@ -80,7 +82,7 @@ class TypeRegistry
 			if (class_exists($classNamespace)) {
 				$typeInstance = new $classNamespace();
 				self::$platformTypes[$typeInstance->getName()] = $typeInstance;
-				error_log("Registered type: " . $typeInstance->getName());
+				Log::info("Registered type: " . $typeInstance->getName());
 			}
 		}
 	}
