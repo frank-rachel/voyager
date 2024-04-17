@@ -281,25 +281,6 @@ public static function getPlatformTypeMapping($platform)
         return static::$typeCategories;
     }
 		
-public static function getPlatformTypes()
-{
-    if (self::$platformTypes) {
-        return self::$platformTypes;
-    }
-
-    if (!self::$customTypesRegistered) {
-        self::registerCustomPlatformTypes();
-    }
-
-    $platform = SchemaManager::getDatabasePlatform(); // Adjust according to actual usage
-
-    $types = self::getPlatformTypeMapping($platform);
-    self::$platformTypes = collect($types)->mapWithKeys(function ($typeClass, $typeName) {
-        return [$typeName => self::toArray(new $typeClass)];
-    })->groupBy('category')->toArray(); // Ensure it's converted to an array
-
-    return self::$platformTypes;
-}
 
 public static function logAvailableTypes()
 {
