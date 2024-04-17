@@ -17,7 +17,7 @@ class Column
         $this->name = $name;
         $this->type = $type;
         $this->options = $options;
-        $this->nullable = $options['nullable'] ?? false;
+        $this->nullable = $options['nullable'] ?? true;
         $this->default = $options['default'] ?? null;
         $this->length = $options['length'] ?? null;
         $this->precision = $options['precision'] ?? null;
