@@ -10,4 +10,5 @@ class CharacterType extends CharType
     public const DBTYPE = 'bpchar';
     protected $category = 'String';
 
+
 }
