@@ -74,16 +74,33 @@ class Table
         $this->indexes[] = $index;
     }
 
-    public function toArray()
-    {
-        return [
-            'name' => $this->name,
-            'columns' => array_map(function ($column) { return $column->toArray(); }, $this->columns),
-            'indexes' => array_map(function ($index) { return $index->toArray(); }, $this->indexes),
-            'foreignKeys' => $this->foreignKeys,
-            'options' => $this->options,
-        ];
-    }
+
+	public function toArray()
+	{
+		$columnsArr = [];
+		foreach ($this->columns as $column) {
+			$columnsArr[] = $column->toArray();
+		}
+
+		return [
+			'name' => $this->name,
+			'columns' => $columnsArr,
+			'indexes' => array_map(function ($index) { return $index->toArray(); }, $this->indexes),
+			'foreignKeys' => $this->foreignKeys,
+			'options' => $this->options,
+		];
+	}
+
+    // public function toArray()
+    // {
+        // return [
+            // 'name' => $this->name,
+            // 'columns' => array_map(function ($column) { return $column->toArray(); }, $this->columns),
+            // 'indexes' => array_map(function ($index) { return $index->toArray(); }, $this->indexes),
+            // 'foreignKeys' => $this->foreignKeys,
+            // 'options' => $this->options,
+        // ];
+    // }
 
 
     public function removeColumn($columnName)

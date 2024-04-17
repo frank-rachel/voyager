@@ -34,7 +34,7 @@ class Column
 	{
 		return [
 			'name' => $this->name,
-			'type' => $this->type->getName(), // This assumes $this->type is always an instance of Type
+			'type' => $this->type->getName(), // Make sure this outputs only the type name
 			'oldName' => $this->name,
 			'null' => $this->options['nullable'] ? 'YES' : 'NO',
 			'default' => $this->options['default'],
