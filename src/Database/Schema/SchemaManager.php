@@ -226,36 +226,44 @@ abstract class SchemaManager
      *
      * @return \Illuminate\Support\Collection
      */
-    public static function describeTable($tableName)
-    {
-        // TypeRegistry::registerCustomPlatformTypes();
+	public static function describeTable($tableName)
+	{
+		$table = static::listTableDetails($tableName);
 
-        $table = static::listTableDetails($tableName);
+		return collect($table->columns)->map(function ($column) use ($table) {
+			// Assuming $column is an instance of Column, call toArray directly on the instance
+			$columnArr = $column->toArray();  // Convert column to array using its method
 
-        return collect($table->columns)->map(function ($column) use ($table) {
-            $columnArr = Column::toArray($column);
+			$columnArr['field'] = $columnArr['name'];  // Duplicate name as 'field' for compatibility
+			$columnArr['type'] = $columnArr['type'];  // Directly use the type from toArray()
 
-            $columnArr['field'] = $columnArr['name'];
-            $columnArr['type'] = $columnArr['type']['name'];
+			// Initialize indexes array and key
+			$columnArr['indexes'] = [];
+			$columnArr['key'] = null;
 
-            // Set the indexes and key
-            $columnArr['indexes'] = [];
-            $columnArr['key'] = null;
-            if ($columnArr['indexes'] = $table->getColumnsIndexes($columnArr['name'], true)) {
-                // Convert indexes to Array
-                foreach ($columnArr['indexes'] as $name => $index) {
-                    $columnArr['indexes'][$name] = Index::toArray($index);
-                }
+			// Fetch indexes for the current column and format them
+			if ($indexes = $table->getColumnsIndexes($columnArr['name'], true)) {
+				foreach ($indexes as $name => $index) {
+					// Assuming $index is an instance of Index, use toArray method
+					if ($index instanceof Index) {
+						$columnArr['indexes'][$name] = $index->toArray();
+					} else {
+						throw new \InvalidArgumentException("Expected object of type Index, received " . get_class($index));
+					}
+				}
 
-                // If there are multiple indexes for the column
-                // the Key will be one with highest priority
-                $indexType = array_values($columnArr['indexes'])[0]['type'];
-                $columnArr['key'] = substr($indexType, 0, 3);
-            }
+				// Set the key if indexes are present
+				if (!empty($columnArr['indexes'])) {
+					$indexType = array_values($columnArr['indexes'])[0]['type'];
+					$columnArr['key'] = substr($indexType, 0, 3);  // Key will be the first three letters of the index type
+				}
+			}
 
-            return $columnArr;
-        });
-    }
+			return $columnArr;
+		});
+	}
+
+
 
     public static function dropTable($tableName)
 	{
