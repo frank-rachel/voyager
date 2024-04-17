@@ -10,23 +10,24 @@ class Column
     public $options;
     public $tableName;
 
-    public function __construct($name, $type, array $options = [], $tableName = null)
-    {
-        $this->name = $name;
-        $this->type = $type;  // This should be a type object or a string
-        $this->options = $options;
-        $this->tableName = $tableName;
+	public function __construct($name, $type, array $options = [], $tableName = null)
+	{
+		$this->name = $name;
+		$this->type = Type::getType($type);  // Assume getType returns an instance of Type
+		$this->options = $options;
+		$this->tableName = $tableName;
 
-        // Set default values if not provided
-        $this->options['nullable'] = $options['nullable'] ?? true;
-        $this->options['default'] = $options['default'] ?? null;
-        $this->options['length'] = $options['length'] ?? null;
-        $this->options['precision'] = $options['precision'] ?? null;
-        $this->options['scale'] = $options['scale'] ?? null;
-        $this->options['unsigned'] = $options['unsigned'] ?? false;
-        $this->options['fixed'] = $options['fixed'] ?? false;
-        $this->options['notnull'] = $options['notnull'] ?? !$this->options['nullable'];
-    }
+		// Set defaults
+		$this->options['nullable'] = $options['nullable'] ?? true;
+		$this->options['default'] = $options['default'] ?? null;
+		$this->options['length'] = $options['length'] ?? null;
+		$this->options['precision'] = $options['precision'] ?? null;
+		$this->options['scale'] = $options['scale'] ?? null;
+		$this->options['unsigned'] = $options['unsigned'] ?? false;
+		$this->options['fixed'] = $options['fixed'] ?? false;
+		$this->options['notnull'] = $options['notnull'] ?? !$this->options['nullable'];
+	}
+
 
     public static function make(array $column, string $tableName = null)
     {
@@ -39,26 +40,32 @@ class Column
         return new self($name, $type, $options, $tableName);
     }
 
-    public function toArray()
-    {
-        $columnArr = [
-            'name' => $this->name,
-            'type' => Type::toArray($this->type), // Assuming Type class has a static toArray method
-            'oldName' => $this->name,
-            'null' => $this->options['nullable'] ? 'YES' : 'NO',
-            'default' => $this->options['default'],
-            'length' => $this->options['length'],
-            'precision' => $this->options['precision'],
-            'scale' => $this->options['scale'],
-            'unsigned' => $this->getUnsigned(),
-            'fixed' => $this->getFixed(),
-            'notnull' => $this->getNotnull(),
-            'extra' => $this->getExtra(),
-            'composite' => false  // Assume false or set based on actual logic
-        ];
+	public function toArray()
+	{
+		// Ensure $this->type is an instance of the Type class
+		if (!$this->type instanceof Type) {
+			throw new \InvalidArgumentException("Expected Type instance, got " . gettype($this->type));
+		}
 
-        return $columnArr;
-    }
+		$columnArr = [
+			'name' => $this->name,
+			'type' => $this->type->toArray(), // Call toArray on the instance of Type
+			'oldName' => $this->name,
+			'null' => $this->options['nullable'] ? 'YES' : 'NO',
+			'default' => $this->options['default'],
+			'length' => $this->options['length'],
+			'precision' => $this->options['precision'],
+			'scale' => $this->options['scale'],
+			'unsigned' => $this->getUnsigned(),
+			'fixed' => $this->getFixed(),
+			'notnull' => $this->getNotnull(),
+			'extra' => $this->getExtra(),
+			'composite' => false  // Assume false or set based on actual logic
+		];
+
+		return $columnArr;
+	}
+
 
     protected function getExtra()
     {
