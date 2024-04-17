@@ -6,7 +6,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Log;
-use TCG\Voyager\Database\TableUtilities;
+// use TCG\Voyager\Database\TableUtilities;
+use TableUtilities;
 // Ensure all functionality here uses Laravel's native classes
 
 abstract class SchemaManager
