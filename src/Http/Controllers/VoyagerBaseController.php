@@ -124,7 +124,7 @@ class VoyagerBaseController extends Controller
                 $dataTypeContent = call_user_func([$query->orderBy($model->getKeyName(), 'DESC'), $getter]);
             }
 			
-			print_r($query);
+			// print_r($query);
 			print_r($dataTypeContent);
 			exit;
             // Replace relationships' keys for labels and create READ links if a slug is provided.
