@@ -36,7 +36,8 @@ class DatabaseUpdater
         }
 
         if (!SchemaManager::tableExists($table['oldName'])) {
-            throw SchemaException::tableDoesNotExist($table['oldName']);
+            echo ("table does not exist ".$table['oldName']);
+			exit;
         }
 
         $updater = new self($table);
