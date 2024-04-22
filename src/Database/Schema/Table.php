@@ -37,6 +37,22 @@ class Table
 		}
 	}
 
+	public function toArray()
+	{
+		$columnsArr = [];
+		foreach ($this->columns as $column) {
+			$columnsArr[] = $column->toArray();
+		}
+
+		return [
+			'name' => $this->name,
+			'columns' => $columnsArr,
+			'indexes' => array_map(function ($index) { return $index->toArray(); }, $this->indexes),
+			'foreignKeys' => $this->foreignKeys,
+			'options' => $this->options,
+		];
+	}
+
 
     public function addColumn(Column $column)
     {
@@ -74,22 +90,6 @@ class Table
         $this->indexes[] = $index;
     }
 
-
-	public function toArray()
-	{
-		$columnsArr = [];
-		foreach ($this->columns as $column) {
-			$columnsArr[] = $column->toArray();
-		}
-
-		return [
-			'name' => $this->name,
-			'columns' => $columnsArr,
-			'indexes' => array_map(function ($index) { return $index->toArray(); }, $this->indexes),
-			'foreignKeys' => $this->foreignKeys,
-			'options' => $this->options,
-		];
-	}
 
     // public function toArray()
     // {

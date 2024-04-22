@@ -7,6 +7,7 @@ use TCG\Voyager\Database\Types\TypeRegistry;
 class Column
 {
     public $name;
+	public $oldName;
     public $type;
     public $options;
     public $tableName;
@@ -14,6 +15,7 @@ class Column
 	public function __construct($name, $type, array $options = [], $tableName = null)
 	{
 		$this->name = $name;
+		$this->oldName = $name;
 		// Check if $type is already an instance of Type, otherwise get it from TypeRegistry
 		$this->type = $type instanceof Type ? $type : TypeRegistry::getType($type);
 		$this->options = $options;
