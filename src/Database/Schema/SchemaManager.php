@@ -151,6 +151,7 @@ abstract class SchemaManager
 			return $table;
 
 		} catch (\Exception $e) {
+			Log::error($e->getMessage(), ['exception' => $e]);
 			// Log error for debugging
 			Log::error('Failed to list table details: ' . $e->getMessage());
 			return null;  // Or handle the error as appropriate
@@ -253,6 +254,7 @@ abstract class SchemaManager
 				return $columnArr;
 			});
 		} catch (\Exception $e) {
+			Log::error($e->getMessage(), ['exception' => $e]);
 			echo("Failed to describe table $tableName: " . $e->getMessage());
 			exit;
 			Log::error("Failed to describe table $tableName: " . $e->getMessage());
