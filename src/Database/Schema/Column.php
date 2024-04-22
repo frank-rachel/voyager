@@ -51,7 +51,12 @@ class Column
 		];
 	}
 
-
+    public static function makeMany(array $columns, string $tableName = null)
+    {
+        return array_map(function ($column) use ($tableName) {
+            return self::make($column, $tableName);
+        }, $columns);
+    }
 
     public function getName()
     {
