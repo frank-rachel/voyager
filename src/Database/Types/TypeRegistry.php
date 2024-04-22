@@ -85,14 +85,14 @@ class TypeRegistry
         }
     }
 
-    private static function registerCustomPlatformTypes()
+    public static function registerCustomPlatformTypes()
     {
         self::registerTypesFromDirectory(__DIR__ . '/Postgresql');
         self::registerTypesFromDirectory(__DIR__ . '/Common');
         self::$customTypesRegistered = true;
     }
 
-    private static function registerTypesFromDirectory($directory)
+    public static function registerTypesFromDirectory($directory)
     {
         foreach (glob($directory . "/*.php") as $file) {
             $className = basename($file, '.php');
