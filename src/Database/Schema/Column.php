@@ -50,7 +50,15 @@ class Column
 			'composite' => false
 		];
 	}
-
+	
+    public static function make(array $column, string $tableName = null)
+    {
+        $name = $column['name'];
+        $type = $column['type'];
+        $options = $column['options'] ?? [];
+        return new self($name, $type, $options, $tableName);
+    }
+	
     public static function makeMany(array $columns, string $tableName = null)
     {
         return array_map(function ($column) use ($tableName) {
