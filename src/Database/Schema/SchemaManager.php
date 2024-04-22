@@ -294,32 +294,61 @@ abstract class SchemaManager
         return $ColumnNames;
     }
 
+    // public static function createTable($table)
+	// {	
+        // $table = Table::make($table);
+		// return $table;		
+	// }
+
     public static function createTable($table)
-	{
-		
-        $table = Table::make($table);
-		return $table;
-        // $indexes = [];
-        // foreach ($table['indexes'] as $indexArr) {
-            // $index = Index::make($indexArr);
-            // $indexes[$index->getName()] = $index;
-        // }
+    {
+        if (!($table instanceof Table)) {
+            $table = Table::make($table);
+        }
 
-        // $foreignKeys = [];
-        // foreach ($table['foreignKeys'] as $foreignKeyArr) {
-            // $foreignKey = ForeignKey::make($foreignKeyArr);
-            // $foreignKeys[$foreignKey->getName()] = $foreignKey;
-        // }
+        // Use Laravel's Schema builder to create a table
+        Schema::create($table->name, function (Blueprint $tableBlueprint) use ($table) {
+            // Define columns based on the Table object's columns
+            foreach ($table->columns as $column) {
+                $columnType = $column->type->getName();  // Ensure type is correct and simplified for Laravel's Schema
+                $options = $column->options;
 
-        // $options = $table['options'];
-		
-		// Schema::create($name, function (Blueprint $table) {
-			// $table->id();
-			// $table->string('name');
-			// $table->string('email');
-			// $table->timestamps();
-		// });		
-	}
+                // Add the column to the blueprint based on the type and options
+                $columnBlueprint = $tableBlueprint->addColumn($columnType, $column->name);
+
+                // Apply options like default, nullable etc.
+                if (isset($options['default'])) {
+                    $columnBlueprint->default($options['default']);
+                }
+
+                if (isset($options['nullable']) && $options['nullable']) {
+                    $columnBlueprint->nullable();
+                }
+
+                // More options can be set here according to your specific needs
+            }
+
+            // Add indexes if any
+            foreach ($table->indexes as $index) {
+                if ($index->isPrimary) {
+                    $tableBlueprint->primary($index->columns);
+                } elseif ($index->isUnique) {
+                    $tableBlueprint->unique($index->columns);
+                } else {
+                    $tableBlueprint->index($index->columns);
+                }
+            }
+
+            // Handle foreign keys
+            foreach ($table->foreignKeys as $foreignKey) {
+                $tableBlueprint->foreign($foreignKey->localColumns)
+                               ->references($foreignKey->foreignColumns)
+                               ->on($foreignKey->foreignTable);
+                // Add onDelete, onUpdate constraints etc.
+            }
+        });
+    }	
+	
     // public static function createTable($table)
     // {
         // if (!($table instanceof DoctrineTable)) {

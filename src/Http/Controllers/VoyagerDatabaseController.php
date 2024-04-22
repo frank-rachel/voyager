@@ -99,8 +99,8 @@ class VoyagerDatabaseController extends Controller
 
 			
 			// Apparently this is done by the next command equally
-            $table = Table::make($table);
-            // $table = SchemaManager::createTable($table);
+            // $table = Table::make($table);
+            $table = SchemaManager::createTable($table);
 
             if (isset($request->create_model) && $request->create_model == 'on') {
                 $modelNamespace = config('voyager.models.namespace', app()->getNamespace());
