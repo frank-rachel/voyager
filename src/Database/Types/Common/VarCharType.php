@@ -5,7 +5,8 @@ use TCG\Voyager\Database\Types\Type;
 
 class VarCharType extends Type
 {
-    public const NAME = 'varchar';
+    public const NAME = 'string';
+    // public const NAME = 'varchar';
 
     // Define a default category or use the one in the base class if appropriate
     protected $category = 'String';
