@@ -39,7 +39,8 @@ class VoyagerBaseController extends Controller
 
         // GET THE DataType based on the slug
         $dataType = Voyager::model('DataType')->where('slug', '=', $slug)->first();
-
+		print_r($dataType);
+		
         // Check permission
         $this->authorize('browse', app($dataType->model_name));
 
