@@ -7,7 +7,7 @@ use TCG\Voyager\Database\Types\Common\VarCharType;
 class CharacterVaryingType extends VarCharType
 {
     // public const NAME = 'character varying';
-    public const NAME = 'varchar';
+    public const NAME = 'string';
     public const DBTYPE = 'varchar';
     protected $category = 'String';
 	
