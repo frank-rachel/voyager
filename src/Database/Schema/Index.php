@@ -26,6 +26,24 @@ class Index
         $this->options = $options;
     }
 
+    public static function make(array $index, string $tableName = null)
+    {
+        // Initialize an Index object from an array
+        return new self(
+            $index['name'],
+            $index['columns'],
+            $index['type'],
+            $index['options'] ?? []
+        );
+    }
+
+    public static function makeMany(array $indexes, string $tableName = null)
+    {
+        return array_map(function ($index) use ($tableName) {
+            return self::make($index, $tableName);
+        }, $indexes);
+    }
+
     public static function createIndex($name, $table, array $columns, $type)
     {
         $columnsList = implode(',', $columns);

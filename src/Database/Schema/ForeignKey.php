@@ -2,59 +2,54 @@
 
 namespace TCG\Voyager\Database\Schema;
 
-use Doctrine\DBAL\Schema\ForeignKeyConstraint as DoctrineForeignKey;
-
-abstract class ForeignKey
+class ForeignKey
 {
+    public $name;
+    public $localColumns;
+    public $foreignTable;
+    public $foreignColumns;
+    public $options;
+
+    public function __construct($name, array $localColumns, $foreignTable, array $foreignColumns, array $options = [])
+    {
+        $this->name = $name;
+        $this->localColumns = $localColumns;
+        $this->foreignTable = $foreignTable;
+        $this->foreignColumns = $foreignColumns;
+        $this->options = $options;
+    }
+
     public static function make(array $foreignKey)
     {
-        // Set the local table
-        $localTable = null;
-        if (isset($foreignKey['localTable'])) {
-            $localTable = SchemaManager::getDoctrineTable($foreignKey['localTable']);
-        }
-
+        $name = $foreignKey['name'] ?? null;
         $localColumns = $foreignKey['localColumns'];
         $foreignTable = $foreignKey['foreignTable'];
         $foreignColumns = $foreignKey['foreignColumns'];
         $options = $foreignKey['options'] ?? [];
 
-        // Set the name
-        $name = isset($foreignKey['name']) ? trim($foreignKey['name']) : '';
+        // Optionally validate the name or generate it
         if (empty($name)) {
-            $table = isset($localTable) ? $localTable->getName() : null;
-            $name = Index::createName($localColumns, 'foreign', $table);
-        } else {
-            $name = Identifier::validate($name, 'Foreign Key');
+            $name = 'fk_' . implode('_', $localColumns);
         }
 
-        $doctrineForeignKey = new DoctrineForeignKey(
-            $localColumns,
-            $foreignTable,
-            $foreignColumns,
-            $name,
-            $options
-        );
-
-        if (isset($localTable)) {
-            $doctrineForeignKey->setLocalTable($localTable);
-        }
-
-        return $doctrineForeignKey;
+        return new self($name, $localColumns, $foreignTable, $foreignColumns, $options);
     }
 
-    /**
-     * @return array
-     */
-    public static function toArray(DoctrineForeignKey $fk)
+    public static function makeMany(array $foreignKeys)
+    {
+        return array_map(function ($foreignKey) {
+            return self::make($foreignKey);
+        }, $foreignKeys);
+    }
+
+    public function toArray()
     {
         return [
-            'name'           => $fk->getName(),
-            'localTable'     => $fk->getLocalTableName(),
-            'localColumns'   => $fk->getLocalColumns(),
-            'foreignTable'   => $fk->getForeignTableName(),
-            'foreignColumns' => $fk->getForeignColumns(),
-            'options'        => $fk->getOptions(),
+            'name' => $this->name,
+            'localColumns' => $this->localColumns,
+            'foreignTable' => $this->foreignTable,
+            'foreignColumns' => $this->foreignColumns,
+            'options' => $this->options
         ];
     }
 }

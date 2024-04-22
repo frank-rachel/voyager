@@ -167,9 +167,9 @@ class Table
 
         return new self(
             $name,
-            Column::makeMany($table['columns']),
-            Index::makeMany($table['indexes']),
-            ForeignKey::makeMany($table['foreignKeys']),
+            Column::makeMany($table['columns'], $table['name']),
+            Index::makeMany($table['indexes'], $table['name']),
+            ForeignKey::makeMany($table['foreignKeys'], $table['name']),
             $table['options'] ?? []
         );
     }
