@@ -202,7 +202,7 @@ public static function getPlatformTypeMapping($platform)
 
 
 
-    protected static function registerTypeCategories()
+    public static function registerTypeCategories()
     {
         $types = static::getTypeCategories();
 
