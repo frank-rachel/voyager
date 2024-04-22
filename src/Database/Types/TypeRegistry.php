@@ -76,7 +76,7 @@ class TypeRegistry
         }
 		// print_r($typeName);
 		// exit;
-		$typeName=$typeName['name'];
+		if (is_array($typeName)) $typeName=$typeName['name'];
         // Check if the type name is an alias, and get the canonical type name
         $canonicalName = self::$aliases[$typeName] ?? $typeName;
 
