@@ -24,6 +24,7 @@ class TypeRegistry
     private static $aliases = [  // Declare a new property for aliases
         'int' => 'integer',
         'character varying' => 'string',
+        'varchar' => 'string',
         // 'bigint' => 'integer',
         // 'smallint' => 'integer',
         // 'tinyint' => 'integer',
