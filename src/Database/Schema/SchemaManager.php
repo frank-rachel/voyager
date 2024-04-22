@@ -349,6 +349,7 @@ abstract class SchemaManager
 				}
 			});
 		}
+		return $table;
     }	
 	
     // public static function createTable($table)
