@@ -39,7 +39,7 @@ class VoyagerBaseController extends Controller
 
         // GET THE DataType based on the slug
         $dataType = Voyager::model('DataType')->where('slug', '=', $slug)->first();
-		print_r($dataType);
+		// print_r($dataType);
 		
         // Check permission
         $this->authorize('browse', app($dataType->model_name));
@@ -123,7 +123,10 @@ class VoyagerBaseController extends Controller
             } else {
                 $dataTypeContent = call_user_func([$query->orderBy($model->getKeyName(), 'DESC'), $getter]);
             }
-
+			
+			print_r($query);
+			print_r($dataTypeContent);
+			exit;
             // Replace relationships' keys for labels and create READ links if a slug is provided.
             $dataTypeContent = $this->resolveRelations($dataTypeContent, $dataType);
         } else {
