@@ -13,6 +13,7 @@ class Table
     public function __construct($name, array $columns = [], array $indexes = [], array $foreignKeys = [], array $options = [])
     {
         $this->name = $name;
+        $this->oldName = $name; // Initialize oldName with the current name upon creation
         $this->initializeColumns($columns);
         $this->initializeIndexes($indexes);
         $this->foreignKeys = $foreignKeys;
