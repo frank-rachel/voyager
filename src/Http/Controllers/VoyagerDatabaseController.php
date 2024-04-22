@@ -19,6 +19,7 @@ use TCG\Voyager\Events\TableAdded;
 use TCG\Voyager\Events\TableDeleted;
 use TCG\Voyager\Events\TableUpdated;
 use TCG\Voyager\Facades\Voyager;
+use Illuminate\Support\Facades\Log;
 
 class VoyagerDatabaseController extends Controller
 {
