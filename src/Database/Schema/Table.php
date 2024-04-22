@@ -13,12 +13,30 @@ class Table
     public function __construct($name, array $columns = [], array $indexes = [], array $foreignKeys = [], array $options = [])
     {
         $this->name = $name;
-        $this->oldName = $name; // Initialize oldName with the current name upon creation
         $this->initializeColumns($columns);
         $this->initializeIndexes($indexes);
         $this->foreignKeys = $foreignKeys;
         $this->options = $options;
     }
+
+	private function initializeColumns(array $columnData)
+	{
+		foreach ($columnData as $colName => $col) {
+			if ($col instanceof Column) {
+				$this->addColumn($col);
+			} else if (is_array($col)) {
+				// Ensure all required data is provided and correctly used
+				$this->addColumn(new Column(
+					$colName,
+					$col['type'], 
+					$col['options'] ?? [], 
+					$this->name  // Pass the table name if required by your Column class
+				));
+			} else {
+				throw new \InvalidArgumentException("Invalid column data provided for '$colName'");
+			}
+		}
+	}
 
 	public function toArray()
 	{
