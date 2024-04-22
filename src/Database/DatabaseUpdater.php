@@ -8,6 +8,7 @@ use Doctrine\DBAL\Schema\TableDiff;
 use TCG\Voyager\Database\Schema\SchemaManager;
 use TCG\Voyager\Database\Schema\Table;
 use TCG\Voyager\Database\Types\Type;
+use TCG\Voyager\Database\Types\TypeRegistry;
 
 class DatabaseUpdater
 {

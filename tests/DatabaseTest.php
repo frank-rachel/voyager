@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use TCG\Voyager\Database\Schema\SchemaManager;
 use TCG\Voyager\Database\Schema\Table;
 use TCG\Voyager\Database\Types\Type;
+use TCG\Voyager\Database\Types\TypeRegistry;
 use TCG\Voyager\Traits\AlertsMessages;
 
 class DatabaseTest extends TestCase
