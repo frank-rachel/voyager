@@ -74,7 +74,8 @@ class TypeRegistry
         if (!self::$customTypesRegistered) {
             self::registerCustomPlatformTypes();
         }
-
+		print_r($typeName);
+		exit;
         // Check if the type name is an alias, and get the canonical type name
         $canonicalName = self::$aliases[$typeName] ?? $typeName;
 
