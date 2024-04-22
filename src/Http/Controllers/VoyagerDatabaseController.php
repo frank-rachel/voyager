@@ -176,6 +176,7 @@ class VoyagerDatabaseController extends Controller
             // $this->cleanOldAndCreateNew($request->original_name, $request->name);
             event(new TableUpdated($table));
         } catch (Exception $e) {
+			Log::error($e->getMessage(), ['exception' => $e]);
             return back()->with($this->alertException($e))->withInput();
         }
 
@@ -335,6 +336,7 @@ class VoyagerDatabaseController extends Controller
                 ->route('voyager.database.index')
                 ->with($this->alertSuccess(__('voyager::database.success_delete_table', ['table' => $table])));
         } catch (Exception $e) {
+			Log::error($e->getMessage(), ['exception' => $e]);
             return back()->with($this->alertException($e));
         }
     }
