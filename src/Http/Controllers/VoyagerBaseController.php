@@ -125,10 +125,10 @@ class VoyagerBaseController extends Controller
             }
 			
 			// print_r($query);
-			print_r($dataTypeContent);
-			exit;
             // Replace relationships' keys for labels and create READ links if a slug is provided.
             $dataTypeContent = $this->resolveRelations($dataTypeContent, $dataType);
+			print_r($dataTypeContent);
+			exit;
         } else {
             // If Model doesn't exist, get data from table name
             $dataTypeContent = call_user_func([DB::table($dataType->name), $getter]);
