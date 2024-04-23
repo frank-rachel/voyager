@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TCG\Voyager\Database\Types
+namespace TCG\Voyager\Database\Types;
 
 use function spl_object_id;
 

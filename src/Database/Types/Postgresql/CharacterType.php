@@ -1,6 +1,6 @@
 <?php
 
-namespace TCG\Voyager\Database\Types\Postgresql;
+namespace TCG\Voyager\Database\Types;\Postgresql;
 
 use TCG\Voyager\Database\Types\Common\CharType;
 

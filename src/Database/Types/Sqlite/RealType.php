@@ -1,6 +1,6 @@
 <?php
 
-namespace TCG\Voyager\Database\Types\Sqlite;
+namespace TCG\Voyager\Database\Types;\Sqlite;
 
 
 use TCG\Voyager\Database\Types\Type;

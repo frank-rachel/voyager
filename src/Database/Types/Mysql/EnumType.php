@@ -1,6 +1,6 @@
 <?php
 
-namespace TCG\Voyager\Database\Types\Mysql;
+namespace TCG\Voyager\Database\Types;\Mysql;
 
 
 use Illuminate\Support\Facades\DB;
