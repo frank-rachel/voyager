@@ -44,7 +44,7 @@ final class TypeRegistry
     private function convertPostgresTypeToGeneric($postgresType) {
         $typeMapping = [
             'character varying' => 'varchar',
-            'integer' => 'int',
+            // 'integer' => 'int',
             'timestamp without time zone' => 'timestamp',
             // Add more mappings as needed
         ];
