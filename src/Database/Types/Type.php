@@ -146,7 +146,8 @@ abstract class Type
         return static::NAME;
     }
 
-    public static function toArray(Type $type)
+    // public static function toArray(Type $type)
+    public function toArray(Type $type)
     {
         $customTypeOptions = $type->customOptions ?? [];
         return array_merge(['name' => $type->getName()], $customTypeOptions);
