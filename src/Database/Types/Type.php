@@ -77,7 +77,8 @@ abstract class Type
                 str_replace($typesPath, '', $classFile)
             );
         }
-
+		print_r($types);
+		exit;
         return $types;
     }
 
