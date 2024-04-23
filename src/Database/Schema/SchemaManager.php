@@ -108,6 +108,39 @@ abstract class SchemaManager
 	 
 	public static function listTableDetails($tableName)
 	{
+		// Ensure the table exists
+		if (!Schema::hasTable($tableName)) {
+			throw new \Exception("Table does not exist: $tableName");
+		}
+
+		// Get columns details
+		$columns = DB::select(DB::raw("SELECT column_name, data_type, is_nullable, column_default
+									   FROM information_schema.columns
+									   WHERE table_name = '{$tableName}'"));
+
+		// Get foreign keys
+		$foreignKeys = DB::select(DB::raw("SELECT tc.constraint_name, kcu.column_name, ccu.table_name AS foreign_table_name, ccu.column_name AS foreign_column_name
+										   FROM information_schema.table_constraints AS tc 
+										   JOIN information_schema.key_column_usage AS kcu ON tc.constraint_name = kcu.constraint_name
+										   JOIN information_schema.constraint_column_usage AS ccu ON ccu.constraint_name = tc.constraint_name
+										   WHERE tc.table_name = '{$tableName}' AND tc.constraint_type = 'FOREIGN KEY'"));
+
+		// Get indexes
+		$indexes = DB::select(DB::raw("SELECT indexname, indexdef 
+									   FROM pg_indexes 
+									   WHERE tablename = '{$tableName}'"));
+
+		// Convert database results into the appropriate structure
+		// You will need to create data transformation logic here based on your needs
+
+		return new Table($tableName, $columns, $indexes, [], $foreignKeys);
+	}
+
+
+	 
+/*	 
+	public static function listTableDetails($tableName)
+	{
 		try {
 			$columns = TableUtilities::getColumnDetails($tableName);
 			print_r($columns);
@@ -159,7 +192,7 @@ abstract class SchemaManager
 			return null;  // Or handle the error as appropriate
 		}
 	}
-
+// */
 	public static function getColumnDetails($tableName) {
 		$columns = DB::select("
 			SELECT 
