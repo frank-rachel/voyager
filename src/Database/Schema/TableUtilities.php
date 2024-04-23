@@ -19,7 +19,8 @@ class TableUtilities {
                 'scale' => $column->numeric_scale,
                 'unsigned' => strpos($column->data_type, 'int') !== false && strpos($column->column_default, 'nextval(') === false
             ];
-            $type = self::convertPostgresTypeToGeneric($column->data_type);
+            // $type = self::convertPostgresTypeToGeneric($column->data_type);
+            $type = ($column->data_type);
             return new Column($column->column_name, $type, $options);
         }, $columns);
     }
