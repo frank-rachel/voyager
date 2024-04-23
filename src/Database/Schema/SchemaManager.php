@@ -137,17 +137,27 @@ abstract class SchemaManager
 								   WHERE tc.table_name = ? AND tc.constraint_type = 'FOREIGN KEY'", [$tableName]);
 
 		// Get indexes
-		$indexes = DB::select("SELECT indexname, indexdef 
-							   FROM pg_indexes 
-							   WHERE tablename = ?", [$tableName]);
+		$indexes = DB::select("SELECT indexname, indexdef FROM pg_indexes WHERE tablename = ?", [$tableName]);
 
-		// Convert database results into the appropriate structure
+		$indexData = [];
+		foreach ($indexes as $index) {
+			$indexDetails = $this->parseIndexDefinition($index->indexdef);
+			if ($indexDetails) {
+				$indexData[] = [
+					'name' => $index->indexname,
+					'columns' => $indexDetails['columns'],
+					'type' => $indexDetails['type'],
+					'isPrimary' => $indexDetails['isPrimary'],
+					'isUnique' => $indexDetails['isUnique']
+				];
+			}
+		}		// Convert database results into the appropriate structure
 		// You will need to create data transformation logic here based on your needs
 		// print_r($columns);
 		// exit;
 		
 		
-		return new Table($tableName, $columns, $indexes, [], $foreignKeys);
+		return new Table($tableName, $columns, $indexData, [], $foreignKeys);
 	}
 
 
