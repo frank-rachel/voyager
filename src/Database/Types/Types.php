@@ -1,7 +1,7 @@
 <?php
 
 declare(strict_types=1);
-
+namespace TCG\Voyager\Database\Types\Types;
 /**
  * Default built-in types provided by Doctrine DBAL.
  */

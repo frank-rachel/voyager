@@ -4,6 +4,7 @@ namespace TCG\Voyager\Database\Types;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use TCG\Voyager\Database\Types\Types;
 
 abstract class Type
 {
