@@ -160,7 +160,7 @@ abstract class SchemaManager
 		return new Table($tableName, $columns, $indexData, [], $foreignKeys);
 	}
 
-	private function parseIndexDefinition($indexdef) {
+	private static function parseIndexDefinition($indexdef) {
 		// Example parsing logic, you might need to adapt it based on actual SQL definition
 		$isPrimary = strpos(strtolower($indexdef), 'primary') !== false;
 		$isUnique = strpos(strtolower($indexdef), 'unique') !== false;
