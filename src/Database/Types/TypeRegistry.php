@@ -35,7 +35,8 @@ final class TypeRegistry
     {
         $type = $this->instances[$name] ?? null;
         if ($type === null) {
-            throw UnknownColumnType::new($name);
+            echo ("unknown column type ($name)");
+			exit;
         }
 
         return $type;
