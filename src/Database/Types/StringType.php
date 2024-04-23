@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TCG\Voyager\Database\Types;
 
-use Doctrine\DBAL\Platforms\AbstractPlatform;
+use TCG\Voyager\Database\Platforms\PostgreSQLPlatform;
 
 /**
  * Type that maps an SQL VARCHAR to a PHP string.

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace TCG\Voyager\Database\Types;
 
 use Doctrine\DBAL\ParameterType;
-use Doctrine\DBAL\Platforms\AbstractPlatform;
+use TCG\Voyager\Database\Platforms\PostgreSQLPlatform;
 
 /**
  * Type that maps an SQL boolean to a PHP boolean.

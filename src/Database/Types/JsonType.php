@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TCG\Voyager\Database\Types;
 
-use Doctrine\DBAL\Platforms\AbstractPlatform;
+use TCG\Voyager\Database\Platforms\PostgreSQLPlatform;
 use Doctrine\DBAL\Types\Exception\SerializationFailed;
 use Doctrine\DBAL\Types\Exception\ValueNotConvertible;
 use JsonException;

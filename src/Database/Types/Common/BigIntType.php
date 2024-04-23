@@ -10,7 +10,7 @@ class BigIntType extends Type
     // Optionally set a default category
     protected $category = 'Numeric';
 
-    public function getSQLDeclaration(array $field, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $field, PostgreSQLPlatform $platform)
     {
         $field['length'] = empty($field['length']) ? 1 : $field['length'];
 

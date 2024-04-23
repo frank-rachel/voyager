@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace TCG\Voyager\Database\Types;
 
 use DateInterval;
-use Doctrine\DBAL\Platforms\AbstractPlatform;
+use TCG\Voyager\Database\Platforms\PostgreSQLPlatform;
 use Doctrine\DBAL\Types\Exception\InvalidFormat;
 use Doctrine\DBAL\Types\Exception\InvalidType;
 use Throwable;
