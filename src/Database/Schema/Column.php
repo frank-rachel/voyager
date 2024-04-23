@@ -28,11 +28,12 @@ class Column
 			$resolvedType = Type::getType(trim($type['name']));
 		} else {
 			// Log or handle unexpected $type format
-			echo("Unexpected type format: " . print_r($type, true));
-			throw new \Exception("Unexpected type format encountered.");
+			// echo("Unexpected type format: " . print_r($type, true));
+			// throw new \Exception("Unexpected type format encountered.");
+			$resolvedType = Type::getType(trim($type));
 		}
 		
-		
+		$type = $resolvedType;
         $this->options = $options;
 		$this->tableName = $tableName;
 
