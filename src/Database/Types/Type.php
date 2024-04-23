@@ -90,10 +90,10 @@ abstract class Type
      *
      * @throws Exception
      */
-    public static function addType(string $name, string $className): void
-    {
-        self::getTypeRegistry()->register($name, new $className());
-    }
+    // public static function addType(string $name, string $className): void
+    // {
+        // self::getTypeRegistry()->register($name, new $className());
+    // }
 
     /**
      * Checks if exists support for a type.
