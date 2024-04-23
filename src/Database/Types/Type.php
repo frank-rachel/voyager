@@ -46,7 +46,9 @@ abstract class Type
     private const BUILTIN_TYPES_MAP = [
         'ascii_string'         => AsciiStringType::class,
         'bigint'               => Common\BigIntType::class,
+        'varchar'               => Common\VarCharType::class,
         'integer'               => IntegerType::class,
+        // 'integer'               => IntegerType::class,
         // 'integer'               => Common\IntegerType::class,
         'timestamp'               => Postgresql\TimeStampType::class,
         // 'binary'               => BinaryType::class,
