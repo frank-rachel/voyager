@@ -34,7 +34,7 @@ final class TypeRegistry
         $type = $this->instances[$genericName] ?? null;
         if ($type === null) {
             // Log::error("Unknown column type ($name)");
-            throw new \Exception("Unknown column type ($name)");
+            throw new \Exception("Unknown column type ($name-$genericName)");
         }
 
         return $type;
