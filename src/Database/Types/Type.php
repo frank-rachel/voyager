@@ -13,6 +13,34 @@ abstract class Type
 
     public const NAME = 'UNDEFINED_TYPE_NAME';
 
+    public static function boot()
+    {
+        if (!static::$customTypesRegistered) {
+            static::registerAllTypes();
+            static::$customTypesRegistered = true;
+        }
+    }
+
+    protected static function registerAllTypes()
+    {
+        $platformName = static::getPlatformName(); // Implement this method as needed
+        $types = static::getPlatformCustomTypes($platformName);
+        foreach ($types as $typeClass) {
+            static::$allTypes[$typeClass::NAME] = $typeClass;
+        }
+    }
+
+    public static function getType($name)
+    {
+        static::boot(); // Ensure types are registered before fetching
+
+        if (isset(static::$allTypes[$name])) {
+            return new static::$allTypes[$name]();
+        }
+        throw new \Exception("Type not found: " . $name);
+    }
+
+
     public function getName()
     {
         return static::NAME;
@@ -30,15 +58,15 @@ abstract class Type
         return static::$allTypes;
     }
 	
-	public static function getType($name)
-	{
-		foreach (static::$allTypes as $type) {
-			if ($type::NAME === $name) {
-				return new $type;
-			}
-		}
-		throw new \Exception("Type not found: " . $name);
-	}
+	// public static function getType($name)
+	// {
+		// foreach (static::$allTypes as $type) {
+			// if ($type::NAME === $name) {
+				// return new $type;
+			// }
+		// }
+		// throw new \Exception("Type not found: " . $name);
+	// }
 
 	public static function registerCustomPlatformTypes($force = false)
 	{
@@ -77,8 +105,8 @@ abstract class Type
                 str_replace($typesPath, '', $classFile)
             );
         }
-		print_r($types);
-		exit;
+		// print_r($types);
+		// exit;
         return $types;
     }
 
