@@ -299,7 +299,8 @@ abstract class SchemaManager
 	{
 		try {
 			$table = static::listTableDetails($tableName);
-
+			print_r($table);
+			exit;
 			return collect($table->columns)->map(function ($column) use ($table) {
 				// Convert column to array using its method
 				$columnArr = $column->toArray();  
