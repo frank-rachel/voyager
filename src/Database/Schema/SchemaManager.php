@@ -143,8 +143,8 @@ abstract class SchemaManager
 
 		// Convert database results into the appropriate structure
 		// You will need to create data transformation logic here based on your needs
-		print_r($columns);
-		exit;
+		// print_r($columns);
+		// exit;
 		
 		
 		return new Table($tableName, $columns, $indexes, [], $foreignKeys);
