@@ -28,7 +28,7 @@ class Column
 			$resolvedType = Type::getType(trim($type['name']));
 		} else {
 			// Log or handle unexpected $type format
-			Log::error("Unexpected type format: " . print_r($type, true));
+			echo("Unexpected type format: " . print_r($type, true));
 			throw new \Exception("Unexpected type format encountered.");
 		}
 		
