@@ -26,20 +26,28 @@ final class TypeRegistry
         }
     }
 
-    /**
-     * Finds a type by the given name.
-     *
-     * @throws Exception
-     */
+
     public function get(string $name): Type
     {
-        $type = $this->instances[$name] ?? null;
+        $genericName = $this->convertPostgresTypeToGeneric($name);
+        
+        $type = $this->instances[$genericName] ?? null;
         if ($type === null) {
-            echo ("unknown column type ($name)");
-			exit;
+            Log::error("Unknown column type ($name)");
+            throw new \Exception("Unknown column type ($name)");
         }
 
         return $type;
+    }
+
+    private function convertPostgresTypeToGeneric($postgresType) {
+        $typeMapping = [
+            'character varying' => 'varchar',
+            'integer' => 'int',
+            'timestamp without time zone' => 'timestamp',
+            // Add more mappings as needed
+        ];
+        return $typeMapping[$postgresType] ?? $postgresType;
     }
 
     /**
