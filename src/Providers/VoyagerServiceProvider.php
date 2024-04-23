@@ -15,8 +15,8 @@ class VoyagerServiceProvider extends ServiceProvider
 
     private function registerTypes()
     {
-        TypeRegistry::addType('integer', new IntegerType());
-        TypeRegistry::addType('text', new TextType());
+        Type::addType('integer', new IntegerType());
+        Type::addType('text', new TextType());
         // Add more types as needed
     }
 }

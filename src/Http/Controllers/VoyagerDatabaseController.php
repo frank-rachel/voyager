@@ -72,7 +72,7 @@ class VoyagerDatabaseController extends Controller
 
         // try {
             $conn = 'database.connections.'.config('database.default');
-            TypeRegistry::registerCustomPlatformTypes();
+            Type::registerCustomPlatformTypes();
 
             $table = $request->table;
             if (!is_array($request->table)) {
@@ -190,7 +190,7 @@ class VoyagerDatabaseController extends Controller
 	{
 		$db = new \stdClass();
 
-		$db->types = TypeRegistry::getPlatformTypes();  // Ensuring type compatibility
+		$db->types = Type::getPlatformTypes();  // Ensuring type compatibility
 
 		if ($action == 'update' && !empty($tableName)) {
 			$db->table = SchemaManager::listTableDetails($tableName);  // Returns a Table object

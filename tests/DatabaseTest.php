@@ -23,7 +23,7 @@ class DatabaseTest extends TestCase
         // todo: make sure tests are isolated and do not effect other ones
         // todo: interract with Table object directly instead of array?
         // todo: maybe perform the updates using one call to update_table?
-        TypeRegistry::registerCustomPlatformTypes(true);
+        Type::registerCustomPlatformTypes(true);
         Auth::loginUsingId(1);
 
         // Prepare table

@@ -1,132 +1,110 @@
 <?php
+
 namespace TCG\Voyager\Database\Types;
+
+use Illuminate\Support\Collection;
+use Illuminate\Database\Schema\Blueprint;
 
 abstract class Type
 {
+    protected static $customTypesRegistered = false;
+    protected static $allTypes = [];
+    protected static $typeCategories = [];
+
     public const NAME = 'UNDEFINED_TYPE_NAME';
 
-    // Define the properties each type class should have
-    public const DBTYPE = 'default_db_type';
-    public $name;
-    protected $category = 'Other';  // Default category
-
-    public function __construct()
-    {
-        $this->name = static::NAME;
-    }
-
-    // Getter for name
     public function getName()
     {
-        return $this->name;
+        return static::NAME;
     }
 
-	// In your Type class
-	public function getSimpleOutput() {
-		return $this->getName(); // Just return the type name as a string
-	}
-
-
-    // Getter for category
-    public function getCategory()
+    public static function toArray(Type $type)
     {
-        return $this->category;
+        return [
+            'name' => $type->getName(),
+        ];
     }
 
-    // Each type must implement its own SQL declaration method
-    // abstract public function getSQLDeclaration(array $field);
-    public function getSQLDeclaration(array $field)
+    public static function getAllTypes()
     {
-        $length = $field['length'] ?? 2000; // Default length
-        return DBTYPE."($length)";
+        return static::$allTypes;
     }
 
-    // Convert the type instance to an array format for easy handling
-	public function toArray() {
-		return [
-			'name' => $this->getName(),
-			'category' => $this->getCategory(),
-			'default' => $this->getDefaultSettings()
-		];
-	}
-
-	protected function getDefaultSettings() {
-		// Return default settings based on the type. For example:
-		if ($this->category === 'Numbers') {
-			return ['type' => 'number', 'step' => 'any'];
-		} else if ($this->category === 'Date and Time') {
-			return ['type' => 'date'];
-		}
-		// Add other conditions as necessary
-		return null;
-	}
-
-
-    // Method to initialize and return the type instance
-    public static function getType($typeName)
+    public static function registerCustomPlatformTypes($force = false)
     {
-        $className = __NAMESPACE__ . '\\Postgresql\\' . $typeName;
-        if (class_exists($className)) {
-            return new $className();
+        if (static::$customTypesRegistered && !$force) {
+            return;
         }
-        throw new \Exception("Type $typeName does not exist.");
+
+        $platformName = static::getPlatformName();
+
+        static::$allTypes = static::getPlatformCustomTypes($platformName);
+
+        foreach (static::$allTypes as $type) {
+            $name = $type::NAME;
+            Blueprint::macro($name, function ($column) use ($type) {
+                /* Implement the specifics of the type handling here */
+                return $this->addColumn($type::NAME, $column);
+            });
+        }
+
+        static::$customTypesRegistered = true;
     }
 
-    // Static method to register all types found in the specified directory
-    public static function registerTypesFromDirectory($directory)
+    protected static function getPlatformCustomTypes($platformName)
     {
+        $typesPath = __DIR__.DIRECTORY_SEPARATOR.$platformName.DIRECTORY_SEPARATOR;
+        $namespace = __NAMESPACE__.'\\'.$platformName.'\\';
         $types = [];
-        foreach (glob($directory . '*.php') as $file) {
-            $baseName = basename($file, '.php');
-            $className = __NAMESPACE__ . '\\Postgresql\\' . $baseName;
-            if (class_exists($className)) {
-                $typeInstance = new $className();
-                $types[$typeInstance->getName()] = $typeInstance->toArray();
-            }
+
+        foreach (glob($typesPath.'*.php') as $classFile) {
+            $types[] = $namespace.str_replace(
+                '.php',
+                '',
+                str_replace($typesPath, '', $classFile)
+            );
         }
+
         return $types;
     }
-	
-public static function getPlatformTypeMapping($platform)
-{
-    return [
-        // Common types
-        'char' => CharType::class,
-        'double' => DoubleType::class,
-        'json' => JsonType::class,
-        'numeric' => NumericType::class,
-        'text' => TextType::class,
-        'varchar' => VarCharType::class,
-        'bigint' => BigIntType::class,
-        'integer' => IntegerType::class,
-        'int' => IntegerType::class,
 
-        // PostgreSQL types
-        'bit' => BitType::class,
-        'bit varying' => BitVaryingType::class,
-        'bytea' => ByteaType::class,
-        'character' => CharacterType::class,
-        'character varying' => CharacterVaryingType::class,
-        'cidr' => CidrType::class,
-        'double precision' => DoublePrecisionType::class,
-        'geometry' => GeometryType::class,
-        'inet' => InetType::class,
-        'interval' => IntervalType::class,
-        'jsonb' => JsonbType::class,
-        'macaddr' => MacAddrType::class,
-        'money' => MoneyType::class,
-        'real' => RealType::class,
-        'smallint' => SmallIntType::class,
-        'timestamp' => TimeStampType::class,
-        'timestamptz' => TimeStampTzType::class,
-        'timetz' => TimeTzType::class,
-        'tsquery' => TsQueryType::class,
-        'tsvector' => TsVectorType::class,
-        'txid_snapshot' => TxidSnapshotType::class,
-        'uuid' => UuidType::class,
-        'xml' => XmlType::class
-    ];
-}
-	
-}
+    protected static function getPlatformName()
+    {
+        return 'PostgreSQL';
+    }
 
+    public static function getTypeCategories()
+    {
+        if (!empty(static::$typeCategories)) {
+            return static::$typeCategories;
+        }
+
+        static::initializeTypeCategories();
+        return static::$typeCategories;
+    }
+
+    protected static function initializeTypeCategories()
+    {
+        static::$typeCategories = [
+            'numbers' => [
+                'boolean', 'integer', 'float', 'smallint', 'bigint', 'numeric'
+            ],
+            'strings' => [
+                'char', 'varchar', 'text'
+            ],
+            'datetime' => [
+                'date', 'timestamp', 'timestamptz', 'time', 'timetz', 'interval'
+            ],
+            'json' => [
+                'json', 'jsonb'
+            ],
+            'arrays' => [
+                'array', // specify more or custom array types as needed
+            ],
+            'network' => [
+                'cidr', 'inet', 'macaddr'
+            ],
+            // Add other PostgreSQL-specific types as necessary
+        ];
+    }
+}

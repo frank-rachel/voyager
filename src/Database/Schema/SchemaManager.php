@@ -272,7 +272,7 @@ abstract class SchemaManager
 	
     public static function listTableColumns($tableName)
     {
-        TypeRegistry::registerCustomPlatformTypes();
+        Type::registerCustomPlatformTypes();
 
         // $columnNames = [];
 

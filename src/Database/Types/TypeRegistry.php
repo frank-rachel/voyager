@@ -85,7 +85,7 @@ class TypeRegistry
         if (isset(self::$types[$canonicalName])) {
             return self::$types[$canonicalName];
         } else {
-            throw new \Exception("Type '{$typeName}' not found in TypeRegistry.");
+            throw new \Exception("Type '{$typeName}' not found in Type.");
         }
     }
 

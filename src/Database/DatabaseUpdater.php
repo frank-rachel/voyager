@@ -18,7 +18,7 @@ class DatabaseUpdater
 
     public function __construct(array $tableArr)
     {
-        TypeRegistry::registerCustomPlatformTypes();
+        Type::registerCustomPlatformTypes();
 
         $this->table = Table::make($tableArr);
         $this->tableArr = $tableArr;
