@@ -1,5 +1,5 @@
 <?php
-namespace TCG\Voyager\Database\Types;\Common;
+namespace TCG\Voyager\Database\Types\Common;
 
 use TCG\Voyager\Database\Types\Type;
 
