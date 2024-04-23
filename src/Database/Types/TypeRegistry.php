@@ -30,8 +30,8 @@ final class TypeRegistry
     public function get(string $name): Type
     {
         $genericName = $this->convertPostgresTypeToGeneric($name);
-        print_r($this->instances);
-		exit;
+        // print_r($this->instances);
+		// exit;
         $type = $this->instances[$genericName] ?? null;
         if ($type === null) {
             // Log::error("Unknown column type ($name)");
