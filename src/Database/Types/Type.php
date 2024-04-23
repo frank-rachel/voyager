@@ -29,27 +29,40 @@ abstract class Type
     {
         return static::$allTypes;
     }
+	
+	public static function getType($name)
+	{
+		foreach (static::$allTypes as $type) {
+			if ($type::NAME === $name) {
+				return new $type;
+			}
+		}
+		throw new \Exception("Type not found: " . $name);
+	}
 
-    public static function registerCustomPlatformTypes($force = false)
-    {
-        if (static::$customTypesRegistered && !$force) {
-            return;
-        }
+	public static function registerCustomPlatformTypes($force = false)
+	{
+		if (static::$customTypesRegistered && !$force) {
+			return;
+		}
 
-        $platformName = static::getPlatformName();
+		$platformName = static::getPlatformName();
 
-        static::$allTypes = static::getPlatformCustomTypes($platformName);
+		static::$allTypes = static::getPlatformCustomTypes($platformName);
 
-        foreach (static::$allTypes as $type) {
-            $name = $type::NAME;
-            Blueprint::macro($name, function ($column) use ($type) {
-                /* Implement the specifics of the type handling here */
-                return $this->addColumn($type::NAME, $column);
-            });
-        }
+		foreach (static::$allTypes as $typeClass) {
+			$typeInstance = new $typeClass();
+			$name = $typeInstance->getName();
+			Blueprint::macro($name, function ($column) use ($typeInstance) {
+				// Implement the specifics of the type handling here
+				// For example:
+				return $this->addColumn($typeInstance::NAME, $column);
+			});
+		}
 
-        static::$customTypesRegistered = true;
-    }
+		static::$customTypesRegistered = true;
+	}
+
 
     protected static function getPlatformCustomTypes($platformName)
     {
