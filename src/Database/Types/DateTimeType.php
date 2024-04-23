@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Doctrine\DBAL\Types;
+namespace TCG\Voyager\Database\Types;
 
 use DateTime;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
