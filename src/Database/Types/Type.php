@@ -17,7 +17,99 @@ abstract class Type
     public const NAME = 'UNDEFINED_TYPE_NAME';
     public const NOT_SUPPORTED = 'notSupported';
     public const NOT_SUPPORT_INDEX = 'notSupportIndex';
+    private const BUILTIN_TYPES_MAP = [
+        Types::ASCII_STRING         => AsciiStringType::class,
+        Types::BIGINT               => BigIntType::class,
+        Types::BINARY               => BinaryType::class,
+        Types::BLOB                 => BlobType::class,
+        Types::BOOLEAN              => BooleanType::class,
+        Types::DATE_MUTABLE         => DateType::class,
+        Types::DATE_IMMUTABLE       => DateImmutableType::class,
+        Types::DATEINTERVAL         => DateIntervalType::class,
+        Types::DATETIME_MUTABLE     => DateTimeType::class,
+        Types::DATETIME_IMMUTABLE   => DateTimeImmutableType::class,
+        Types::DATETIMETZ_MUTABLE   => DateTimeTzType::class,
+        Types::DATETIMETZ_IMMUTABLE => DateTimeTzImmutableType::class,
+        Types::DECIMAL              => DecimalType::class,
+        Types::FLOAT                => FloatType::class,
+        Types::GUID                 => GuidType::class,
+        Types::INTEGER              => IntegerType::class,
+        Types::JSON                 => JsonType::class,
+        Types::SIMPLE_ARRAY         => SimpleArrayType::class,
+        Types::SMALLINT             => SmallIntType::class,
+        Types::STRING               => StringType::class,
+        Types::TEXT                 => TextType::class,
+        Types::TIME_MUTABLE         => TimeType::class,
+        Types::TIME_IMMUTABLE       => TimeImmutableType::class,
+    ];
+    private static ?TypeRegistry $typeRegistry = null;
 
+    /** @internal Do not instantiate directly - use {@see Type::addType()} method instead. */
+    final public function __construct()
+    {
+    }
+
+    private static function createTypeRegistry(): TypeRegistry
+    {
+        $instances = [];
+
+        foreach (self::BUILTIN_TYPES_MAP as $name => $class) {
+            $instances[$name] = new $class();
+        }
+
+        return new TypeRegistry($instances);
+    }
+
+    /**
+     * Factory method to create type instances.
+     *
+     * @param string $name The name of the type.
+     *
+     * @throws Exception
+     */
+    public static function getType(string $name): self
+    {
+        return self::getTypeRegistry()->get($name);
+    }
+
+    /**
+     * Finds a name for the given type.
+     *
+     * @throws Exception
+     */
+    public static function lookupName(self $type): string
+    {
+        return self::getTypeRegistry()->lookupName($type);
+    }
+
+    /**
+     * Adds a custom type to the type map.
+     *
+     * @param string             $name      The name of the type.
+     * @param class-string<Type> $className The class name of the custom type.
+     *
+     * @throws Exception
+     */
+    public static function addType(string $name, string $className): void
+    {
+        self::getTypeRegistry()->register($name, new $className());
+    }
+
+    /**
+     * Checks if exists support for a type.
+     *
+     * @param string $name The name of the type.
+     *
+     * @return bool TRUE if type is supported; FALSE otherwise.
+     */
+    public static function hasType(string $name): bool
+    {
+        return self::getTypeRegistry()->has($name);
+    }
+
+
+
+	
     public function getName()
     {
         return static::NAME;
