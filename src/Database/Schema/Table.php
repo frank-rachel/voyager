@@ -39,7 +39,7 @@ class Table
 		}
 	}
 
-	public function toArray()
+	public function toArray(Type $type)
 	{
 		$columnsArr = [];
 		foreach ($this->columns as $column) {
@@ -94,7 +94,7 @@ class Table
     }
 
 
-    // public function toArray()
+    // public function toArray(Type $type)
     // {
         // return [
             // 'name' => $this->name,

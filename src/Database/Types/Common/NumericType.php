@@ -20,7 +20,7 @@ class NumericType extends Type
     }
 
     // Override `toArray()` if additional properties are needed
-    public function toArray()
+    public function toArray(Type $type)
     {
         return array_merge(parent::toArray(), [
             'precision' => 10,  // Default precision, adjust as necessary

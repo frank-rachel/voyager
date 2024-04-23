@@ -42,7 +42,7 @@ class ForeignKey
         }, $foreignKeys);
     }
 
-    public function toArray()
+    public function toArray(Type $type)
     {
         return [
             'name' => $this->name,

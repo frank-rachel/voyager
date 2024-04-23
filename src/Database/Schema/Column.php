@@ -48,7 +48,7 @@ class Column
 		$this->options['notnull'] = $options['notnull'] ?? !$this->options['nullable'];
 	}
 
-	public function toArray()
+	public function toArray(Type $type)
 	{
 		$columnArr = $column->toArray();
         $columnArr['type'] = Type::toArray($columnArr['type']);
