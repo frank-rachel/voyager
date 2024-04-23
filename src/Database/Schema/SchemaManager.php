@@ -110,6 +110,8 @@ abstract class SchemaManager
 	{
 		try {
 			$columns = TableUtilities::getColumnDetails($tableName);
+			print_r($columns);
+			exit;
 			
 			$foreignKeys = DB::select("
 				SELECT tc.constraint_name, kcu.column_name, ccu.table_name AS foreign_table_name, ccu.column_name AS foreign_column_name
