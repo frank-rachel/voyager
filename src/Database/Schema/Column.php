@@ -18,8 +18,8 @@ class Column
 		$this->name = $name;
 		$this->oldName = $name;
 		// Check if $type is already an instance of Type, otherwise get it from TypeRegistry
-		$this->type = $type instanceof Type ? $type : Type::getType($type);
-		$this->options = $options;
+		$type = ($type instanceof Type) ? $type : Type::getType(trim($type['name']));
+        $this->options = $options;
 		$this->tableName = $tableName;
 
 		// Set defaults from options or use default values
@@ -35,9 +35,12 @@ class Column
 
 	public function toArray()
 	{
-		return [
+		$columnArr = $column->toArray();
+        $columnArr['type'] = Type::toArray($columnArr['type']);
+        return [
 			'name' => $this->name,
-			'type' => $this->type->getName(), // Make sure this outputs only the type name
+			// 'type' => $this->type->getName(), // Make sure this outputs only the type name
+			'type' => $columnArr['type'],
 			'oldName' => $this->name,
 			'null' => $this->options['nullable'] ? 'YES' : 'NO',
 			'default' => $this->options['default'],
