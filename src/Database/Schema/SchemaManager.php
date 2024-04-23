@@ -300,32 +300,21 @@ abstract class SchemaManager
 		try {
 			$table = static::listTableDetails($tableName);
 
-			// Ensure $table->columns is correctly set and iterable
-			if (empty($table->columns)) {
-				throw new \Exception("No columns found for table $tableName");
-			}
-
 			return collect($table->columns)->map(function ($column) use ($table) {
-				// Convert column to array using its method
-				// Ensure that $column is an object with a method toArray()
+				// Assuming $column is an object with a method toArray() that converts properties to an array
 				$columnArr = $column->toArray();
 
-				// Duplicate name as 'field' for compatibility and direct use of type
-				$columnArr['field'] = $columnArr['name'];
-				$columnArr['type'] = $columnArr['type'];
+				$columnArr['field'] = $column->name;  // Access properties using object notation
+				$columnArr['type'] = $column->type;
 
-				// Initialize indexes array and key
 				$columnArr['indexes'] = [];
 				$columnArr['key'] = null;
 
-				// Fetch and format indexes for the current column
-				if ($indexes = $table->getColumnsIndexes($columnArr['name'], true)) {
+				if ($indexes = $table->getColumnsIndexes($column->name, true)) {  // Ensure column name accessed correctly
 					foreach ($indexes as $name => $index) {
-						// Ensure index has toArray() method
 						$columnArr['indexes'][$name] = $index->toArray();
 					}
 
-					// Set the key if indexes are present
 					if (!empty($columnArr['indexes'])) {
 						$indexType = array_values($columnArr['indexes'])[0]['type'];
 						$columnArr['key'] = substr($indexType, 0, 3);  // First three letters of the index type
@@ -335,11 +324,11 @@ abstract class SchemaManager
 				return $columnArr;
 			});
 		} catch (\Exception $e) {
-			Log::error($e->getMessage(), ['exception' => $e]);
-			echo("Failed to describe table $tableName: " . $e->getMessage());
+			Log::error("Failed to describe table $tableName: " . $e->getMessage(), ['exception' => $e]);
 			return collect([]);  // Return an empty collection on error
 		}
 	}
+
 
 
 
