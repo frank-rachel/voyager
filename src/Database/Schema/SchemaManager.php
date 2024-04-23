@@ -299,9 +299,16 @@ abstract class SchemaManager
 	{
 		try {
 			$table = static::listTableDetails($tableName);
+
+			// Ensure $table->columns is correctly set and iterable
+			if (empty($table->columns)) {
+				throw new \Exception("No columns found for table $tableName");
+			}
+
 			return collect($table->columns)->map(function ($column) use ($table) {
 				// Convert column to array using its method
-				$columnArr = $column->toArray();  
+				// Ensure that $column is an object with a method toArray()
+				$columnArr = $column->toArray();
 
 				// Duplicate name as 'field' for compatibility and direct use of type
 				$columnArr['field'] = $columnArr['name'];
@@ -314,6 +321,7 @@ abstract class SchemaManager
 				// Fetch and format indexes for the current column
 				if ($indexes = $table->getColumnsIndexes($columnArr['name'], true)) {
 					foreach ($indexes as $name => $index) {
+						// Ensure index has toArray() method
 						$columnArr['indexes'][$name] = $index->toArray();
 					}
 
@@ -329,8 +337,6 @@ abstract class SchemaManager
 		} catch (\Exception $e) {
 			Log::error($e->getMessage(), ['exception' => $e]);
 			echo("Failed to describe table $tableName: " . $e->getMessage());
-			exit;
-			Log::error("Failed to describe table $tableName: " . $e->getMessage());
 			return collect([]);  // Return an empty collection on error
 		}
 	}
