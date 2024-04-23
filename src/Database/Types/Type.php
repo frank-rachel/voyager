@@ -49,6 +49,11 @@ abstract class Type
     {
     }
 
+    final public static function getTypeRegistry(): TypeRegistry
+    {
+        return self::$typeRegistry ??= self::createTypeRegistry();
+    }
+
     private static function createTypeRegistry(): TypeRegistry
     {
         $instances = [];
