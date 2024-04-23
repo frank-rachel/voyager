@@ -18,7 +18,21 @@ class Column
 		$this->name = $name;
 		$this->oldName = $name;
 		// Check if $type is already an instance of Type, otherwise get it from TypeRegistry
-		$type = ($type instanceof Type) ? $type : Type::getType(trim($type['name']));
+		// $type = ($type instanceof Type) ? $type : Type::getType(trim($type['name']));
+		
+		// Check if $type is an instance of Type first
+		if ($type instanceof Type) {
+			$resolvedType = $type;
+		} else if (is_array($type) && isset($type['name'])) {
+			// Safely access 'name' if $type is an array
+			$resolvedType = Type::getType(trim($type['name']));
+		} else {
+			// Log or handle unexpected $type format
+			Log::error("Unexpected type format: " . print_r($type, true));
+			throw new \Exception("Unexpected type format encountered.");
+		}
+		
+		
         $this->options = $options;
 		$this->tableName = $tableName;
 
