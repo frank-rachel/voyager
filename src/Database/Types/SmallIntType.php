@@ -8,16 +8,16 @@ use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 
 /**
- * Type that maps an SQL INT to a PHP integer.
+ * Type that maps a database SMALLINT to a PHP integer.
  */
-class IntegerType extends Type implements PhpIntegerMappingType
+class SmallIntType extends Type implements PhpIntegerMappingType
 {
     /**
      * {@inheritDoc}
      */
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        return $platform->getIntegerTypeDeclarationSQL($column);
+        return $platform->getSmallIntTypeDeclarationSQL($column);
     }
 
     /**

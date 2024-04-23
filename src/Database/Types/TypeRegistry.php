@@ -1,363 +1,124 @@
 <?php
-namespace TCG\Voyager\Database\Types;
 
-use Illuminate\Support\Facades\Log;
+declare(strict_types=1);
 
-use TCG\Voyager\Database\Types\Common\{
-    CharType, DoubleType, JsonType, NumericType, TextType, VarCharType, IntegerType, BigIntType
-};
-use TCG\Voyager\Database\Types\Postgresql\{
-    BitType, BitVaryingType, ByteaType, CharacterType, CharacterVaryingType, CidrType, DoublePrecisionType,
-    GeometryType, InetType, IntervalType, JsonbType, MacAddrType, MoneyType, RealType, SmallIntType,
-    TimeStampType, TimeStampTzType, TimeTzType, TsQueryType, TsVectorType, TxidSnapshotType, UuidType, XmlType
-};
+namespace TCG\Voyager\Database\Types
 
-use TCG\Voyager\Database\Schema\SchemaManager;
-use Composer\Autoload\ClassLoader;
-use ReflectionClass;
+use function spl_object_id;
 
-class TypeRegistry
+/**
+ * The type registry is responsible for holding a map of all known DBAL types.
+ */
+final class TypeRegistry
 {
-    private static $platformTypes = null;
-    private static $customTypesRegistered = false;
-    private static $types = [];
-    private static $aliases = [  // Declare a new property for aliases
-        'int' => 'integer',
-        'character varying' => 'string',
-        'varchar' => 'string',
-        // 'bigint' => 'integer',
-        // 'smallint' => 'integer',
-        // 'tinyint' => 'integer',
-        'double' => 'float',  // Example if needed
-    ];
+    /** @var array<string, Type> Map of type names and their corresponding flyweight objects. */
+    private array $instances;
+    /** @var array<int, string> */
+    private array $instancesReverseIndex;
 
-	public static function getPlatformTypes()
-	{
-		if (self::$platformTypes) {
-			return self::$platformTypes;
-		}
-
-		if (!self::$customTypesRegistered) {
-			self::registerCustomPlatformTypes();
-		}
-
-		$platform = SchemaManager::getDatabasePlatform();
-		$types = self::getPlatformTypeMapping($platform);
-		$groupedTypes = collect($types)->mapWithKeys(function ($typeClass, $typeName) {
-			$typeInstance = new $typeClass;
-			return [$typeName => $typeInstance->toArray()];
-		})->groupBy('category');
-
-		// Safe retrieval of categories with fallback to an empty collection
-		self::$platformTypes = [
-			'Numbers' => $groupedTypes->get('Numeric', collect())->all(),
-			'Strings' => $groupedTypes->get('String', collect())->all(),
-			'Date and Time' => $groupedTypes->get('Date and Time', collect())->all(),
-			'Other' => $groupedTypes->get('Other', collect())->all(),
-			// Ensure all expected categories are covered, defaulting to an empty array if not present
-		];
-
-		// Optionally, handle uncategorized types:
-		$knownCategories = ['Numeric', 'String', 'Date and Time', 'Other'];
-		foreach ($groupedTypes as $category => $items) {
-			if (!in_array($category, $knownCategories)) {
-				// Append uncategorized items to the 'Other' category
-				self::$platformTypes['Other'] = array_merge(self::$platformTypes['Other'], $items->all());
-			}
-		}
-
-		return self::$platformTypes;
-	}
-
-
-
-    public static function getType($typeName)
+    /** @param array<string, Type> $instances */
+    public function __construct(array $instances = [])
     {
-        if (!self::$customTypesRegistered) {
-            self::registerCustomPlatformTypes();
-        }
-		// print_r($typeName);
-		// exit;
-		if (is_array($typeName)) $typeName=$typeName['name'];
-        // Check if the type name is an alias, and get the canonical type name
-        $canonicalName = self::$aliases[$typeName] ?? $typeName;
-
-        if (isset(self::$types[$canonicalName])) {
-            return self::$types[$canonicalName];
-        } else {
-            throw new \Exception("Type '{$typeName}' not found in Type.");
+        $this->instances             = [];
+        $this->instancesReverseIndex = [];
+        foreach ($instances as $name => $type) {
+            $this->register($name, $type);
         }
     }
 
-    public static function registerCustomPlatformTypes()
+    /**
+     * Finds a type by the given name.
+     *
+     * @throws Exception
+     */
+    public function get(string $name): Type
     {
-        self::registerTypesFromDirectory(__DIR__ . '/Postgresql');
-        self::registerTypesFromDirectory(__DIR__ . '/Common');
-        self::$customTypesRegistered = true;
-    }
-
-    public static function registerTypesFromDirectory($directory)
-    {
-        foreach (glob($directory . "/*.php") as $file) {
-            $className = basename($file, '.php');
-            $classNamespace = 'TCG\\Voyager\\Database\\Types\\' . basename($directory) . '\\' . $className;
-            if (class_exists($classNamespace)) {
-                $typeInstance = new $classNamespace();
-                self::$types[$typeInstance->getName()] = $typeInstance;
-                Log::info("Registered type: " . $typeInstance->getName());
-            }
-        }
-    }
-
-
-
-
-    // private static function toArray(Type $type)
-    // {
-        // return [
-            // 'name' => $type->getName(),
-            // 'category' => $type->getCategory() // Assume these methods exist
-        // ];
-    // }
-
-	private static function toArray(Type $type)
-	{
-		// Adjust this to include defaults based on type category or specific types
-		$defaults = [];
-		switch ($type->getCategory()) {
-			case 'Numbers':
-				$defaults = ['default' => ['type' => 'number', 'step' => 'any']];
-				break;
-			case 'Date and Time':
-				if ($type->getName() === 'date') {
-					$defaults = ['default' => ['type' => 'date']];
-				} elseif (in_array($type->getName(), ['time', 'timetz'])) {
-					$defaults = ['default' => ['type' => 'time', 'step' => '1']];
-				}
-				break;
-			// Add other cases as needed
-		}
-
-		return array_merge([
-			'name' => $type->getName(),
-			'category' => $type->getCategory(),
-		], $defaults);
-	}
-
-
-    protected static function getPlatformCustomTypes($platformName)
-    {
-        $typesPath = __DIR__.DIRECTORY_SEPARATOR.$platformName.DIRECTORY_SEPARATOR;
-        $namespace = __NAMESPACE__.'\\'.$platformName.'\\';
-        $types = [];
-
-        foreach (glob($typesPath.'*.php') as $classFile) {
-            $types[] = $namespace.str_replace(
-                '.php',
-                '',
-                str_replace($typesPath, '', $classFile)
-            );
+        $type = $this->instances[$name] ?? null;
+        if ($type === null) {
+            throw UnknownColumnType::new($name);
         }
 
-        return $types;
+        return $type;
     }
 
-public static function getPlatformTypeMapping($platform)
-{
-    return [
-        // Common types
-        'char' => CharType::class,
-        'double' => DoubleType::class,
-        'json' => JsonType::class,
-        'numeric' => NumericType::class,
-        'text' => TextType::class,
-        'varchar' => VarCharType::class,
-        'bigint' => BigIntType::class,
-        'integer' => IntegerType::class,
-        'int' => IntegerType::class,
-
-        // PostgreSQL types
-        'bit' => BitType::class,
-        'bit varying' => BitVaryingType::class,
-        'bytea' => ByteaType::class,
-        'character' => CharacterType::class,
-        'character varying' => CharacterVaryingType::class,
-        'cidr' => CidrType::class,
-        'double precision' => DoublePrecisionType::class,
-        'geometry' => GeometryType::class,
-        'inet' => InetType::class,
-        'interval' => IntervalType::class,
-        'jsonb' => JsonbType::class,
-        'macaddr' => MacAddrType::class,
-        'money' => MoneyType::class,
-        'real' => RealType::class,
-        'smallint' => SmallIntType::class,
-        'timestamp' => TimeStampType::class,
-        'timestamptz' => TimeStampTzType::class,
-        'timetz' => TimeTzType::class,
-        'tsquery' => TsQueryType::class,
-        'tsvector' => TsVectorType::class,
-        'txid_snapshot' => TxidSnapshotType::class,
-        'uuid' => UuidType::class,
-        'xml' => XmlType::class
-    ];
-}
-
-
-
-
-    public static function registerTypeCategories()
+    /**
+     * Finds a name for the given type.
+     *
+     * @throws Exception
+     */
+    public function lookupName(Type $type): string
     {
-        $types = static::getTypeCategories();
+        $name = $this->findTypeName($type);
 
-        static::registerCustomOption('category', 'Numbers', $types['numbers']);
-        static::registerCustomOption('category', 'Strings', $types['strings']);
-        static::registerCustomOption('category', 'Date and Time', $types['datetime']);
-        static::registerCustomOption('category', 'Lists', $types['lists']);
-        static::registerCustomOption('category', 'Binary', $types['binary']);
-        static::registerCustomOption('category', 'Geometry', $types['geometry']);
-        static::registerCustomOption('category', 'Network', $types['network']);
-        static::registerCustomOption('category', 'Objects', $types['objects']);
-    }
-
-    public static function getAllTypes()
-    {
-        if (static::$allTypes) {
-            return static::$allTypes;
+        if ($name === null) {
+            throw TypeNotRegistered::new($type);
         }
 
-        static::$allTypes = collect(static::getTypeCategories())->flatten();
-
-        return static::$allTypes;
+        return $name;
     }
 
-    public static function getTypeCategories()
+    /**
+     * Checks if there is a type of the given name.
+     */
+    public function has(string $name): bool
     {
-        if (static::$typeCategories) {
-            return static::$typeCategories;
+        return isset($this->instances[$name]);
+    }
+
+    /**
+     * Registers a custom type to the type map.
+     *
+     * @throws Exception
+     */
+    public function register(string $name, Type $type): void
+    {
+        if (isset($this->instances[$name])) {
+            throw TypesAlreadyExists::new($name);
         }
 
-        $numbers = [
-            'boolean',
-            'tinyint',
-            'smallint',
-            'mediumint',
-            'integer',
-            'int',
-            'bigint',
-            'decimal',
-            'numeric',
-            'money',
-            'float',
-            'real',
-            'double',
-            'double precision',
-        ];
+        if ($this->findTypeName($type) !== null) {
+            throw TypeAlreadyRegistered::new($type);
+        }
 
-        $strings = [
-            'char',
-            'character',
-            'varchar',
-            'character varying',
-            'string',
-            'guid',
-            'uuid',
-            'tinytext',
-            'text',
-            'mediumtext',
-            'longtext',
-            'tsquery',
-            'tsvector',
-            'xml',
-        ];
-
-        $datetime = [
-            'date',
-            'datetime',
-            'year',
-            'time',
-            'timetz',
-            'timestamp',
-            'timestamptz',
-            'datetimetz',
-            'dateinterval',
-            'interval',
-        ];
-
-        $lists = [
-            'enum',
-            'set',
-            'simple_array',
-            'array',
-            'json',
-            'jsonb',
-            'json_array',
-        ];
-
-        $binary = [
-            'bit',
-            'bit varying',
-            'binary',
-            'varbinary',
-            'tinyblob',
-            'blob',
-            'mediumblob',
-            'longblob',
-            'bytea',
-        ];
-
-        $network = [
-            'cidr',
-            'inet',
-            'macaddr',
-            'txid_snapshot',
-        ];
-
-        $geometry = [
-            'geometry',
-            'point',
-            'linestring',
-            'polygon',
-            'multipoint',
-            'multilinestring',
-            'multipolygon',
-            'geometrycollection',
-        ];
-
-        $objects = [
-            'object',
-        ];
-
-        static::$typeCategories = [
-            'numbers'  => $numbers,
-            'strings'  => $strings,
-            'datetime' => $datetime,
-            'lists'    => $lists,
-            'binary'   => $binary,
-            'network'  => $network,
-            'geometry' => $geometry,
-            'objects'  => $objects,
-        ];
-
-        return static::$typeCategories;
-    }
-		
-
-public static function logAvailableTypes()
-{
-    $typesArray = self::getPlatformTypes();
-
-    // Checking and converting explicitly
-    if ($typesArray instanceof Illuminate\Support\Collection) {
-        $typesArray = $typesArray->toArray();
+        $this->instances[$name]                            = $type;
+        $this->instancesReverseIndex[spl_object_id($type)] = $name;
     }
 
-    // Logging to check the type of $typesArray
-    Log::info('TypesArray Type: ' . (is_array($typesArray) ? 'Array' : gettype($typesArray)));
+    /**
+     * Overrides an already defined type to use a different implementation.
+     *
+     * @throws Exception
+     */
+    public function override(string $name, Type $type): void
+    {
+        $origType = $this->instances[$name] ?? null;
+        if ($origType === null) {
+            throw TypeNotFound::new($name);
+        }
 
-    // Use array_keys on a guaranteed array
-    Log::info("Available types: " . implode(", ", array_keys($typesArray)));
-}
-		
-		
+        if (($this->findTypeName($type) ?? $name) !== $name) {
+            throw TypeAlreadyRegistered::new($type);
+        }
+
+        unset($this->instancesReverseIndex[spl_object_id($origType)]);
+        $this->instances[$name]                            = $type;
+        $this->instancesReverseIndex[spl_object_id($type)] = $name;
+    }
+
+    /**
+     * Gets the map of all registered types and their corresponding type instances.
+     *
+     * @internal
+     *
+     * @return array<string, Type>
+     */
+    public function getMap(): array
+    {
+        return $this->instances;
+    }
+
+    private function findTypeName(Type $type): ?string
+    {
+        return $this->instancesReverseIndex[spl_object_id($type)] ?? null;
+    }
 }

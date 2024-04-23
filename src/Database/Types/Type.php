@@ -44,12 +44,12 @@ abstract class Type
     public const NOT_SUPPORTED = 'notSupported';
     public const NOT_SUPPORT_INDEX = 'notSupportIndex';
     private const BUILTIN_TYPES_MAP = [
-        // 'ascii_string'         => AsciiStringType::class,
+        'ascii_string'         => AsciiStringType::class,
         'bigint'               => Common\BigIntType::class,
         // 'binary'               => BinaryType::class,
         // 'blob'                 => BlobType::class,
         // 'boolean'              => BooleanType::class,
-        // 'date'         			=> DateType::class,
+        'date'         			=> DateType::class,
         // 'date_immutable'       => DateImmutableType::class,
         // 'dateinterval'         => DateIntervalType::class,
         // 'datetime'     			=> DateTimeType::class,

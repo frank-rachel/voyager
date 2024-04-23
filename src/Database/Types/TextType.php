@@ -1,35 +1,29 @@
 <?php
-namespace TCG\Voyager\Database\Types;
 
+declare(strict_types=1);
+
+namespace Doctrine\DBAL\Types;
+
+use Doctrine\DBAL\Platforms\AbstractPlatform;
+
+use function is_resource;
+use function stream_get_contents;
+
+/**
+ * Type that maps an SQL CLOB to a PHP string.
+ */
 class TextType extends Type
 {
-
-	public function getSQLDeclaration(array $field)
-	{
-		return "TEXT"; 
-	}	
-	
-    // Default conversion to database value
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    /**
+     * {@inheritDoc}
+     */
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        // Default implementation, override in child classes if needed
-        return $value;
+        return $platform->getClobTypeDeclarationSQL($column);
     }
 
-    // Default conversion to PHP value
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    public function convertToPHPValue(mixed $value, AbstractPlatform $platform): mixed
     {
-        // Default implementation, override in child classes if needed
-        return $value;
+        return is_resource($value) ? stream_get_contents($value) : $value;
     }
-	
-    public function getName(): string
-    {
-        return 'text';
-    }
-	
-    public function getCategory(): string
-    {
-        return 'text';  // Categorize this type as text
-    }	
 }
