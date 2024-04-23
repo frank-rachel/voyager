@@ -2,6 +2,7 @@
 
 namespace TCG\Voyager\Database\Schema;
 
+use TCG\Voyager\Database\Types\Type;
 use TCG\Voyager\Database\Types\TypeRegistry;
 
 class Column
