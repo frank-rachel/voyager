@@ -113,11 +113,22 @@ abstract class SchemaManager
 			throw new \Exception("Table does not exist: $tableName");
 		}
 
-		// Get columns details, use parameter binding for safety
-		$columns = DB::select("SELECT column_name, data_type, is_nullable, column_default
-							   FROM information_schema.columns
-							   WHERE table_name = ?", [$tableName]);
+		// Get column details
+		$rawColumns = DB::select("SELECT column_name, data_type, is_nullable, column_default
+								  FROM information_schema.columns
+								  WHERE table_name = ?", [$tableName]);
 
+		// Transform raw column data to fit the expected format for Column objects
+		$columns = [];
+		foreach ($rawColumns as $rawColumn) {
+			$columns[$rawColumn->column_name] = [
+				'type' => $rawColumn->data_type,
+				'options' => [
+					'nullable' => $rawColumn->is_nullable === 'YES',
+					'default' => $rawColumn->column_default
+				]
+			];
+		}
 		// Get foreign keys
 		$foreignKeys = DB::select("SELECT tc.constraint_name, kcu.column_name, ccu.table_name AS foreign_table_name, ccu.column_name AS foreign_column_name
 								   FROM information_schema.table_constraints AS tc 
