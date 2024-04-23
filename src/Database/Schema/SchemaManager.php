@@ -141,7 +141,7 @@ abstract class SchemaManager
 
 		$indexData = [];
 		foreach ($indexes as $index) {
-			$indexDetails = $this->parseIndexDefinition($index->indexdef);
+			$indexDetails = self::parseIndexDefinition($index->indexdef);
 			if ($indexDetails) {
 				$indexData[] = [
 					'name' => $index->indexname,
@@ -160,7 +160,22 @@ abstract class SchemaManager
 		return new Table($tableName, $columns, $indexData, [], $foreignKeys);
 	}
 
+	private function parseIndexDefinition($indexdef) {
+		// Example parsing logic, you might need to adapt it based on actual SQL definition
+		$isPrimary = strpos(strtolower($indexdef), 'primary') !== false;
+		$isUnique = strpos(strtolower($indexdef), 'unique') !== false;
+		$type = $isPrimary ? 'PRIMARY' : ($isUnique ? 'UNIQUE' : 'INDEX');
+		
+		preg_match('/\(([^)]+)\)/', $indexdef, $matches);
+		$columns = $matches[1] ? array_map('trim', explode(',', $matches[1])) : [];
 
+		return [
+			'columns' => $columns,
+			'type' => $type,
+			'isPrimary' => $isPrimary,
+			'isUnique' => $isUnique
+		];
+	}
 	 
 /*	 
 	public static function listTableDetails($tableName)
