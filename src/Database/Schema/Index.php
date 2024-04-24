@@ -80,7 +80,7 @@ class Index
 		return $this->name;
 	}
 
-    public function toArray(Type $type)
+    public function toArray()
     {
         return [
             'name'        => $this->name,
