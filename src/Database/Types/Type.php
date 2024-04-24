@@ -47,6 +47,7 @@ abstract class Type
         'ascii_string'         => AsciiStringType::class,
         'bigint'               => Common\BigIntType::class,
         'varchar'               => Common\VarCharType::class,
+        'char'               => Common\CharType::class,
         'integer'               => IntegerType::class,
         // 'integer'               => IntegerType::class,
         // 'integer'               => Common\IntegerType::class,
