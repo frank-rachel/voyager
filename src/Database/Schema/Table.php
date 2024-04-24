@@ -39,22 +39,18 @@ class Table
 		}
 	}
 
-	public function toArray(Type $type)
-	{
-		$columnsArr = [];
-		foreach ($this->columns as $column) {
-			$columnsArr[] = $column->toArray();
-		}
-
-		return [
-			'name' => $this->name,
-			'oldName' => $this->oldName, // Include oldName in the serialized output
- 			'columns' => $columnsArr,
-			'indexes' => array_map(function ($index) { return $index->toArray(); }, $this->indexes),
-			'foreignKeys' => $this->foreignKeys,
-			'options' => $this->options,
-		];
-	}
+    public function toArray()
+    {
+        return [
+            'name'           => $this->_name,
+            'oldName'        => $this->_name,
+            'columns'        => $this->exportColumnsToArray(),
+            'indexes'        => $this->exportIndexesToArray(),
+            'primaryKeyName' => $this->_primaryKeyName,
+            'foreignKeys'    => $this->exportForeignKeysToArray(),
+            'options'        => $this->_options,
+        ];
+    }
 
 
     public function addColumn(Column $column)
