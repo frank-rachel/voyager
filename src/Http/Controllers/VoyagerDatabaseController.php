@@ -206,6 +206,7 @@ class VoyagerDatabaseController extends Controller
 		if (request('help') === 'frank') {
 			// print_r($db->table->toJson());
 			print_r($db);
+			dd($db);
 			exit;
 		} else {
 			return $db;
