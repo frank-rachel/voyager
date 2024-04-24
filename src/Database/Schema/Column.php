@@ -8,67 +8,57 @@ use TCG\Voyager\Database\Types\TypeRegistry;
 class Column
 {
     public $name;
-	public $oldName;
+    public $oldName;
     public $type;
     public $options;
     public $tableName;
 
-	public function __construct($name, $type, array $options = [], $tableName = null)
-	{
-		$this->name = $name;
-		$this->oldName = $name;
-		// Check if $type is already an instance of Type, otherwise get it from TypeRegistry
-		// $type = ($type instanceof Type) ? $type : Type::getType(trim($type['name']));
-		
-		// Check if $type is an instance of Type first
-		if ($type instanceof Type) {
-			$resolvedType = $type;
-		} else if (is_array($type) && isset($type['name'])) {
-			// Safely access 'name' if $type is an array
-			$resolvedType = Type::getType(trim($type['name']));
-		} else {
-			// Log or handle unexpected $type format
-			// echo("Unexpected type format: " . print_r($type, true));
-			// throw new \Exception("Unexpected type format encountered.");
-			$resolvedType = Type::getType(trim($type));
-		}
-		
-		$type = $resolvedType;
-        $this->options = $options;
-		$this->tableName = $tableName;
+    public function __construct($name, $type, array $options = [], $tableName = null)
+    {
+        $this->name = $name;
+        $this->oldName = $name;
+        $this->tableName = $tableName;
 
-		// Set defaults from options or use default values
-		$this->options['nullable'] = $options['nullable'] ?? true;
-		$this->options['default'] = $options['default'] ?? null;
-		$this->options['length'] = $options['length'] ?? null;
-		$this->options['precision'] = $options['precision'] ?? null;
-		$this->options['scale'] = $options['scale'] ?? null;
-		$this->options['unsigned'] = $options['unsigned'] ?? false;
-		$this->options['fixed'] = $options['fixed'] ?? false;
-		$this->options['notnull'] = $options['notnull'] ?? !$this->options['nullable'];
-	}
+        // Resolving type instance if needed
+        if (!($type instanceof Type)) {
+            $typeName = is_array($type) && isset($type['name']) ? trim($type['name']) : trim($type);
+            $this->type = Type::getType($typeName);
+        } else {
+            $this->type = $type;
+        }
 
-	public function toArray(Type $type)
-	{
-		$columnArr = $column->toArray();
-        $columnArr['type'] = Type::toArray($columnArr['type']);
+        $this->options = array_merge([
+            'nullable' => true,
+            'default' => null,
+            'length' => null,
+            'precision' => null,
+            'scale' => null,
+            'unsigned' => false,
+            'fixed' => false,
+            'notnull' => true
+        ], $options);
+
+        $this->options['notnull'] = !$this->options['nullable'];
+    }
+
+    public function toArray()
+    {
         return [
-			'name' => $this->name,
-			// 'type' => $this->type->getName(), // Make sure this outputs only the type name
-			'type' => $columnArr['type'],
-			'oldName' => $this->name,
-			'null' => $this->options['nullable'] ? 'YES' : 'NO',
-			'default' => $this->options['default'],
-			'length' => $this->options['length'],
-			'precision' => $this->options['precision'],
-			'scale' => $this->options['scale'],
-			'unsigned' => $this->getUnsigned(),
-			'fixed' => $this->getFixed(),
-			'notnull' => $this->getNotnull(),
-			'extra' => $this->getExtra(),
-			'composite' => false
-		];
-	}
+            'name' => $this->name,
+            'type' => $this->type->getName(),  // Assuming Type has a getName() method.
+            'oldName' => $this->oldName,
+            'null' => $this->options['nullable'] ? 'YES' : 'NO',
+            'default' => $this->options['default'],
+            'length' => $this->options['length'],
+            'precision' => $this->options['precision'],
+            'scale' => $this->options['scale'],
+            'unsigned' => $this->options['unsigned'],
+            'fixed' => $this->options['fixed'],
+            'notnull' => $this->options['notnull'],
+            'extra' => $this->getExtra(),  // Ensure this method is defined
+            'composite' => false
+        ];
+    }
 	
     public static function make(array $column, string $tableName = null)
     {
