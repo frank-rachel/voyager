@@ -316,10 +316,10 @@ class VoyagerDatabaseController extends Controller
                 }
             }
         }
-		$tableDescription = SchemaManager::describeTable($table);
-		$mergedData = collect($tableDescription)->merge($additional_attributes);
-		dd($mergedData);
-        // return response()->json(collect(SchemaManager::describeTable($table))->merge($additional_attributes));
+		// $tableDescription = SchemaManager::describeTable($table);
+		// $mergedData = collect($tableDescription)->merge($additional_attributes);
+		// dd($mergedData);
+        return response()->json(collect(SchemaManager::describeTable($table))->merge($additional_attributes));
     }
 	// */
 	/*
