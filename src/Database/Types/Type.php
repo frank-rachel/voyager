@@ -140,13 +140,11 @@ abstract class Type
     }
 
 
-
-	
-    public function getName()
+    public function getName(): string
     {
-        return static::NAME;
+        return self::getTypeName($this);
     }
-
+	
     // public static function toArray(Type $type)
     public function toArray(Type $type)
     {

@@ -45,7 +45,7 @@ class Column
     {
         return [
             'name' => $this->name,
-            'type' => $this->type->lookupName(),  // Assuming Type has a getName() method.
+            'type' => $this->type->getName(),  // Assuming Type has a getName() method.
             'oldName' => $this->oldName,
             'null' => $this->options['nullable'] ? 'YES' : 'NO',
             'default' => $this->options['default'],
