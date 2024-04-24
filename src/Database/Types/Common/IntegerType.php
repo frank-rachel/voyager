@@ -20,10 +20,5 @@ class IntegerType extends Type
         return "integer";
     }
 
-    // Override `toArray()` if additional properties are needed
-    public function toArray(Type $type)
-    {
-        return (parent::toArray());
-    }
 }
 
