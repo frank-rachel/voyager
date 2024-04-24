@@ -19,28 +19,25 @@
 <script>
     let databaseTypes = {!! json_encode($db->types) !!};
 
-console.log("Database Types:", databaseTypes);
+    function getDbType(name) {
+        let type;
+        name = name.toLowerCase().trim();
 
-function getDbType(name) {
-    let type;
-    name = name.toLowerCase().trim();
-    console.log("Looking up type:", name);
+        for (category in databaseTypes) {
+            type = databaseTypes[category].find(function (type) {
+                return name == type.name.toLowerCase();
+            });
 
-    for (category in databaseTypes) {
-        type = databaseTypes[category].find(function (type) {
-            return name == type.name.toLowerCase();
-        });
-
-        if (type) {
-            console.log("Type found:", type);
-            return type;
+            if (type) {
+                return type;
+            }
         }
+
+        toastr.error("{{ __('voyager::database.unknown_type') }}: " + name);
+
+        // fallback to a default type
+        return databaseTypes.Numbers[0];
     }
-
-    console.error("Type not found:", name);
-    return databaseTypes.Numbers[0]; // Ensure this default fallback is safe and makes sense
-}
-
 
     Vue.component('database-types', {
         props: {
