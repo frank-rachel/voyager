@@ -55,7 +55,9 @@
     </div>
 
 @stop
-
+<?php /*
+originalTable: {!! $db->table->toJson() !!}, // to do comparison later?
+*/ ?>
 @section('javascript')
     @include('voyager::tools.database.vue-components.database-table-editor')
 
@@ -64,8 +66,8 @@
             el: '#dbManager',
             data: {
                 table: {},
-                originalTable: {!! $db->table->toJson() !!}, // to do comparison later?
-                oldTable: {!! $db->oldTable !!},
+                originalTable: {!! json_encode($db->table) !!}
+				oldTable: {!! $db->oldTable !!},
                 tableJson: ''
             },
             created() {
