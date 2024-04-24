@@ -300,12 +300,17 @@ public static function describeTable($tableName)
     try {
         $table = static::listTableDetails($tableName);
         return collect($table->columns)->map(function ($column) use ($table) {
-            // Ensure $column is an instance of Type or derived from Type
-            $columnArr = $column->toArray(); // Correct usage: calling on instance
+            // Convert the column data from the object to an array if not already done
+            $columnArr = $column->toArray(); // Assuming toArray() provides all necessary column details
 
-            $columnArr['field'] = $column->getName(); // Assuming getName() is a method
-            $columnArr['type'] = $column->getType(); // Assuming getType() is a method
+            // Enhance the 'type' attribute to be an object with detailed type information
+            $columnArr['type'] = [
+                'name' => $column->type->getName(),  // Ensure Type class has getName()
+                'category' => $column->type->getCategory(),  // Ensure Type class has getCategory()
+                'default' => $column->type->getDefault()  // Ensure Type class has getDefault()
+            ];
 
+            // Add index information
             $columnArr['indexes'] = [];
             $columnArr['key'] = null;
 
@@ -321,12 +326,13 @@ public static function describeTable($tableName)
             }
 
             return $columnArr;
-        });
+        })->values()->all();  // Convert Collection to array
     } catch (\Exception $e) {
         Log::error("Failed to describe table $tableName: " . $e->getMessage(), ['exception' => $e]);
         return collect([]);  // Return an empty collection on error
     }
 }
+
 
 
 
