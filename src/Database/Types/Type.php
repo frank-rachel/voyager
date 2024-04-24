@@ -118,26 +118,7 @@ abstract class Type
         return self::getTypeRegistry()->lookupName($type);
     }
 
-    /**
-     * Adds a custom type to the type map.
-     *
-     * @param string             $name      The name of the type.
-     * @param class-string<Type> $className The class name of the custom type.
-     *
-     * @throws Exception
-     */
-    // public static function addType(string $name, string $className): void
-    // {
-        // self::getTypeRegistry()->register($name, new $className());
-    // }
 
-    /**
-     * Checks if exists support for a type.
-     *
-     * @param string $name The name of the type.
-     *
-     * @return bool TRUE if type is supported; FALSE otherwise.
-     */
     public static function hasType(string $name): bool
     {
         return self::getTypeRegistry()->has($name);
@@ -158,14 +139,16 @@ abstract class Type
         return array_merge(['name' => $type->getName()], $customTypeOptions);
     }
 
-    public static function getPlatformTypes()
-    {
-        static::boot(); // Ensure types are registered
+	public static function getPlatformTypes()
+	{
+		static::boot(); // Ensure types are registered
 
-        return collect(static::$allTypes)->map(function ($type) {
-            return static::toArray(new $type());
-        })->groupBy('category');
-    }
+		return collect(static::$allTypes)->map(function ($typeClassName) {
+			$typeInstance = new $typeClassName();  // Create an instance
+			return $typeInstance->toArray($typeInstance);  // Call toArray on the instance
+		})->groupBy('category');
+	}
+
 
     protected static function boot()
     {
