@@ -30,7 +30,7 @@ class DoubleType extends Type
     // You could override `toArray()` if additional properties are needed
     public function toArray(Type $type)
     {
-        return array_merge(parent::toArray(), [
+        return array_merge(parent::toArray($type), [
             'precision' => null, // Default precision, adjust as necessary
             'scale' => null      // Default scale, adjust as necessary
         ]);

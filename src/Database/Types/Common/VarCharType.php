@@ -20,7 +20,7 @@ class VarCharType extends Type
     // You could override `toArray()` if additional properties are needed
     public function toArray(Type $type)
     {
-        return array_merge(parent::toArray(), [
+        return array_merge(parent::toArray($type), [
             'length' => 2000, // Default length, adjust as necessary or make it dynamic based on $field
         ]);
     }
