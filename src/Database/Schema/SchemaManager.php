@@ -299,39 +299,43 @@ public static function describeTable($tableName)
 {
     try {
         $table = static::listTableDetails($tableName);
-        return collect($table->columns)->map(function ($column) use ($table) {
-            // Convert the column data from the object to an array if not already done
-            $columnArr = $column->toArray(); // Assuming toArray() provides all necessary column details
 
-            // Enhance the 'type' attribute to be an object with detailed type information
-            $columnArr['type'] = [
-                'name' => $column->type->getName(),  // Ensure Type class has getName()
-                'category' => $column->type->getCategory(),  // Ensure Type class has getCategory()
-                'default' => $column->type->getDefault()  // Ensure Type class has getDefault()
+        return collect($table->columns)->map(function ($column) use ($table) {
+            // Assuming $column->type is an object, we format it with more details
+            $typeDetails = [
+                'name' => $column->type->getName(),  // Basic type name, e.g., 'integer'
+                'category' => $column->type->getCategory(),  // E.g., 'Numbers'
+                'default' => [
+                    'type' => 'number',  // Assume default type; adjust based on actual defaults and logic
+                    'step' => 'any'  // Example default value
+                ]
             ];
 
-            // Add index information
-            $columnArr['indexes'] = [];
-            $columnArr['key'] = null;
-
-            if ($indexes = $table->getColumnsIndexes($column->getName(), true)) {
-                foreach ($indexes as $name => $index) {
-                    $columnArr['indexes'][$name] = $index->toArray();
-                }
-
-                if (!empty($columnArr['indexes'])) {
-                    $indexType = array_values($columnArr['indexes'])[0]['type'];
-                    $columnArr['key'] = substr($indexType, 0, 3);
-                }
-            }
+            // Assemble the column details
+            $columnArr = [
+                'name' => $column->name,
+                'type' => $typeDetails,
+                'oldName' => $column->oldName,
+                'null' => $column->options['nullable'] ? 'YES' : 'NO',
+                'default' => $column->options['default'],
+                'length' => $column->options['length'],
+                'precision' => $column->options['precision'],
+                'scale' => $column->options['scale'],
+                'unsigned' => $column->options['unsigned'],
+                'fixed' => $column->options['fixed'],
+                'notnull' => $column->options['notnull'],
+                'extra' => $column->options['extra'] ?? '',
+                'composite' => false  // Assuming no composite types
+            ];
 
             return $columnArr;
-        })->values()->all();  // Convert Collection to array
+        })->values()->all();  // Ensure output is a list of columns, not keyed by column names
     } catch (\Exception $e) {
         Log::error("Failed to describe table $tableName: " . $e->getMessage(), ['exception' => $e]);
         return collect([]);  // Return an empty collection on error
     }
 }
+
 
 
 
