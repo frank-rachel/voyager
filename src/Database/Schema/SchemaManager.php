@@ -300,19 +300,18 @@ public static function describeTable($tableName)
     try {
         $table = static::listTableDetails($tableName);
 
-        // Build an array of column data explicitly as an array of objects
+        // Build an array of column data as an array of objects
         $columnsArray = collect($table->columns)->map(function ($column) {
             // Assuming $column->type is an object, we format it with more details
             $typeDetails = [
                 'name' => $column->type->getName(),
-                'category' => $column->type->getCategory(), // This method needs to exist in your Type class
+                'category' => $column->type->getCategory(), // Ensure this method exists in your Type class
                 'default' => [
-                    'type' => 'number', // Assuming default settings; modify as necessary
-                    'step' => 'any'    // Example value; adjust based on actual logic
+                    'type' => 'number', // Modify as necessary
+                    'step' => 'any'    // Example value
                 ]
             ];
 
-            // Return each column as an object within the array
             return [
                 'name' => $column->name,
                 'type' => $typeDetails,
@@ -328,12 +327,12 @@ public static function describeTable($tableName)
                 'extra' => $column->options['extra'] ?? '',
                 'composite' => false
             ];
-        })->all();  // Convert the collection to a plain PHP array
+        })->all();  // Ensure this converts the collection to a plain PHP array correctly
 
         return [
             'name' => $table->name,
             'oldName' => $table->oldName,
-            'columns' => $columnsArray, // Ensures columns are returned as an array
+            'columns' => $columnsArray, // Ensure this is an array of dictionaries
             'indexes' => $table->indexes,
             'primaryKeyName' => $table->primaryKeyName,
             'foreignKeys' => $table->foreignKeys,
@@ -344,6 +343,7 @@ public static function describeTable($tableName)
         return [];  // Return an empty array on error
     }
 }
+
 
 
 
