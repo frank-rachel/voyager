@@ -81,7 +81,8 @@ class Column
     }
     public function getType()
     {
-        return $this->type;
+        // return $this->type;
+        return $this->type->getName();
     }
 
     protected function getExtra()
