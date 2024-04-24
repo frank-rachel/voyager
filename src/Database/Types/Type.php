@@ -49,6 +49,7 @@ abstract class Type
         'varchar'               => Common\VarCharType::class,
         'char'               => Common\CharType::class,
         'integer'               => IntegerType::class,
+        'double'               => Common\DoubleType::class,
         // 'integer'               => IntegerType::class,
         // 'integer'               => Common\IntegerType::class,
         'timestamp'               => Postgresql\TimeStampType::class,
