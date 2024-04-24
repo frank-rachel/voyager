@@ -300,39 +300,41 @@ public static function describeTable($tableName)
     try {
         $table = static::listTableDetails($tableName);
 
-        // Convert columns from associative array to indexed array of objects
+        // Build an array of column data explicitly as an array of objects
+        $columnsArray = collect($table->columns)->map(function ($column) {
+            // Assuming $column->type is an object, we format it with more details
+            $typeDetails = [
+                'name' => $column->type->getName(),
+                'category' => $column->type->getCategory(), // This method needs to exist in your Type class
+                'default' => [
+                    'type' => 'number', // Assuming default settings; modify as necessary
+                    'step' => 'any'    // Example value; adjust based on actual logic
+                ]
+            ];
+
+            // Return each column as an object within the array
+            return [
+                'name' => $column->name,
+                'type' => $typeDetails,
+                'oldName' => $column->oldName,
+                'null' => $column->options['nullable'] ? 'YES' : 'NO',
+                'default' => $column->options['default'],
+                'length' => $column->options['length'],
+                'precision' => $column->options['precision'],
+                'scale' => $column->options['scale'],
+                'unsigned' => $column->options['unsigned'],
+                'fixed' => $column->options['fixed'],
+                'notnull' => !$column->options['nullable'],
+                'extra' => $column->options['extra'] ?? '',
+                'composite' => false
+            ];
+        })->all();  // Convert the collection to a plain PHP array
+
         return [
             'name' => $table->name,
             'oldName' => $table->oldName,
-            'columns' => collect($table->columns)->map(function ($column) {
-                // Assuming the column object has a method to get detailed type info
-                $typeDetails = [
-                    'name' => $column->type->getName(),
-                    'category' => $column->type->getCategory(), // This method needs to exist in your Type class
-                    'default' => [
-                        'type' => 'number', // Assuming default settings; modify as necessary
-                        'step' => 'any'    // Example value; adjust based on actual logic
-                    ]
-                ];
-
-                // Format the column details as an object
-                return [
-                    'name' => $column->name,
-                    'type' => $typeDetails,
-                    'oldName' => $column->oldName,
-                    'null' => $column->options['nullable'] ? 'YES' : 'NO',
-                    'default' => $column->options['default'],
-                    'length' => $column->options['length'],
-                    'precision' => $column->options['precision'],
-                    'scale' => $column->options['scale'],
-                    'unsigned' => $column->options['unsigned'],
-                    'fixed' => $column->options['fixed'],
-                    'notnull' => !$column->options['nullable'],
-                    'extra' => $column->options['extra'] ?? '',
-                    'composite' => false
-                ];
-            })->values()->all(), // Ensures the output is an indexed array
-            'indexes' => $table->indexes, // Assuming indexes are already formatted correctly
+            'columns' => $columnsArray, // Ensures columns are returned as an array
+            'indexes' => $table->indexes,
             'primaryKeyName' => $table->primaryKeyName,
             'foreignKeys' => $table->foreignKeys,
             'options' => $table->options
@@ -342,9 +344,6 @@ public static function describeTable($tableName)
         return [];  // Return an empty array on error
     }
 }
-
-
-
 
 
 
