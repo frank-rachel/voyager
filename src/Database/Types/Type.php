@@ -105,11 +105,22 @@ abstract class Type
      */
     public static function getType(string $name): self
     {
-		echo ("get type for $name");
+		// echo ("get type for $name");
 		$type=self::getTypeRegistry()->get($name);
-		print_r($type);
-		exit;
+		// print_r($type);
+		// exit;
         return $type;
+    }
+
+    public static function getTypeName($typeInstance): string
+    {
+        $className = get_class($typeInstance);
+        foreach (self::BUILTIN_TYPES_MAP as $name => $class) {
+            if ($class === $className) {
+                return $name;
+            }
+        }
+        throw new \Exception("Type not found for class instance: {$className}");
     }
 
     /**
