@@ -5,6 +5,7 @@ class Table
 {
     public $name;
     public $oldName; // Added to keep track of the original table name
+    public $primaryKeyName;
     public $columns = [];
     public $indexes = [];
     public $foreignKeys = [];
@@ -42,13 +43,13 @@ class Table
     public function toArray()
     {
         return [
-            'name'           => $this->_name,
-            'oldName'        => $this->_name,
+            'name'           => $this->name,
+            'oldName'        => $this->name,
             'columns'        => $this->exportColumnsToArray(),
             'indexes'        => $this->exportIndexesToArray(),
-            'primaryKeyName' => $this->_primaryKeyName,
+            'primaryKeyName' => $this->primaryKeyName,
             'foreignKeys'    => $this->exportForeignKeysToArray(),
-            'options'        => $this->_options,
+            'options'        => $this->options,
         ];
     }
 
