@@ -79,6 +79,10 @@ class Column
     {
         return $this->name;
     }
+    public function getType()
+    {
+        return $this->type;
+    }
 
     protected function getExtra()
     {
