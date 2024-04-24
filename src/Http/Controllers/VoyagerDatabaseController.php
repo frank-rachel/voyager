@@ -300,6 +300,8 @@ class VoyagerDatabaseController extends Controller
      *
      * @return JSON
      */
+	 
+	 /*
     public function show($table)
     {
         $this->authorize('browse_database');
@@ -317,6 +319,35 @@ class VoyagerDatabaseController extends Controller
 
         return response()->json(collect(SchemaManager::describeTable($table))->merge($additional_attributes));
     }
+	// */
+public function show($table)
+{
+    $this->authorize('browse_database');
+
+    $additional_attributes = [];
+    $model_name = Voyager::model('DataType')->where('name', $table)->pluck('model_name')->first();
+    if (isset($model_name)) {
+        $model = app($model_name);
+        if (isset($model->additional_attributes)) {
+            foreach ($model->additional_attributes as $attribute) {
+                $additional_attributes[$attribute] = $model->{$attribute}; // Assuming you want to collect actual data
+            }
+        }
+    }
+
+    $tableDescription = SchemaManager::describeTable($table);
+
+    // Check if the columns are provided as an associative array and convert them to a numeric array
+    if (isset($tableDescription['columns']) && is_array($tableDescription['columns'])) {
+        $tableDescription['columns'] = array_values($tableDescription['columns']);
+    }
+
+    // Combine the table description with additional attributes
+    $responseArray = array_merge($tableDescription, $additional_attributes);
+
+    // Return the JSON response with the correctly formatted data
+    return response()->json($responseArray);
+}
 
     /**
      * Destroy table.
