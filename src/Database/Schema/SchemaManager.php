@@ -298,16 +298,16 @@ abstract class SchemaManager
 public static function describeTable($tableName)
 {
     try {
-        $table = static::listTableDetails($tableName);
+        $table = static::listTableDetails($tableName);  // This should return a Table object
 
-        // Build an array of column data as an array of objects
+        // Ensure 'columns' is formatted as an array of dictionaries
         $columnsArray = collect($table->columns)->map(function ($column) {
-            // Assuming $column->type is an object, we format it with more details
+            // Check and format type details assuming $column->type is an object
             $typeDetails = [
                 'name' => $column->type->getName(),
-                'category' => $column->type->getCategory(), // Ensure this method exists in your Type class
+                'category' => $column->type->getCategory(), // Ensure getCategory() is defined
                 'default' => [
-                    'type' => 'number', // Modify as necessary
+                    'type' => 'number', // Example, modify as needed
                     'step' => 'any'    // Example value
                 ]
             ];
@@ -327,17 +327,20 @@ public static function describeTable($tableName)
                 'extra' => $column->options['extra'] ?? '',
                 'composite' => false
             ];
-        })->all();  // Ensure this converts the collection to a plain PHP array correctly
+        })->all();  // Convert to array
 
-        return [
+        // Build the final array with proper structure
+        $finalTable = [
             'name' => $table->name,
             'oldName' => $table->oldName,
-            'columns' => $columnsArray, // Ensure this is an array of dictionaries
+            'columns' => $columnsArray, // Array of dictionaries
             'indexes' => $table->indexes,
             'primaryKeyName' => $table->primaryKeyName,
             'foreignKeys' => $table->foreignKeys,
             'options' => $table->options
         ];
+
+        return $finalTable;
     } catch (\Exception $e) {
         Log::error("Failed to describe table $tableName: " . $e->getMessage(), ['exception' => $e]);
         return [];  // Return an empty array on error
