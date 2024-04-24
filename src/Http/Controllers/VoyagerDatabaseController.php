@@ -301,7 +301,7 @@ class VoyagerDatabaseController extends Controller
      * @return JSON
      */
 	 
-	 /*
+	 
     public function show($table)
     {
         $this->authorize('browse_database');
@@ -320,6 +320,7 @@ class VoyagerDatabaseController extends Controller
         return response()->json(collect(SchemaManager::describeTable($table))->merge($additional_attributes));
     }
 	// */
+	/*
 public function show($table)
 {
     $this->authorize('browse_database');
@@ -348,7 +349,7 @@ public function show($table)
     // Return the JSON response with the correctly formatted data
     return response()->json($responseArray);
 }
-
+// */
     /**
      * Destroy table.
      *
