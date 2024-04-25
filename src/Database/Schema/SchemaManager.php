@@ -300,41 +300,49 @@ public static function describeTable($tableName)
     try {
         $table = static::listTableDetails($tableName);
 
-        return collect($table->columns)->map(function ($column) use ($table) {
-            // Assuming $column->type is an object, we format it with more details
-            $typeDetails = [
-                'name' => $column->type->getName(),  // Basic type name, e.g., 'integer'
-                'category' => $column->type->getCategory(),  // E.g., 'Numbers'
-                'default' => [
-                    'type' => 'number',  // Assume default type; adjust based on actual defaults and logic
-                    'step' => 'any'  // Example default value
-                ]
-            ];
+        // Convert columns from associative array to indexed array of objects
+        return [
+            'name' => $table->name,
+            'oldName' => $table->oldName,
+            'columns' => collect($table->columns)->map(function ($column) {
+                // Assuming the column object has a method to get detailed type info
+                $typeDetails = [
+                    'name' => $column->type->getName(),
+                    'category' => $column->type->getCategory(), // This method needs to exist in your Type class
+                    'default' => [
+                        'type' => 'number', // Assuming default settings; modify as necessary
+                        'step' => 'any'    // Example value; adjust based on actual logic
+                    ]
+                ];
 
-            // Assemble the column details
-            $columnArr = [
-                'name' => $column->name,
-                'type' => $typeDetails,
-                'oldName' => $column->oldName,
-                'null' => $column->options['nullable'] ? 'YES' : 'NO',
-                'default' => $column->options['default'],
-                'length' => $column->options['length'],
-                'precision' => $column->options['precision'],
-                'scale' => $column->options['scale'],
-                'unsigned' => $column->options['unsigned'],
-                'fixed' => $column->options['fixed'],
-                'notnull' => $column->options['notnull'],
-                'extra' => $column->options['extra'] ?? '',
-                'composite' => false  // Assuming no composite types
-            ];
-
-            return $columnArr;
-        })->values()->all();  // Ensure output is a list of columns, not keyed by column names
+                // Format the column details as an object
+                return [
+                    'name' => $column->name,
+                    'type' => $typeDetails,
+                    'oldName' => $column->oldName,
+                    'null' => $column->options['nullable'] ? 'YES' : 'NO',
+                    'default' => $column->options['default'],
+                    'length' => $column->options['length'],
+                    'precision' => $column->options['precision'],
+                    'scale' => $column->options['scale'],
+                    'unsigned' => $column->options['unsigned'],
+                    'fixed' => $column->options['fixed'],
+                    'notnull' => !$column->options['nullable'],
+                    'extra' => $column->options['extra'] ?? '',
+                    'composite' => false
+                ];
+            })->values()->all(), // Ensures the output is an indexed array
+            'indexes' => $table->indexes, // Assuming indexes are already formatted correctly
+            'primaryKeyName' => $table->primaryKeyName,
+            'foreignKeys' => $table->foreignKeys,
+            'options' => $table->options
+        ];
     } catch (\Exception $e) {
         Log::error("Failed to describe table $tableName: " . $e->getMessage(), ['exception' => $e]);
-        return collect([]);  // Return an empty collection on error
+        return [];  // Return an empty array on error
     }
 }
+
 
 
 
