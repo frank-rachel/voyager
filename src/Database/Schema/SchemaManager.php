@@ -295,39 +295,44 @@ abstract class SchemaManager
      *
      * @return \Illuminate\Support\Collection
      */
-	public static function describeTable($tableName)
-	{
-		try {
-			$table = static::listTableDetails($tableName);
+public static function describeTable($tableName)
+{
+    try {
+        $table = static::listTableDetails($tableName);
+        return collect($table->columns)->map(function ($column) use ($table) {
+            // Convert the column data from the object to an array if not already done
+            $columnArr = $column->toArray(); // Assuming toArray() provides all necessary column details
 
-			return collect($table->columns)->map(function ($column) use ($table) {
-				// Assuming $column is an object with a method toArray() that converts properties to an array
-				$columnArr = $column->toArray();
+            // Enhance the 'type' attribute to be an object with detailed type information
+            $columnArr['type'] = [
+                'name' => $column->type->getName(),  // Ensure Type class has getName()
+                'category' => $column->type->getCategory(),  // Ensure Type class has getCategory()
+                'default' => $column->type->getDefault()  // Ensure Type class has getDefault()
+            ];
 
-				$columnArr['field'] = $column->name;  // Access properties using object notation
-				$columnArr['type'] = $column->type;
+            // Add index information
+            $columnArr['indexes'] = [];
+            $columnArr['key'] = null;
 
-				$columnArr['indexes'] = [];
-				$columnArr['key'] = null;
+            if ($indexes = $table->getColumnsIndexes($column->getName(), true)) {
+                foreach ($indexes as $name => $index) {
+                    $columnArr['indexes'][$name] = $index->toArray();
+                }
 
-				if ($indexes = $table->getColumnsIndexes($column->name, true)) {  // Ensure column name accessed correctly
-					foreach ($indexes as $name => $index) {
-						$columnArr['indexes'][$name] = $index->toArray();
-					}
+                if (!empty($columnArr['indexes'])) {
+                    $indexType = array_values($columnArr['indexes'])[0]['type'];
+                    $columnArr['key'] = substr($indexType, 0, 3);
+                }
+            }
 
-					if (!empty($columnArr['indexes'])) {
-						$indexType = array_values($columnArr['indexes'])[0]['type'];
-						$columnArr['key'] = substr($indexType, 0, 3);  // First three letters of the index type
-					}
-				}
+            return $columnArr;
+        })->values()->all();  // Convert Collection to array
+    } catch (\Exception $e) {
+        Log::error("Failed to describe table $tableName: " . $e->getMessage(), ['exception' => $e]);
+        return collect([]);  // Return an empty collection on error
+    }
+}
 
-				return $columnArr;
-			});
-		} catch (\Exception $e) {
-			Log::error("Failed to describe table $tableName: " . $e->getMessage(), ['exception' => $e]);
-			return collect([]);  // Return an empty collection on error
-		}
-	}
 
 
 
