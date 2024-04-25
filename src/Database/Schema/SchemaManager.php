@@ -113,22 +113,11 @@ abstract class SchemaManager
 			throw new \Exception("Table does not exist: $tableName");
 		}
 
-		// Get column details
-		$rawColumns = DB::select("SELECT column_name, data_type, is_nullable, column_default
-								  FROM information_schema.columns
-								  WHERE table_name = ?", [$tableName]);
+		// Get columns details, use parameter binding for safety
+		$columns = DB::select("SELECT column_name, data_type, is_nullable, column_default
+							   FROM information_schema.columns
+							   WHERE table_name = ?", [$tableName]);
 
-		// Transform raw column data to fit the expected format for Column objects
-		$columns = [];
-		foreach ($rawColumns as $rawColumn) {
-			$columns[$rawColumn->column_name] = [
-				'type' => $rawColumn->data_type,
-				'options' => [
-					'nullable' => $rawColumn->is_nullable === 'YES',
-					'default' => $rawColumn->column_default
-				]
-			];
-		}
 		// Get foreign keys
 		$foreignKeys = DB::select("SELECT tc.constraint_name, kcu.column_name, ccu.table_name AS foreign_table_name, ccu.column_name AS foreign_column_name
 								   FROM information_schema.table_constraints AS tc 
@@ -137,45 +126,19 @@ abstract class SchemaManager
 								   WHERE tc.table_name = ? AND tc.constraint_type = 'FOREIGN KEY'", [$tableName]);
 
 		// Get indexes
-		$indexes = DB::select("SELECT indexname, indexdef FROM pg_indexes WHERE tablename = ?", [$tableName]);
+		$indexes = DB::select("SELECT indexname, indexdef 
+							   FROM pg_indexes 
+							   WHERE tablename = ?", [$tableName]);
 
-		$indexData = [];
-		foreach ($indexes as $index) {
-			$indexDetails = self::parseIndexDefinition($index->indexdef);
-			if ($indexDetails) {
-				$indexData[] = [
-					'name' => $index->indexname,
-					'columns' => $indexDetails['columns'],
-					'type' => $indexDetails['type'],
-					'isPrimary' => $indexDetails['isPrimary'],
-					'isUnique' => $indexDetails['isUnique']
-				];
-			}
-		}		// Convert database results into the appropriate structure
+		// Convert database results into the appropriate structure
 		// You will need to create data transformation logic here based on your needs
-		// print_r($columns);
-		// exit;
 		
 		
-		return new Table($tableName, $columns, $indexData, [], $foreignKeys);
+
+		return new Table($tableName, $columns, $indexes, [], $foreignKeys);
 	}
 
-	private static function parseIndexDefinition($indexdef) {
-		// Example parsing logic, you might need to adapt it based on actual SQL definition
-		$isPrimary = strpos(strtolower($indexdef), 'primary') !== false;
-		$isUnique = strpos(strtolower($indexdef), 'unique') !== false;
-		$type = $isPrimary ? 'PRIMARY' : ($isUnique ? 'UNIQUE' : 'INDEX');
-		
-		preg_match('/\(([^)]+)\)/', $indexdef, $matches);
-		$columns = $matches[1] ? array_map('trim', explode(',', $matches[1])) : [];
 
-		return [
-			'columns' => $columns,
-			'type' => $type,
-			'isPrimary' => $isPrimary,
-			'isUnique' => $isUnique
-		];
-	}
 	 
 /*	 
 	public static function listTableDetails($tableName)
@@ -295,59 +258,46 @@ abstract class SchemaManager
      *
      * @return \Illuminate\Support\Collection
      */
-public static function describeTable($tableName)
-{
-    try {
-        $table = static::listTableDetails($tableName);  // This should return a Table object
+	public static function describeTable($tableName)
+	{
+		try {
+			$table = static::listTableDetails($tableName);
 
-        // Ensure 'columns' is formatted as an array of dictionaries
-        $columnsArray = collect($table->columns)->map(function ($column) {
-            // Check and format type details assuming $column->type is an object
-            $typeDetails = [
-                'name' => $column->type->getName(),
-                'category' => $column->type->getCategory(), // Ensure getCategory() is defined
-                'default' => [
-                    'type' => 'number', // Example, modify as needed
-                    'step' => 'any'    // Example value
-                ]
-            ];
+			return collect($table->columns)->map(function ($column) use ($table) {
+				// Convert column to array using its method
+				$columnArr = $column->toArray();  
 
-            return [
-                'name' => $column->name,
-                'type' => $typeDetails,
-                'oldName' => $column->oldName,
-                'null' => $column->options['nullable'] ? 'YES' : 'NO',
-                'default' => $column->options['default'],
-                'length' => $column->options['length'],
-                'precision' => $column->options['precision'],
-                'scale' => $column->options['scale'],
-                'unsigned' => $column->options['unsigned'],
-                'fixed' => $column->options['fixed'],
-                'notnull' => !$column->options['nullable'],
-                'extra' => $column->options['extra'] ?? '',
-                'composite' => false
-            ];
-        })->all();  // Convert to array
+				// Duplicate name as 'field' for compatibility and direct use of type
+				$columnArr['field'] = $columnArr['name'];
+				$columnArr['type'] = $columnArr['type'];
 
-        // Build the final array with proper structure
-        $finalTable = [
-            'name' => $table->name,
-            'oldName' => $table->oldName,
-            'columns' => $columnsArray, // Array of dictionaries
-            'indexes' => $table->indexes,
-            'primaryKeyName' => $table->primaryKeyName,
-            'foreignKeys' => $table->foreignKeys,
-            'options' => $table->options
-        ];
+				// Initialize indexes array and key
+				$columnArr['indexes'] = [];
+				$columnArr['key'] = null;
 
-        return $finalTable;
-    } catch (\Exception $e) {
-        Log::error("Failed to describe table $tableName: " . $e->getMessage(), ['exception' => $e]);
-        return [];  // Return an empty array on error
-    }
-}
+				// Fetch and format indexes for the current column
+				if ($indexes = $table->getColumnsIndexes($columnArr['name'], true)) {
+					foreach ($indexes as $name => $index) {
+						$columnArr['indexes'][$name] = $index->toArray();
+					}
 
+					// Set the key if indexes are present
+					if (!empty($columnArr['indexes'])) {
+						$indexType = array_values($columnArr['indexes'])[0]['type'];
+						$columnArr['key'] = substr($indexType, 0, 3);  // First three letters of the index type
+					}
+				}
 
+				return $columnArr;
+			});
+		} catch (\Exception $e) {
+			Log::error($e->getMessage(), ['exception' => $e]);
+			echo("Failed to describe table $tableName: " . $e->getMessage());
+			exit;
+			Log::error("Failed to describe table $tableName: " . $e->getMessage());
+			return collect([]);  // Return an empty collection on error
+		}
+	}
 
 
 
