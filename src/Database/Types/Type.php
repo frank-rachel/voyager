@@ -14,6 +14,7 @@ abstract class Type
     protected static $platformTypes = [];
     protected static $customTypeOptions = [];
     protected static $typeCategories = [];
+	protected $typeName;
 
 
     public const ASCII_STRING         = 'ascii_string';
@@ -81,6 +82,7 @@ abstract class Type
     /** @internal Do not instantiate directly - use {@see Type::addType()} method instead. */
     final public function __construct()
     {
+		$this->typeName = $typeName;
     }
 
     final public static function getTypeRegistry(): TypeRegistry
@@ -123,15 +125,15 @@ abstract class Type
         throw new \Exception("Type not found for class instance: {$className}");
     }
 
-    public static function getCategory(string $name): ?string {
+    public function getCategory(): ?string {
         // Initialize categories if not already done
         if (empty(self::$typeCategories)) {
             self::initializeTypeCategories();
         }
 
-        // Search each category for the type
+        // Search each category for this instance's type
         foreach (self::$typeCategories as $category => $types) {
-            if (in_array($name, $types)) {
+            if (in_array($this->typeName, $types)) {
                 return $category;
             }
         }
