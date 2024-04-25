@@ -216,12 +216,26 @@ class Table
         return (new Comparator())->diffTable(SchemaManager::getDoctrineTable($this->_name), $this);
     }
 
-    public function exportColumnsToArray()
-    {
-        return array_map(function($column) {
-            return $column->toArray();
-        }, $this->columns);
-    }
+    // public function exportColumnsToArray()
+    // {
+        // return array_map(function($column) {
+            // return $column->toArray();
+        // }, $this->columns);
+    // }
+
+	public function exportColumnsToArray()
+	{
+		$columnsArray = array_map(function ($column) {
+			return $column->toArray();
+		}, $this->columns);
+
+		// Log to check the structure of $columnsArray
+		\Log::info('Exported Columns:', ['columns' => $columnsArray]);
+
+		return $columnsArray;
+	}
+
+
 
     public function exportIndexesToArray()
     {

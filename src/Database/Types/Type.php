@@ -108,11 +108,8 @@ abstract class Type
      */
     public static function getType(string $name): self
     {
-		// echo ("get type for $name");
 		$type=self::getTypeRegistry()->get($name);
-		// print_r($type);
-		// exit;
-        return $type;
+		return $type;
     }
 
     public static function getTypeName($typeInstance): string
@@ -124,6 +121,23 @@ abstract class Type
             }
         }
         throw new \Exception("Type not found for class instance: {$className}");
+    }
+
+    public static function getCategory(string $name): ?string {
+        // Initialize categories if not already done
+        if (empty(self::$typeCategories)) {
+            self::initializeTypeCategories();
+        }
+
+        // Search each category for the type
+        foreach (self::$typeCategories as $category => $types) {
+            if (in_array($name, $types)) {
+                return $category;
+            }
+        }
+
+        // Return null if type not found in any category
+        return null;
     }
 
     /**
