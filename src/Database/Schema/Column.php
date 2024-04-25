@@ -46,16 +46,17 @@ class Column
         return [
             'name' => $this->name,
             'type' => $this->type->getName(),  // Assuming Type has a getName() method.
+            'type' => Type::toArray($columnArr['type']),  // Assuming Type has a getName() method.
             'oldName' => $this->oldName,
             'null' => $this->options['nullable'] ? 'YES' : 'NO',
+            'extra' => $this->getExtra(),  // Ensure this method is defined
+            'notnull' => $this->options['notnull'],
+            'fixed' => $this->options['fixed'],
+            'unsigned' => $this->options['unsigned'],
             'default' => $this->options['default'],
             'length' => $this->options['length'],
             'precision' => $this->options['precision'],
             'scale' => $this->options['scale'],
-            'unsigned' => $this->options['unsigned'],
-            'fixed' => $this->options['fixed'],
-            'notnull' => $this->options['notnull'],
-            'extra' => $this->getExtra(),  // Ensure this method is defined
             'composite' => false
         ];
     }
