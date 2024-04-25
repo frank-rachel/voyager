@@ -141,7 +141,7 @@ abstract class SchemaManager
 
 		$indexData = [];
 		foreach ($indexes as $index) {
-			$indexDetails = $this->parseIndexDefinition($index->indexdef);
+			$indexDetails = self::parseIndexDefinition($index->indexdef);
 			if ($indexDetails) {
 				$indexData[] = [
 					'name' => $index->indexname,
