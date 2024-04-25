@@ -42,10 +42,15 @@ class Table
 
     public function toArray()
     {
-        return [
-            'name'           => $this->name,
-            'oldName'        => $this->name,
-            'columns'        => $this->exportColumnsToArray(),
+		$columnsArr = [];
+		foreach ($this->columns as $column) {
+			$columnsArr[] = $column->toArray();
+		}
+
+		return [
+			'name' => $this->name,
+			'oldName' => $this->oldName, // Include oldName in the serialized output
+ 			'columns' => $columnsArr,
             'indexes'        => $this->exportIndexesToArray(),
             'primaryKeyName' => $this->primaryKeyName,
             'foreignKeys'    => $this->exportForeignKeysToArray(),
