@@ -3,6 +3,7 @@ namespace TCG\Voyager\Database\Types;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Exception;
 
 abstract class Type
 {
