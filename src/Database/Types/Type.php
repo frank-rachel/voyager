@@ -71,8 +71,8 @@ abstract class Type
 
     public static function getType(string $name): Type
     {
-		echo (" check name $name");
-		exit;
+		// echo (" check name $name");
+		// exit;
         return self::getTypeRegistry()->get($name);
     }
 
@@ -164,8 +164,11 @@ class TypeRegistry
         }
     }
 
-    public function get($name)
+    public function get($name): Type
     {
+        if (!$this->types->has($name)) {
+            throw new Exception("Type '{$name}' is not registered.");
+        }
         return $this->types->get($name);
     }
 
