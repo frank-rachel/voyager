@@ -13,6 +13,8 @@ abstract class Type
     protected static $customTypeOptions = [];
     protected static $typeCategories = [];
 
+    protected $name; // Instance variable to hold the type's name.
+
     public const ASCII_STRING         = 'ascii_string';
     public const BIGINT               = 'bigint';
     public const BINARY               = 'binary';
@@ -55,8 +57,8 @@ abstract class Type
     ];
     private static ?TypeRegistry $typeRegistry = null;
 
-    final public function __construct()
-    {
+    public function __construct($name) {
+        $this->name = $name;
     }
 
     final public static function getTypeRegistry(): TypeRegistry
@@ -73,15 +75,16 @@ abstract class Type
     }
 
     /**
-     * Instance method to convert a Type instance to an array.
+     * Method to convert a Type instance to an array.
+     * Should be compatible across all subclasses.
      */
-    public function toArray(): array
+    public static function toArray(Type $type): array
     {
-        $category = self::determineCategory($this->name);
-        $customOptions = self::$customTypeOptions[$this->name] ?? [];
+        $category = self::determineCategory($type->name);
+        $customOptions = self::$customTypeOptions[$type->name] ?? [];
 
         return array_merge([
-            'name' => $this->name,
+            'name' => $type->name,
             'category' => $category,
         ], $customOptions);
     }
@@ -95,6 +98,10 @@ abstract class Type
             }
         }
         return null;
+    }
+
+    public function getName(): string {
+        return $this->name;
     }
 
     public static function registerCustomOption($name, $value, $types)
@@ -146,9 +153,12 @@ class TypeRegistry
 
     public function __construct(array $typeMap)
     {
-        $this->types = collect($typeMap)->mapWithKeys(function ($typeClass, $typeName) {
-            return [$typeName => new $typeClass()];
-        });
+        $this->types = new Collection();
+        foreach ($typeMap as $typeName => $typeClass) {
+            if (class_exists($typeClass)) {
+                $this->types[$typeName] = new $typeClass($typeName);
+            }
+        }
     }
 
     public function get($name)
@@ -159,11 +169,6 @@ class TypeRegistry
     public function has($name)
     {
         return $this->types->has($name);
-    }
-
-    public function add($name, $type)
-    {
-        $this->types[$name] = $type;
     }
 }
 
