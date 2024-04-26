@@ -67,29 +67,28 @@ abstract class Type
         return self::$typeRegistry;
     }
 
-    public static function getType(string $name): self
+    public static function getType(string $name): Type
     {
         return self::getTypeRegistry()->get($name);
     }
 
-    public function toArray(string $typeName): array
+    /**
+     * Instance method to convert a Type instance to an array.
+     */
+    public function toArray(): array
     {
-        $type = self::getType($typeName);
-        if (!$type) {
-            throw new \Exception("Type not found for name: {$typeName}");
-        }
-
-        $category = self::determineCategory($typeName);
-        $customOptions = self::$customTypeOptions[$typeName] ?? [];
+        $category = self::determineCategory($this->name);
+        $customOptions = self::$customTypeOptions[$this->name] ?? [];
 
         return array_merge([
-            'name' => $typeName,
+            'name' => $this->name,
             'category' => $category,
         ], $customOptions);
     }
 
     private static function determineCategory($typeName): ?string
     {
+        self::initializeTypeCategories();
         foreach (self::$typeCategories as $category => $types) {
             if (in_array($typeName, $types)) {
                 return $category;
@@ -127,7 +126,17 @@ abstract class Type
 
     public static function initializeTypeCategories()
     {
-        // Initialize categories here...
+        if (!empty(self::$typeCategories)) {
+            return;
+        }
+
+        self::$typeCategories = [
+            'numbers' => ['bigint', 'integer', 'tinyint', 'smallint', 'mediumint', 'float', 'double', 'decimal'],
+            'strings' => ['char', 'varchar', 'text'],
+            'datetime' => ['date', 'datetime', 'timestamp'],
+            'json' => ['json'],
+            // Add more categories as necessary
+        ];
     }
 }
 
