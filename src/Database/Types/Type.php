@@ -170,7 +170,7 @@ abstract class Type
         return $types;
     }
 
-    public static function getPlatformTypes()
+    public function getPlatformTypes()
     {
         self::registerCustomPlatformTypes(); // Make sure custom types are registered
 
