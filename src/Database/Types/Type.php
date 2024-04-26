@@ -197,7 +197,13 @@ abstract class Type
     {
         // You can make this dynamic or configuration driven as needed
         return 'PostgreSQL';
-    }	
+    }
+
+    public static function addType($name, $typeClass)
+    {
+        static::$allTypes[$name] = $typeClass;
+    }
+	
 }
 
 class TypeRegistry
