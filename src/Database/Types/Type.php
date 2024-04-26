@@ -71,6 +71,8 @@ abstract class Type
 
     public static function getType(string $name): Type
     {
+		echo (" check name $name");
+		exit;
         return self::getTypeRegistry()->get($name);
     }
 
