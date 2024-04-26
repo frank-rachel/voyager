@@ -249,6 +249,60 @@ abstract class Type
             // More categories as required...
         ];
     }
+    public static function registerCustomOption($name, $value, $types)
+    {
+        if (is_string($types)) {
+            $types = trim($types);
+
+            if ($types == '*') {
+                $types = static::getAllTypes()->toArray();
+            } elseif (strpos($types, '*') !== false) {
+                $searchType = str_replace('*', '', $types);
+                $types = static::getAllTypes()->filter(function ($type) use ($searchType) {
+                    return strpos($type, $searchType) !== false;
+                })->toArray();
+            } else {
+                $types = [$types];
+            }
+        }
+
+        static::$customTypeOptions[] = [
+            'name'  => $name,
+            'value' => $value,
+            'types' => $types,
+        ];
+    }
+
+    protected static function registerCommonCustomTypeOptions()
+    {
+        static::registerTypeCategories();
+        static::registerTypeDefaultOptions();
+    }
+
+    protected static function registerTypeDefaultOptions()
+    {
+        $types = static::getTypeCategories();
+
+        // Numbers
+        static::registerCustomOption('default', [
+            'type' => 'number',
+            'step' => 'any',
+        ], $types['numbers']);
+
+        // Date and Time
+        static::registerCustomOption('default', [
+            'type' => 'date',
+        ], 'date');
+        static::registerCustomOption('default', [
+            'type' => 'time',
+            'step' => '1',
+        ], 'time');
+        static::registerCustomOption('default', [
+            'type' => 'number',
+            'min'  => '0',
+        ], 'year');
+    }
+
 
     public static function getAllTypes()
     {
