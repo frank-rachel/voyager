@@ -1,10 +1,8 @@
 <?php
-
 namespace TCG\Voyager\Database\Types;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use TCG\Voyager\Database\Types\Types;
 
 abstract class Type
 {
@@ -14,7 +12,6 @@ abstract class Type
     protected static $platformTypes = [];
     protected static $customTypeOptions = [];
     protected static $typeCategories = [];
-
 
     public const ASCII_STRING         = 'ascii_string';
     public const BIGINT               = 'bigint';
@@ -48,264 +45,116 @@ abstract class Type
         'bigint'               => Common\BigIntType::class,
         'varchar'               => Common\VarCharType::class,
         'char'               => Common\CharType::class,
-        // 'integer'               => IntegerType::class,
         'double'               => Common\DoubleType::class,
         'numeric'               => Common\NumericType::class,
-        // 'integer'               => IntegerType::class,
-        // 'integer'               => Common\IntegerType::class,
         'timestamp'               => Postgresql\TimeStampType::class,
-        // 'binary'               => BinaryType::class,
-        // 'blob'                 => BlobType::class,
-        // 'boolean'              => BooleanType::class,
         'date'         			=> DateType::class,
-        // 'date_immutable'       => DateImmutableType::class,
-        // 'dateinterval'         => DateIntervalType::class,
-        // 'datetime'     			=> DateTimeType::class,
-        // 'datetime_immutable'   => DateTimeImmutableType::class,
-        // 'datetimetz'   			=> DateTimeTzType::class,
-        // 'datetimetz_immutable' => DateTimeTzImmutableType::class,
-        // 'decimal'              => DecimalType::class,
-        // 'float'                => FloatType::class,
-        // 'guid'                 => GuidType::class,
         'integer'              => Common\IntegerType::class,
         'json'                 => Common\JsonType::class,
-        // 'simple_array'         => SimpleArrayType::class,
-        // 'smallint'             => SmallIntType::class,
-        // 'string'               => StringType::class,
         'text'                 => Common\TextType::class,
-        // 'time'        			 => TimeType::class,
-        // 'time_immutable'       => TimeImmutableType::class,
     ];
     private static ?TypeRegistry $typeRegistry = null;
 
-    /** @internal Do not instantiate directly - use {@see Type::addType()} method instead. */
     final public function __construct()
     {
     }
 
     final public static function getTypeRegistry(): TypeRegistry
     {
-        return self::$typeRegistry ??= self::createTypeRegistry();
-    }
-
-    private static function createTypeRegistry(): TypeRegistry
-    {
-        $instances = [];
-
-        foreach (self::BUILTIN_TYPES_MAP as $name => $class) {
-            $instances[$name] = new $class();
+        if (!self::$typeRegistry) {
+            self::$typeRegistry = new TypeRegistry(self::BUILTIN_TYPES_MAP);
         }
-
-        return new TypeRegistry($instances);
+        return self::$typeRegistry;
     }
 
-    /**
-     * Factory method to create type instances.
-     *
-     * @param string $name The name of the type.
-     *
-     * @throws Exception
-     */
     public static function getType(string $name): self
     {
-		// echo ("get type for $name");
-		$type=self::getTypeRegistry()->get($name);
-		// print_r($type);
-		// exit;
-        return $type;
+        return self::getTypeRegistry()->get($name);
     }
 
-    public static function getTypeName($typeInstance): string
+    public static function toArray(string $typeName): array
     {
-        $className = get_class($typeInstance);
-        foreach (self::BUILTIN_TYPES_MAP as $name => $class) {
-            if ($class === $className) {
-                return $name;
+        $type = self::getType($typeName);
+        if (!$type) {
+            throw new \Exception("Type not found for name: {$typeName}");
+        }
+
+        $category = self::determineCategory($typeName);
+        $customOptions = self::$customTypeOptions[$typeName] ?? [];
+
+        return array_merge([
+            'name' => $typeName,
+            'category' => $category,
+        ], $customOptions);
+    }
+
+    private static function determineCategory($typeName): ?string
+    {
+        foreach (self::$typeCategories as $category => $types) {
+            if (in_array($typeName, $types)) {
+                return $category;
             }
         }
-        throw new \Exception("Type not found for class instance: {$className}");
+        return null;
     }
 
-    /**
-     * Finds a name for the given type.
-     *
-     * @throws Exception
-     */
-    public static function lookupName(self $type): string
+    public static function registerCustomOption($name, $value, $types)
     {
-        return self::getTypeRegistry()->lookupName($type);
-    }
-
-
-    public static function hasType(string $name): bool
-    {
-        return self::getTypeRegistry()->has($name);
-    }
-
-
-    public function getName(): string
-    {
-        return self::getTypeName($this);
-    }
-	
-    // public static function toArray(Type $type)
-    public function toArray(Type $type)
-    {
-        $customTypeOptions = $type->customOptions ?? [];
-        return array_merge(['name' => $type->getName()], $customTypeOptions);
-    }
-
-	public static function getPlatformTypes()
-	{
-		static::boot(); // Ensure types are registered
-
-		return collect(static::$allTypes)->map(function ($typeClassName) {
-			$typeInstance = new $typeClassName();  // Create an instance
-			return $typeInstance->toArray($typeInstance);  // Call toArray on the instance
-		})->groupBy('category');
-	}
-
-
-    protected static function boot()
-    {
-        if (!static::$customTypesRegistered) {
-            static::registerCustomPlatformTypes();
-            static::$customTypesRegistered = true;
+        if (!is_array($types)) {
+            $types = [$types];
+        }
+        foreach ($types as $type) {
+            self::$customTypeOptions[$type][$name] = $value;
         }
     }
 
     protected static function registerCustomPlatformTypes()
     {
-        $platformName = static::getPlatformName();
-        $customTypes = array_merge(
-            static::getPlatformCustomTypes('Common'),
-            static::getPlatformCustomTypes($platformName)
-        );
-
-        foreach ($customTypes as $typeClass) {
-            $name = $typeClass::NAME;
-            static::addType($name, $typeClass);
+        if (!static::$customTypesRegistered) {
+            // Example: Register additional custom types dynamically if needed
+            static::$customTypesRegistered = true;
         }
-        
-        static::addCustomTypeOptions($platformName);
     }
 
-    protected static function getPlatformCustomTypes($platformName)
+    public static function getPlatformTypes()
     {
-        $typesPath = __DIR__ . DIRECTORY_SEPARATOR . $platformName . DIRECTORY_SEPARATOR;
-        $namespace = __NAMESPACE__ . '\\' . $platformName . '\\';
-        $types = [];
+        self::registerCustomPlatformTypes(); // Make sure custom types are registered
 
-        foreach (glob($typesPath . '*.php') as $classFile) {
-            $className = $namespace . basename($classFile, '.php');
-            if (class_exists($className)) {
-                $types[] = $className;
-            }
-        }
-        return $types;
+        return collect(self::$allTypes)->mapWithKeys(function ($typeClass, $typeName) {
+            return [$typeName => self::toArray($typeName)];
+        })->groupBy('category');
     }
 
-    protected static function getPlatformName()
+    public static function initializeTypeCategories()
     {
-        // You can make this dynamic or configuration driven as needed
-        return 'PostgreSQL';
-    }
-
-    public static function addType($name, $typeClass)
-    {
-        static::$allTypes[$name] = $typeClass;
-    }
-
-    protected static function addCustomTypeOptions($platformName)
-    {
-        // You would implement your own logic here to add custom options
-        // For demonstration, let's assume a simple setup
-        static::$customTypeOptions[$platformName] = [
-            // Define some custom options as needed
-        ];
-    }
-
-    public static function getTypeCategories()
-    {
-        if (empty(static::$typeCategories)) {
-            static::initializeTypeCategories();
-        }
-        return static::$typeCategories;
-    }
-
-    protected static function initializeTypeCategories()
-    {
-        static::$typeCategories = [
-            'numbers' => [
-                'boolean', 'tinyint', 'smallint', 'mediumint', 'integer', 'bigint',
-                'decimal', 'numeric', 'money', 'float', 'real', 'double', 'double precision'
-            ],
-            'strings' => [
-                'char', 'character', 'varchar', 'string', 'text'
-            ],
-            'datetime' => [
-                'date', 'datetime', 'timestamp'
-            ],
-            // More categories as required...
-        ];
-    }
-    public static function registerCustomOption($name, $value, $types)
-    {
-        if (is_string($types)) {
-            $types = trim($types);
-
-            if ($types == '*') {
-                $types = static::getAllTypes()->toArray();
-            } elseif (strpos($types, '*') !== false) {
-                $searchType = str_replace('*', '', $types);
-                $types = static::getAllTypes()->filter(function ($type) use ($searchType) {
-                    return strpos($type, $searchType) !== false;
-                })->toArray();
-            } else {
-                $types = [$types];
-            }
-        }
-
-        static::$customTypeOptions[] = [
-            'name'  => $name,
-            'value' => $value,
-            'types' => $types,
-        ];
-    }
-
-    protected static function registerCommonCustomTypeOptions()
-    {
-        static::registerTypeCategories();
-        static::registerTypeDefaultOptions();
-    }
-
-    protected static function registerTypeDefaultOptions()
-    {
-        $types = static::getTypeCategories();
-
-        // Numbers
-        static::registerCustomOption('default', [
-            'type' => 'number',
-            'step' => 'any',
-        ], $types['numbers']);
-
-        // Date and Time
-        static::registerCustomOption('default', [
-            'type' => 'date',
-        ], 'date');
-        static::registerCustomOption('default', [
-            'type' => 'time',
-            'step' => '1',
-        ], 'time');
-        static::registerCustomOption('default', [
-            'type' => 'number',
-            'min'  => '0',
-        ], 'year');
-    }
-
-
-    public static function getAllTypes()
-    {
-        return static::$allTypes;
+        // Initialize categories here...
     }
 }
+
+class TypeRegistry
+{
+    private $types;
+
+    public function __construct(array $typeMap)
+    {
+        $this->types = collect($typeMap)->mapWithKeys(function ($typeClass, $typeName) {
+            return [$typeName => new $typeClass()];
+        });
+    }
+
+    public function get($name)
+    {
+        return $this->types->get($name);
+    }
+
+    public function has($name)
+    {
+        return $this->types->has($name);
+    }
+
+    public function add($name, $type)
+    {
+        $this->types[$name] = $type;
+    }
+}
+
