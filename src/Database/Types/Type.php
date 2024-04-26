@@ -72,7 +72,7 @@ abstract class Type
         return self::getTypeRegistry()->get($name);
     }
 
-    public static function toArray(string $typeName): array
+    public function toArray(string $typeName): array
     {
         $type = self::getType($typeName);
         if (!$type) {
