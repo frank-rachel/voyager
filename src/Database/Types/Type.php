@@ -193,6 +193,11 @@ abstract class Type
             // Add more categories as necessary
         ];
     }
+    protected static function getPlatformName()
+    {
+        // You can make this dynamic or configuration driven as needed
+        return 'PostgreSQL';
+    }	
 }
 
 class TypeRegistry
