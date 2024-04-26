@@ -78,15 +78,16 @@ abstract class Type
      * Method to convert a Type instance to an array.
      * Should be compatible across all subclasses.
      */
-    public static function toArray(Type $type): array
+    public function toArray(Type $type): array
     {
-        $category = self::determineCategory($type->name);
-        $customOptions = self::$customTypeOptions[$type->name] ?? [];
+        $category = $this->determineCategory($type->name);
+        $customOptions = $this->getCustomOptions($type->name);
 
-        return array_merge([
+        return [
             'name' => $type->name,
             'category' => $category,
-        ], $customOptions);
+            'customOptions' => $customOptions
+        ];
     }
 
     private static function determineCategory($typeName): ?string
