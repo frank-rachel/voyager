@@ -203,7 +203,14 @@ abstract class Type
     {
         static::$allTypes[$name] = $typeClass;
     }
-	
+    protected static function addCustomTypeOptions($platformName)
+    {
+        // You would implement your own logic here to add custom options
+        // For demonstration, let's assume a simple setup
+        static::$customTypeOptions[$platformName] = [
+            // Define some custom options as needed
+        ];
+    }	
 }
 
 class TypeRegistry
