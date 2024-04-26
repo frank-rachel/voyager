@@ -63,7 +63,15 @@ abstract class Type
     public function __construct($name) {
         $this->name = $name;
     }
-
+	
+    protected static function boot()
+    {
+        if (!static::$customTypesRegistered) {
+            static::registerCustomPlatformTypes();
+            static::$customTypesRegistered = true;
+        }
+    }
+	
     final public static function getTypeRegistry(): TypeRegistry
     {
         if (!self::$typeRegistry) {
@@ -72,6 +80,17 @@ abstract class Type
         return self::$typeRegistry;
     }
 
+    private static function createTypeRegistry(): TypeRegistry
+    {
+        $instances = [];
+
+        foreach (self::BUILTIN_TYPES_MAP as $name => $class) {
+            $instances[$name] = new $class();
+        }
+
+        return new TypeRegistry($instances);
+    }
+	
     public static function getType(string $name): Type
     {
 		// echo (" check name $name");
