@@ -141,10 +141,33 @@ abstract class Type
 
     protected static function registerCustomPlatformTypes()
     {
-        if (!static::$customTypesRegistered) {
-            // Example: Register additional custom types dynamically if needed
-            static::$customTypesRegistered = true;
+        $platformName = static::getPlatformName();
+        $customTypes = array_merge(
+            static::getPlatformCustomTypes('Common'),
+            static::getPlatformCustomTypes($platformName)
+        );
+
+        foreach ($customTypes as $typeClass) {
+            $name = $typeClass::NAME;
+            static::addType($name, $typeClass);
         }
+        
+        static::addCustomTypeOptions($platformName);
+    }
+
+    protected static function getPlatformCustomTypes($platformName)
+    {
+        $typesPath = __DIR__ . DIRECTORY_SEPARATOR . $platformName . DIRECTORY_SEPARATOR;
+        $namespace = __NAMESPACE__ . '\\' . $platformName . '\\';
+        $types = [];
+
+        foreach (glob($typesPath . '*.php') as $classFile) {
+            $className = $namespace . basename($classFile, '.php');
+            if (class_exists($className)) {
+                $types[] = $className;
+            }
+        }
+        return $types;
     }
 
     public static function getPlatformTypes()
