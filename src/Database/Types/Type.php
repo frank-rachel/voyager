@@ -51,6 +51,7 @@ abstract class Type
         'double'               => Common\DoubleType::class,
         'numeric'               => Common\NumericType::class,
         'timestamp'               => Postgresql\TimeStampType::class,
+        'timestamp without time zone'               => Postgresql\TimeStampType::class,
         'date'         			=> DateType::class,
         'integer'              => Common\IntegerType::class,
         'json'                 => Common\JsonType::class,
