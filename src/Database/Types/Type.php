@@ -170,15 +170,16 @@ abstract class Type
         return $types;
     }
 
-    public function getPlatformTypes()
-    {
-        self::registerCustomPlatformTypes(); // Make sure custom types are registered
+	public static function getPlatformTypes()
+	{
+		static::boot(); // Ensure types are registered
 
-        return collect(self::$allTypes)->mapWithKeys(function ($typeClass, $typeName) {
-            return [$typeName => self::toArray($typeName)];
-        })->groupBy('category');
-    }
-
+		return collect(static::$allTypes)->map(function ($typeClassName) {
+			$typeInstance = new $typeClassName();  // Create an instance
+			return $typeInstance->toArray($typeInstance);  // Call toArray on the instance
+		})->groupBy('category');
+	}
+	
     public static function initializeTypeCategories()
     {
         if (!empty(self::$typeCategories)) {
