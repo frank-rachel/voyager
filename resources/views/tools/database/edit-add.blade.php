@@ -64,7 +64,7 @@
             el: '#dbManager',
             data: {
                 table: {},
-                originalTable: {!! $db->table->toArray() !!}, // to do comparison later?
+                originalTable: {!! json_encode($db->table->toArray()) !!}, // to do comparison later?
                 oldTable: {!! $db->oldTable !!},
                 tableJson: ''
             },
