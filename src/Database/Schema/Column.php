@@ -46,7 +46,8 @@ class Column
         return [
             'name' => $this->name,
             // 'type' => $this->type->getName(),  // Assuming Type has a getName() method.
-            'type' => Type::toArray($this->type->getName()),  // Assuming Type has a getName() method.
+            // 'type' => Type::toArray($this->type->getName()),  // Assuming Type has a getName() method.
+			'type' => $this->type->toArray(),
             'oldName' => $this->oldName,
             'null' => $this->options['nullable'] ? 'YES' : 'NO',
             'extra' => $this->getExtra(),  // Ensure this method is defined
