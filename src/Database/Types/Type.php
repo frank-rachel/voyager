@@ -139,6 +139,14 @@ abstract class Type
         }
     }
 
+    public function getCustomOptions(): array
+    {
+        $baseOptions = parent::getCustomOptions();
+        // Potentially add or modify options specific to AsciiStringType
+        $extendedOptions = ['additionalOption' => 'value']; // Example extension
+        return array_merge($baseOptions, $extendedOptions);
+    }
+
     protected static function registerCustomPlatformTypes()
     {
         $platformName = static::getPlatformName();
