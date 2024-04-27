@@ -15,7 +15,8 @@ abstract class Type
     protected static $typeCategories = [];
 
     protected $name; // Instance variable to hold the type's name.
-
+	protected $category;
+	
     public const ASCII_STRING         = 'ascii_string';
     public const BIGINT               = 'bigint';
     public const BINARY               = 'binary';
@@ -62,6 +63,7 @@ abstract class Type
 
     public function __construct($name) {
         $this->name = $name;
+        $this->category = $this->determineCategory($name);
     }
 	
     protected static function boot()
