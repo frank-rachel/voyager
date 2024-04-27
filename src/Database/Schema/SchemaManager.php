@@ -158,8 +158,8 @@ abstract class SchemaManager
 		// exit;
 		
 		$return=new Table($tableName, $columns, $indexData, [], $foreignKeys);
-		print_r($return);
-		exit;
+		// print_r($return);
+		// exit;
 		return $return;
 		
 	}
