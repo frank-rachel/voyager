@@ -114,7 +114,12 @@ abstract class Type
     }
 
     public function getCategory(): string {
-        return $this->category;
+        foreach (self::$typeCategories as $category => $types) {
+            if (in_array($this->name, $types)) {
+                return $category;
+            }
+        }
+        return "Unknown"; // Default category if none is found
     }
 
     private static function determineCategory($typeName): ?string
