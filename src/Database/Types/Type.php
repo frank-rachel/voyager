@@ -49,6 +49,7 @@ abstract class Type
         'bigint'               => Common\BigIntType::class,
         'varchar'               => Common\VarCharType::class,
         'character varying'               => Common\VarCharType::class,
+        'boolean'               => BooleanType::class,
         'char'               => Common\CharType::class,
         'double'               => Common\DoubleType::class,
         'numeric'               => Common\NumericType::class,
