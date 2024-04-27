@@ -122,6 +122,7 @@ abstract class SchemaManager
 		$columns = [];
 		foreach ($rawColumns as $rawColumn) {
 			$columns[$rawColumn->column_name] = [
+			// 20240425 we need to get a type object, converted to array here -- actually this is done when creating the table below
 				'type' => $rawColumn->data_type,
 				'options' => [
 					'nullable' => $rawColumn->is_nullable === 'YES',
@@ -156,8 +157,11 @@ abstract class SchemaManager
 		// print_r($columns);
 		// exit;
 		
+		$return=new Table($tableName, $columns, $indexData, [], $foreignKeys);
+		print_r($return);
+		exit;
+		return $return;
 		
-		return new Table($tableName, $columns, $indexData, [], $foreignKeys);
 	}
 
 	private static function parseIndexDefinition($indexdef) {
