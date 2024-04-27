@@ -174,11 +174,15 @@ abstract class Type
 	{
 		static::boot(); // Ensure types are registered
 
-		return collect(static::$allTypes)->map(function ($typeClassName) {
-			$typeInstance = new $typeClassName();  // Create an instance
-			return $typeInstance->toArray($typeInstance);  // Call toArray on the instance
-		})->groupBy('category');
+		return collect(static::BUILTIN_TYPES_MAP)->map(function ($typeClass, $typeName) {
+			if (class_exists($typeClass)) {
+				$typeInstance = new $typeClass($typeName);  // Correctly pass the type name to the constructor
+				return $typeInstance->toArray($typeInstance);  // Call toArray on the instance
+			}
+			return null; // Handle the case where the class does not exist
+		})->filter()->groupBy('category');  // Filter out null entries and group by category
 	}
+
 	
     public static function initializeTypeCategories()
     {
