@@ -111,6 +111,10 @@ abstract class Type
         ];
     }
 
+    public function getCategory(): string {
+        return $this->category;
+    }
+
     private static function determineCategory($typeName): ?string
     {
         self::initializeTypeCategories();
