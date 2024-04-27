@@ -64,7 +64,10 @@ class Table
         $this->columns[$column->getName()] = $column;
     }
 
-
+    public function hasColumn($columnName) {
+        return isset($this->columns[$columnName]);
+    }
+	
 	private function initializeIndexes(array $indexData)
 	{
 		foreach ($indexData as $index) {
