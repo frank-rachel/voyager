@@ -1,192 +1,93 @@
 <?php
-
 namespace TCG\Voyager\Database;
 
-use Doctrine\DBAL\Schema\Column;
-use Doctrine\DBAL\Schema\SchemaException;
-use Doctrine\DBAL\Schema\TableDiff;
-use TCG\Voyager\Database\Schema\SchemaManager;
-use TCG\Voyager\Database\Schema\Table;
-use TCG\Voyager\Database\Types\Type;
-use TCG\Voyager\Database\Types\TypeRegistry;
+use PDO;
 
 class DatabaseUpdater
 {
+    protected $pdo;
     protected $tableArr;
-    protected $table;
-    protected $originalTable;
+    protected $tableName;
 
-    public function __construct(array $tableArr)
+    public function __construct(array $tableArr, PDO $pdo)
     {
-        Type::registerCustomPlatformTypes();
-
-        $this->table = Table::make($tableArr);
+        $this->pdo = $pdo;
         $this->tableArr = $tableArr;
-        $this->originalTable = SchemaManager::listTableDetails($tableArr['oldName']);
+        $this->tableName = $tableArr['oldName'];
     }
 
-    /**
-     * Update the table.
-     *
-     * @return void
-     */
-    public static function update($table)
+    public static function update($tableArr, PDO $pdo)
     {
-        if (!is_array($table)) {
-            $table = json_decode($table, true);
-        }
-
-        if (!SchemaManager::tableExists($table['oldName'])) {
-            echo ("table does not exist ".$table['oldName']);
-			exit;
-        }
-
-        $updater = new self($table);
-
+        $updater = new self($tableArr, $pdo);
         $updater->updateTable();
     }
 
-    /**
-     * Updates the table.
-     *
-     * @return void
-     */
     public function updateTable()
     {
-        // Get table new name
-        if (($newName = $this->table->getName()) != $this->originalTable->getName()) {
-            // Make sure the new name doesn't already exist
-            if (SchemaManager::tableExists($newName)) {
-                throw SchemaException::tableAlreadyExists($newName);
-            }
-        } else {
-            $newName = false;
-        }
+        $this->checkTableExists();
+        $this->handleTableRenaming();
+        $this->processColumns();
+        $this->processIndexes();
+        // Additional schema update methods can be added here
+    }
 
-        // Rename columns
-        if ($renamedColumnsDiff = $this->getRenamedColumnsDiff()) {
-            SchemaManager::alterTable($renamedColumnsDiff);
-
-            // Refresh original table after renaming the columns
-            $this->originalTable = SchemaManager::listTableDetails($this->tableArr['oldName']);
-        }
-
-        $tableDiff = $this->originalTable->diff($this->table);
-
-        // Add new table name to tableDiff
-        if ($newName) {
-            if (!$tableDiff) {
-                $tableDiff = new TableDiff($this->tableArr['oldName']);
-                $tableDiff->fromTable = $this->originalTable;
-            }
-
-            $tableDiff->newName = $newName;
-        }
-
-        // Update the table
-        if ($tableDiff) {
-            SchemaManager::alterTable($tableDiff);
+    protected function checkTableExists()
+    {
+        if (!$this->tableExists($this->tableName)) {
+            throw new \Exception("Table '{$this->tableName}' does not exist.");
         }
     }
 
-    /**
-     * Get the table diff to rename columns.
-     *
-     * @return \Doctrine\DBAL\Schema\TableDiff
-     */
-    protected function getRenamedColumnsDiff()
+    protected function handleTableRenaming()
     {
-        $renamedColumns = $this->getRenamedColumns();
-
-        if (empty($renamedColumns)) {
-            return false;
+        if (isset($this->tableArr['newName']) && $this->tableName !== $this->tableArr['newName']) {
+            $this->renameTable($this->tableName, $this->tableArr['newName']);
+            $this->tableName = $this->tableArr['newName'];
         }
-
-        $renamedColumnsDiff = new TableDiff($this->tableArr['oldName']);
-        $renamedColumnsDiff->fromTable = $this->originalTable;
-
-        foreach ($renamedColumns as $oldName => $newName) {
-            $renamedColumnsDiff->renamedColumns[$oldName] = $this->table->getColumn($newName);
-        }
-
-        return $renamedColumnsDiff;
     }
 
-    /**
-     * Get the table diff to rename columns and indexes.
-     *
-     * @return \Doctrine\DBAL\Schema\TableDiff
-     */
-    protected function getRenamedDiff()
+    protected function processColumns()
     {
-        $renamedColumns = $this->getRenamedColumns();
-        $renamedIndexes = $this->getRenamedIndexes();
-
-        if (empty($renamedColumns) && empty($renamedIndexes)) {
-            return false;
-        }
-
-        $renamedDiff = new TableDiff($this->tableArr['oldName']);
-        $renamedDiff->fromTable = $this->originalTable;
-
-        foreach ($renamedColumns as $oldName => $newName) {
-            $renamedDiff->renamedColumns[$oldName] = $this->table->getColumn($newName);
-        }
-
-        foreach ($renamedIndexes as $oldName => $newName) {
-            $renamedDiff->renamedIndexes[$oldName] = $this->table->getIndex($newName);
-        }
-
-        return $renamedDiff;
-    }
-
-    /**
-     * Get columns that were renamed.
-     *
-     * @return array
-     */
-    protected function getRenamedColumns()
-    {
-        $renamedColumns = [];
-
         foreach ($this->tableArr['columns'] as $column) {
-            $oldName = $column['oldName'];
-
-            // make sure this is an existing column and not a new one
-            if ($this->originalTable->hasColumn($oldName)) {
-                $name = $column['name'];
-
-                if ($name != $oldName) {
-                    $renamedColumns[$oldName] = $name;
-                }
+            if ($column['oldName'] !== $column['name']) {
+                $this->renameColumn($this->tableName, $column['oldName'], $column['name']);
             }
+            $this->modifyColumn($column);  // Assuming modification includes type change, default value, etc.
         }
-
-        return $renamedColumns;
     }
 
-    /**
-     * Get indexes that were renamed.
-     *
-     * @return array
-     */
-    protected function getRenamedIndexes()
+    protected function processIndexes()
     {
-        $renamedIndexes = [];
+        // Placeholder for index processing logic
+        // This would typically handle adding, removing, or modifying indexes
+    }
 
-        foreach ($this->tableArr['indexes'] as $index) {
-            $oldName = $index['oldName'];
+    protected function tableExists($tableName)
+    {
+        $stmt = $this->pdo->prepare("SELECT to_regclass(:table_name)");
+        $stmt->execute(['table_name' => $tableName]);
+        return $stmt->fetchColumn() !== null;
+    }
 
-            // make sure this is an existing index and not a new one
-            if ($this->originalTable->hasIndex($oldName)) {
-                $name = $index['name'];
+    protected function renameTable($oldName, $newName)
+    {
+        $sql = "ALTER TABLE \"$oldName\" RENAME TO \"$newName\"";
+        $this->pdo->exec($sql);
+    }
 
-                if ($name != $oldName) {
-                    $renamedIndexes[$oldName] = $name;
-                }
-            }
+    protected function renameColumn($tableName, $oldColumnName, $newColumnName)
+    {
+        $sql = "ALTER TABLE \"$tableName\" RENAME COLUMN \"$oldColumnName\" TO \"$newColumnName\"";
+        $this->pdo->exec($sql);
+    }
+
+    protected function modifyColumn($column)
+    {
+        // Example SQL for modifying a column's type or setting a default
+        $sql = "ALTER TABLE \"{$this->tableName}\" ALTER COLUMN \"{$column['name']}\" TYPE {$column['type']} USING \"{$column['name']}\"::{$column['type']}";
+        if (isset($column['default'])) {
+            $sql .= ", ALTER COLUMN \"{$column['name']}\" SET DEFAULT '{$column['default']}'";
         }
-
-        return $renamedIndexes;
+        $this->pdo->exec($sql);
     }
 }
