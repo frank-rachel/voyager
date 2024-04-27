@@ -152,7 +152,7 @@ abstract class Type
         return self::$customTypeOptions[$this->name] ?? [];
     }
 
-    protected static function registerCustomPlatformTypes()
+    public static function registerCustomPlatformTypes()
     {
         $platformName = static::getPlatformName();
         $customTypes = array_merge(
