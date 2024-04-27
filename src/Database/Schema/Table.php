@@ -131,6 +131,9 @@ class Table
 
     public function toJson()
     {
+		print_r($this->toArray());
+		print_r(json_encode($this->toArray()));
+		exit;
         return json_encode($this->toArray());
     }
 
