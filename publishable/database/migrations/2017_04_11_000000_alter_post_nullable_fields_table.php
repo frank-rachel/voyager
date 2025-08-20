@@ -1,8 +1,7 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 class AlterPostNullableFieldsTable extends Migration
 {
@@ -13,14 +12,10 @@ class AlterPostNullableFieldsTable extends Migration
      */
     public function up()
     {
-        $platform = \DB::getDoctrineSchemaManager()->getDatabasePlatform();
-        $platform->registerDoctrineTypeMapping('enum', 'string');
-
-        Schema::table('posts', function (Blueprint $table) {
-            $table->text('excerpt')->nullable()->change();
-            $table->text('meta_description')->nullable()->change();
-            $table->text('meta_keywords')->nullable()->change();
-        });
+        $table = DB::getTablePrefix().'posts';
+        DB::statement("ALTER TABLE {$table} MODIFY excerpt TEXT NULL");
+        DB::statement("ALTER TABLE {$table} MODIFY meta_description TEXT NULL");
+        DB::statement("ALTER TABLE {$table} MODIFY meta_keywords TEXT NULL");
     }
 
     /**
@@ -30,10 +25,9 @@ class AlterPostNullableFieldsTable extends Migration
      */
     public function down()
     {
-        Schema::table('posts', function (Blueprint $table) {
-            $table->text('excerpt')->change();
-            $table->text('meta_description')->change();
-            $table->text('meta_keywords')->change();
-        });
+        $table = DB::getTablePrefix().'posts';
+        DB::statement("ALTER TABLE {$table} MODIFY excerpt TEXT NOT NULL");
+        DB::statement("ALTER TABLE {$table} MODIFY meta_description TEXT NOT NULL");
+        DB::statement("ALTER TABLE {$table} MODIFY meta_keywords TEXT NOT NULL");
     }
 }

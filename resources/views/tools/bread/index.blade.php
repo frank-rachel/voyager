@@ -28,10 +28,7 @@
                     <tr>
                         <td>
                             <p class="name">
-                                <a href="{{ route('voyager.database.show', $table->prefix.$table->name) }}"
-                                   data-name="{{ $table->prefix.$table->name }}" class="desctable">
-                                   {{ $table->name }}
-                                </a>
+                                {{ $table->name }}
                                 <i class="voyager-data"
                                    style="font-size:25px; position:absolute; margin-left:10px; margin-top:-3px;"></i>
                             </p>
@@ -85,62 +82,12 @@
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
 
-    <div class="modal modal-info fade" tabindex="-1" id="table_info" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="{{ __('voyager::generic.close') }}"><span
-                                aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title"><i class="voyager-data"></i> @{{ table.name }}</h4>
-                </div>
-                <div class="modal-body" style="overflow:scroll">
-                    <table class="table table-striped">
-                        <thead>
-                        <tr>
-                            <th>{{ __('voyager::database.field') }}</th>
-                            <th>{{ __('voyager::database.type') }}</th>
-                            <th>{{ __('voyager::database.null') }}</th>
-                            <th>{{ __('voyager::database.key') }}</th>
-                            <th>{{ __('voyager::database.default') }}</th>
-                            <th>{{ __('voyager::database.extra') }}</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr v-for="row in table.rows">
-                            <td><strong>@{{ row.Field }}</strong></td>
-                            <td>@{{ row.Type }}</td>
-                            <td>@{{ row.Null }}</td>
-                            <td>@{{ row.Key }}</td>
-                            <td>@{{ row.Default }}</td>
-                            <td>@{{ row.Extra }}</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline pull-right" data-dismiss="modal">{{ __('voyager::generic.close') }}</button>
-                </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
 
 @stop
 
 @section('javascript')
 
     <script>
-
-        var table = {
-            name: '',
-            rows: []
-        };
-
-        new Vue({
-            el: '#table_info',
-            data: {
-                table: table,
-            },
-        });
 
         $(function () {
 
@@ -155,27 +102,6 @@
                 $('#delete_builder_modal').modal('show');
             });
 
-            // Setup Show Table Info
-            //
-            $('.database-tables').on('click', '.desctable', function (e) {
-                e.preventDefault();
-                href = $(this).attr('href');
-                table.name = $(this).data('name');
-                table.rows = [];
-                $.get(href, function (data) {
-                    $.each(data, function (key, val) {
-                        table.rows.push({
-                            Field: val.field,
-                            Type: val.type,
-                            Null: val.null,
-                            Key: val.key,
-                            Default: val.default,
-                            Extra: val.extra
-                        });
-                        $('#table_info').modal('show');
-                    });
-                });
-            });
         });
     </script>
 

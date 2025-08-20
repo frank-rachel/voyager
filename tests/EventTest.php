@@ -16,9 +16,6 @@ use TCG\Voyager\Events\BreadImagesDeleted;
 use TCG\Voyager\Events\BreadUpdated;
 use TCG\Voyager\Events\FileDeleted;
 use TCG\Voyager\Events\MediaFileAdded;
-use TCG\Voyager\Events\TableAdded;
-use TCG\Voyager\Events\TableDeleted;
-use TCG\Voyager\Events\TableUpdated;
 use TCG\Voyager\Models\DataType;
 use TCG\Voyager\Models\Page;
 
@@ -221,105 +218,6 @@ class EventTest extends TestCase
         Event::assertDispatched(FileDeleted::class);
     }
 
-    public function testTableAddedEvent()
-    {
-        Event::fake();
-        Auth::loginUsingId(1);
-
-        $this->post(route('voyager.database.store'), [
-            'table' => [
-                'name'    => 'test',
-                'columns' => [
-                    [
-                        'name' => 'id',
-                        'type' => [
-                            'name' => 'integer',
-                        ],
-                    ],
-                ],
-                'indexes'     => [],
-                'foreignKeys' => [],
-                'options'     => [],
-            ],
-        ]);
-
-        Event::assertDispatched(TableAdded::class);
-    }
-
-    public function testTableUpdatedEvent()
-    {
-        Event::fake();
-        Auth::loginUsingId(1);
-
-        $this->post(route('voyager.database.store'), [
-            'table' => [
-                'name'    => 'test',
-                'columns' => [
-                    [
-                        'name' => 'id',
-                        'type' => [
-                            'name' => 'integer',
-                        ],
-                    ],
-                ],
-                'indexes'     => [],
-                'foreignKeys' => [],
-                'options'     => [],
-            ],
-        ]);
-
-        Event::assertNotDispatched(TableUpdated::class);
-
-        $this->put(route('voyager.database.update', ['test']), [
-            'table' => json_encode([
-                'name'    => 'test',
-                'oldName' => 'test',
-                'columns' => [
-                    [
-                        'name'    => 'id',
-                        'oldName' => 'id',
-                        'type'    => [
-                            'name' => 'integer',
-                        ],
-                    ],
-                ],
-                'indexes'     => [],
-                'foreignKeys' => [],
-                'options'     => [],
-            ]),
-        ]);
-
-        Event::assertDispatched(TableUpdated::class);
-    }
-
-    public function testTableDeletedEvent()
-    {
-        Event::fake();
-        Auth::loginUsingId(1);
-
-        $this->post(route('voyager.database.store'), [
-            'table' => [
-                'name'    => 'test',
-                'columns' => [
-                    [
-                        'name' => 'id',
-                        'type' => [
-                            'name' => 'integer',
-                        ],
-                    ],
-                ],
-                'indexes'     => [],
-                'foreignKeys' => [],
-                'options'     => [],
-            ],
-        ]);
-
-        Event::assertNotDispatched(TableDeleted::class);
-
-        $this->delete(route('voyager.database.destroy', ['test']));
-
-        Event::assertDispatched(TableDeleted::class);
-    }
 
     public function testMediaFileAddedEvent()
     {
