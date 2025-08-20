@@ -7,8 +7,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use ReflectionClass;
 use TCG\Voyager\Database\Schema\SchemaManager;
-use TCG\Voyager\Database\Schema\Table;
-use TCG\Voyager\Database\Types\Type;
 use TCG\Voyager\Events\BreadAdded;
 use TCG\Voyager\Events\BreadDeleted;
 use TCG\Voyager\Events\BreadUpdated;

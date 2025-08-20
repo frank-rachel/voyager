@@ -615,7 +615,7 @@
         function populateRowsFromTable(dropdown){
             var tbl = dropdown.val();
 
-            $.get('{{ route('voyager.database.index') }}/' + tbl, function(data){
+            $.get('{{ route('voyager.database.show', ['__table__']) }}'.replace('__table__', tbl), function(data){
                 var tbl_selected = $(dropdown).val();
 
                 $(dropdown).parent().parent().find('.rowDrop').each(function(){

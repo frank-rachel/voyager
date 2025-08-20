@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 class CreateUserRolesTable extends Migration
 {
@@ -14,11 +15,12 @@ class CreateUserRolesTable extends Migration
     public function up()
     {
         Schema::create('user_roles', function (Blueprint $table) {
-            $type = DB::connection()->getDoctrineColumn(DB::getTablePrefix().'users', 'id')->getType()->getName();
-            if ($type == 'bigint') {
-                $table->bigInteger('user_id')->unsigned()->index();
+            $columns = collect(DB::connection()->getSchemaBuilder()->getColumns(DB::getTablePrefix().'users'));
+            $idType = $columns->firstWhere('name', 'id')['type_name'] ?? 'integer';
+            if ($idType === 'bigint') {
+                $table->unsignedBigInteger('user_id')->index();
             } else {
-                $table->integer('user_id')->unsigned()->index();
+                $table->unsignedInteger('user_id')->index();
             }
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
